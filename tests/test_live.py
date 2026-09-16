@@ -53,7 +53,8 @@ def test_feature_rows_carry_every_model_feature_from_lead_0_to_the_last_forecast
     forecast = pd.DataFrame([{"cell_id": c, "date": d, **weather}
                              for c in cells["cell_id"] for d in pd.date_range("2026-07-15", periods=7)])
     climatology = pd.DataFrame({"cell_id": cells["cell_id"], "month": 7, "clim_month_rate": [0.05, 0.04],
-                                "clim_cell_rate": [0.03, 0.02]})
+                                "clim_cell_rate": [0.03, 0.02], "clim_fwi": [12.0, 10.0],
+                                "clim_temp": [21.0, 20.0], "clim_dc": [300.0, 280.0]})
     rows = live.feature_rows(cells, climatology, history, forecast, FEATURES)
     assert sorted(rows["lead_days"].unique()) == list(range(8))
     assert len(rows) == 2 * 8

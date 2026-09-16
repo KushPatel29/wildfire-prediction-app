@@ -15,6 +15,7 @@ record never has to sit in memory at once.
 
 from __future__ import annotations
 
+import argparse
 import sys
 import time
 import zipfile
@@ -106,40 +107,66 @@ def _read_2020s(path: Path, cache: Path) -> pd.DataFrame:
     return frame
 
 
-def main() -> int:
+#: Everything `derive` computes. Stripped before a re-derive so a renamed or
+#: dropped feature cannot survive in the table as a stale column.
+INTERPOLATED = ["cell_id", "date", "station_km", *F.WEATHER, *F.CODES,
+                "fires", "lightning_fires", "human_fires", "large_fires",
+                "has_fire", "has_large_fire"]
+
+
+def derive(table: pd.DataFrame, cells: pd.DataFrame) -> pd.DataFrame:
+    """Everything the model reads that is not a station reading: rolling windows,
+    what the neighbours saw, what is normal here, and the cell's own history."""
+    table = F.add_recent_weather(table)
+    table = F.add_neighbour_weather(table)
+    table = table.merge(cells[["cell_id", "lat", "lon", "province", "lightning_share"]], on="cell_id", how="left")
+    table = table.merge(F.cell_climatology(table, TRAIN_YEARS), on=["cell_id", "month"], how="left")
+    table = F.add_anomalies(table)
+    floats = table.select_dtypes("float64").columns
+    table[floats] = table[floats].astype("float32")
+    return table
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description="Build the modelling table.")
+    parser.add_argument(
+        "--features-only", action="store_true",
+        help="re-derive the features from the interpolated columns already in "
+             "cell_days.parquet, without re-reading the station archives")
+    args = parser.parse_args(argv)
     PROCESSED.mkdir(parents=True, exist_ok=True)
     started = time.time()
 
-    fires = F.clean_fires(load_nfdb())
-    fires = fires[fires["date"].dt.year >= FIRST_YEAR].reset_index(drop=True)
-    cells = F.build_cells(fires, TRAIN_YEARS)
-    fires.to_parquet(PROCESSED / "fires.parquet", index=False)
-    cells.to_parquet(PROCESSED / "cells.parquet", index=False)
-    print(f"fires {len(fires):,}; cells {len(cells)} (>= 10 starts in {TRAIN_YEARS[0]}-{TRAIN_YEARS[1]})")
+    if args.features_only:
+        cells = pd.read_parquet(PROCESSED / "cells.parquet")
+        table = pd.read_parquet(PROCESSED / "cell_days.parquet", columns=INTERPOLATED)
+        print(f"re-deriving features for {len(table):,} interpolated cell-days")
+    else:
+        fires = F.clean_fires(load_nfdb())
+        fires = fires[fires["date"].dt.year >= FIRST_YEAR].reset_index(drop=True)
+        cells = F.build_cells(fires, TRAIN_YEARS)
+        fires.to_parquet(PROCESSED / "fires.parquet", index=False)
+        cells.to_parquet(PROCESSED / "cells.parquet", index=False)
+        print(f"fires {len(fires):,}; cells {len(cells)} (>= 10 starts in {TRAIN_YEARS[0]}-{TRAIN_YEARS[1]})")
 
-    frames = []
-    for label, load in station_decades():
-        t0 = time.time()
-        stations = F.clean_stations(load())
-        daily = F.interpolate(cells, stations)
-        frames.append(daily)
-        print(f"  {label}: {stations['rep_date'].dt.year.min()}-{stations['rep_date'].dt.year.max()}, "
-              f"{len(daily):,} cell-days, {time.time() - t0:.0f}s")
-    table = pd.concat(frames, ignore_index=True)
+        frames = []
+        for label, load in station_decades():
+            t0 = time.time()
+            stations = F.clean_stations(load())
+            daily = F.interpolate(cells, stations)
+            frames.append(daily)
+            print(f"  {label}: {stations['rep_date'].dt.year.min()}-{stations['rep_date'].dt.year.max()}, "
+                  f"{len(daily):,} cell-days, {time.time() - t0:.0f}s")
+        table = pd.concat(frames, ignore_index=True)
 
-    counts = F.targets(fires, cells)
-    table = table.merge(counts, on=["cell_id", "date"], how="left")
-    for column in ("fires", "lightning_fires", "human_fires", "large_fires"):
-        table[column] = table[column].fillna(0).astype("int16")
-    table["has_fire"] = (table["fires"] > 0).astype("int8")
-    table["has_large_fire"] = (table["large_fires"] > 0).astype("int8")
+        counts = F.targets(fires, cells)
+        table = table.merge(counts, on=["cell_id", "date"], how="left")
+        for column in ("fires", "lightning_fires", "human_fires", "large_fires"):
+            table[column] = table[column].fillna(0).astype("int16")
+        table["has_fire"] = (table["fires"] > 0).astype("int8")
+        table["has_large_fire"] = (table["large_fires"] > 0).astype("int8")
 
-    table = F.add_recent_weather(table)
-    table = table.merge(cells[["cell_id", "lat", "lon", "province", "lightning_share"]], on="cell_id", how="left")
-    table = table.merge(F.cell_climatology(table, TRAIN_YEARS), on=["cell_id", "month"], how="left")
-
-    floats = table.select_dtypes("float64").columns
-    table[floats] = table[floats].astype("float32")
+    table = derive(table, cells)
     table.to_parquet(PROCESSED / "cell_days.parquet", index=False)
     years = table["date"].dt.year
     print(f"cell_days {len(table):,} rows, {years.min()}-{years.max()}, "

@@ -67,7 +67,7 @@ def test_recent_weather_rolls_within_a_cell_and_rain_resets_the_dry_count():
     table = pd.DataFrame({
         "cell_id": ["a"] * 5 + ["b"] * 5, "date": days * 2,
         "fwi": [1.0, 2.0, 3.0, 4.0, 5.0] + [10.0] * 5, "precip": [0.0, 0.0, 5.0, 0.0, 0.0] + [0.0] * 5,
-        "isi": 1.0, "temp": 20.0, "rh": 40.0, "dc": 300.0,
+        "isi": 1.0, "temp": 20.0, "rh": 40.0, "dc": 300.0, "bui": 45.0,
     })
     out = F.add_recent_weather(table)
     a, b = out[out["cell_id"] == "a"], out[out["cell_id"] == "b"]
@@ -75,3 +75,40 @@ def test_recent_weather_rolls_within_a_cell_and_rain_resets_the_dry_count():
     assert a["days_since_rain"].tolist() == [1, 2, 0, 1, 2]
     assert b["days_since_rain"].tolist() == [1, 2, 3, 4, 5]        # a's dry spell does not carry into b
     assert b["fwi_mean_3d"].iloc[0] == 10.0
+    # 1-4 July 2026 is a Wednesday to a Saturday.
+    assert out.loc[out["date"] == pd.Timestamp("2026-07-04"), "is_weekend"].tolist() == [1, 1]
+    assert out.loc[out["date"] == pd.Timestamp("2026-07-02"), "is_weekend"].tolist() == [0, 0]
+
+
+def test_vapour_pressure_deficit_is_the_drying_power_the_two_readings_hide():
+    """The point of carrying VPD as well as temperature and humidity: two days that
+    read as equally "dry" on humidity are not the same day at all."""
+    hot = F.vapour_pressure_deficit(30.0, 30.0)
+    cool = F.vapour_pressure_deficit(20.0, 30.0)
+    assert float(hot) == pytest.approx(2.971, abs=0.01)
+    assert float(cool) == pytest.approx(1.636, abs=0.01)
+    assert float(F.vapour_pressure_deficit(25.0, 100.0)) == pytest.approx(0.0, abs=1e-12)
+    assert float(F.vapour_pressure_deficit(25.0, 120.0)) == 0.0    # never negative
+
+
+def test_a_cell_sees_its_neighbours_and_not_itself():
+    """The neighbour average is what the eight cells around it reported, so a cell
+    whose own stations were silent still has a reading of the airmass it sits in."""
+    ids = ["50_-121", "50_-120", "51_-121", "60_-100"]
+    cells = pd.DataFrame({"cell_id": ids})
+    table = pd.DataFrame({"cell_id": ids, "date": pd.Timestamp("2026-07-01"),
+                          "fwi": [10.0, 20.0, 30.0, 99.0], "dc": [100.0, 200.0, 300.0, 900.0]})
+    out = F.add_neighbour_weather(table).set_index("cell_id")
+    assert out.loc["50_-121", "fwi_neighbour"] == pytest.approx(25.0)   # the two adjacent cells
+    assert out.loc["50_-120", "fwi_neighbour"] == pytest.approx(20.0)   # 50_-121 and 51_-121
+    assert np.isnan(out.loc["60_-100", "fwi_neighbour"])                # nothing within a degree
+
+
+def test_an_anomaly_is_measured_against_this_cell_own_normal():
+    table = pd.DataFrame({"cell_id": ["a", "b"], "fwi": [20.0, 20.0], "temp": [25.0, 25.0],
+                          "dc": [300.0, 300.0], "clim_fwi": [8.0, 25.0], "clim_temp": [20.0, 26.0],
+                          "clim_dc": [250.0, 400.0]})
+    out = F.add_anomalies(table)
+    assert out["fwi_anom"].tolist() == [12.0, -5.0]
+    assert out["temp_anom"].tolist() == [5.0, -1.0]
+    assert out["dc_anom"].tolist() == [50.0, -100.0]

@@ -1,8 +1,8 @@
 # Canada Wildfire Risk
 
 [![CI](https://github.com/KushPatel29/wildfire-prediction-app/actions/workflows/ci.yml/badge.svg)](https://github.com/KushPatel29/wildfire-prediction-app/actions/workflows/ci.yml)
-![Tests](https://img.shields.io/badge/tests-63%20passing-3B8C6E)
-![Model](https://img.shields.io/badge/ROC--AUC-0.802%20out%20of%20time-F28C38)
+![Tests](https://img.shields.io/badge/tests-67%20passing-3B8C6E)
+![Model](https://img.shields.io/badge/ROC--AUC-0.807%20out%20of%20time-F28C38)
 ![Data](https://img.shields.io/badge/NFDB%20%2B%20CWFIS-4.1M%20cell--days-0B5FA5)
 ![Streamlit](https://img.shields.io/badge/Streamlit-live%20forecast-FF4B4B?logo=streamlit&logoColor=white)
 ![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
@@ -33,26 +33,26 @@ what a fire-danger class table gives an agency today.
 
 | 2020–2024, any new fire | ROC-AUC | PR-AUC | Fires in the riskiest 10% | Lift |
 |---|---:|---:|---:|---:|
-| **This model** | **0.802** | **0.112** | **45.6%** | **4.2×** |
+| **This model** | **0.807** | **0.114** | **46.3%** | **4.3×** |
 | Normal for the month | 0.780 | 0.095 | 40.0% | 3.8× |
 | FWI logistic regression | 0.639 | 0.045 | 23.1% | 2.2× |
 
 | 2020–2024, a fire that grows past 200 ha | ROC-AUC | PR-AUC | Fires in the riskiest 10% | Lift |
 |---|---:|---:|---:|---:|
-| **This model** | **0.845** | **0.016** | **55.5%** | **5.3×** |
+| **This model** | **0.850** | **0.016** | **55.6%** | **5.3×** |
 | Normal for the month | 0.752 | 0.008 | 32.4% | 3.2× |
 | FWI logistic regression | 0.714 | 0.008 | 34.1% | 3.4× |
 
 The operational number is the last one re-ranked daily: **rank the 771 cells fresh
-every morning, take the riskiest 78, and 36.6% of the 26,975 fires reported in
+every morning, take the riskiest 78, and 36.7% of the 26,975 fires reported in
 2020–2024 started inside them.** Random cells would hold 10%. Ranking the whole test
-period at once scores higher (45.6%) because it also rewards knowing July is busier
+period at once scores higher (46.3%) because it also rewards knowing July is busier
 than April; both are reported, and which is which is stated on the page.
 
 Calibration is isotonic, fitted on the validation seasons, and it holds through the
-middle of the range on the test seasons: the decile the model calls 3.3% reports a
-fire on 3.3% of days, the 5.2% decile on 5.1%. The riskiest tenth is over-confident
-- 14.2% predicted against 10.8% observed - which the model card shows rather than
+middle of the range on the test seasons: the decile the model calls 2.1% reports a
+fire on 2.1% of days, the 3.1% decile on 3.1%, the 5.4% decile on 5.1%. The riskiest tenth is over-confident
+- 14.7% predicted against 11.1% observed - which the model card shows rather than
 smooths. Brier 0.0233 against a 2.5% base rate.
 
 Replaying 1 June 2023 — the day Quebec's lightning bust began. White rings are the
@@ -92,7 +92,7 @@ this label, the model and the index are close, and both are far ahead of climato
 |---|---|
 | Fires | 164,707 in the National Fire Database point layer, 2000–2024, prescribed burns excluded |
 | Grid | 771 one-degree cells — every cell with at least ten fires in 2000–2016 |
-| Weather | 2,852 CWFIS stations with the official FWI System codes |
+| Weather | 3,198 CWFIS stations with the official FWI System codes |
 | Rows | 4,124,850 cell-days over 25 fire seasons, 2.7% of which report a fire |
 | Live sources | CWFIS station observations, CWFIS satellite hotspots, Open-Meteo forecast |
 
@@ -143,19 +143,29 @@ up to four stations within 200 km, variable by variable, so a station reporting
 temperature but no codes still informs temperature. A cell with none in range gets
 NaN, which the model reads as "unobserved" rather than as zero.
 
-**Features (30).** The day's weather and codes, 3- to 14-day windows of FWI, humidity
-and rain, days since rain, the week's change in Drought Code, season, position, the
-cell's lightning share, its normal fire rate for the month, and how far the nearest
-reporting station is.
+**Features (42).** The day's weather and codes; vapour pressure deficit, which is
+what temperature and humidity mean together; 3- to 30-day windows of FWI, humidity,
+drought and rain; days since rain; the week's change in Drought Code; **today against
+this cell's own normal for the month** and **against its neighbours the same day**,
+because an FWI of 20 is an ordinary July in the southern interior and the driest week
+of the decade on the Labrador coast; season, weekday, position, the cell's lightning
+share, its normal fire rate for the month, and how far the nearest reporting station
+is.
 
-**Model.** XGBoost (histogram trees, depth 7, learning rate 0.05, early stopping on
-the validation seasons), then isotonic calibration. Split by season, never by row: a
-random split would put a July day in training and the next July day in test, and the
-weather they share would flatter every score.
+**Model.** Two boosters read as one number. A classifier asks whether the cell
+reports a fire; a Poisson model of how many reads as `1 - exp(-lambda)`. They
+disagree about different rows, and their average put 0.8 more points of fires inside
+the day's riskiest tenth than either alone on the validation seasons. The average is
+what gets isotonically calibrated, so the published number is still a probability.
+XGBoost, histogram trees, depth 12, learning rate 0.03, early stopping on the
+validation seasons; twelve configurations were compared there and the test seasons
+were scored once, afterwards. Split by season, never by row: a random split would put
+a July day in training and the next July day in test, and the weather they share
+would flatter every score.
 
 **Live.** The last 30 days of CWFIS station files supply the starting codes and the
 rolling features; Open-Meteo's forecast for each cell centre steps the codes forward
-one day at a time; the same 30 features are assembled and scored.
+one day at a time; the same 42 features are assembled and scored.
 
 ## Four things that would have been silently wrong
 
@@ -170,7 +180,7 @@ Each of these produced a plausible number, and each is now a test.
    calibration outputs plateaus, so `score >= quantile(0.9)` swept in every cell tied
    at the cut — and flattered whichever ranking had the biggest plateau there. Taking
    exactly the top tenth, ties broken by the uncalibrated score, moved same-day
-   capture from 37.9% to 36.6%.
+   capture from 37.9% to 36.7%.
 3. **A partly published station file restarted the drought codes.** CWFIS posts a
    day's file while stations are still reporting; the file for 15 September 2026 held
    1,110 of about 2,100 stations, leaving 30% of cells with no station in range and
@@ -215,8 +225,8 @@ days without commits, so the fallback matters.
 - **Lightning is not an input.** It starts most of the area burned in Canada. The
   model knows which cells tend to get lightning fires, not where today's storms are.
   The worst day in the 2023 replay is a lightning bust.
-- **The cell's own history is the largest single input** — 41% of the trees' gain is
-  the cell's normal rate for the month, 15% its rate over the season. Weather moves
+- **The cell's own history is the largest single input** — 36% of the trees' gain is
+  the cell's normal rate for the month, 13% its rate over the season. Weather moves
   the answer around a strong prior; it does not replace it.
 - **Report date, not ignition date.** A fire that smoulders before it is found is
   labelled on the day it was reported.

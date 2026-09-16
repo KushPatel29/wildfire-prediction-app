@@ -6,6 +6,9 @@ import pytest
 from sklearn.isotonic import IsotonicRegression
 
 from wildfire.evaluation import rank_within, ranking, top_mask
+import xgboost as xgb
+
+from wildfire import model as model_module
 from wildfire.model import FEATURES, Calibration, load_all
 
 
@@ -27,8 +30,23 @@ def models():
 def test_both_models_predict_with_the_trees_up_to_their_best_round(models):
     """Early stopping keeps 100 rounds past the best; the calibration never saw them."""
     for target, model in models.items():
-        start, stop = model.trees
-        assert start == 0 and 0 < stop < model.booster.num_boosted_rounds(), target
+        for member in model.members:
+            start, stop = model_module.trees_of(member.booster)
+            assert start == 0 and 0 < stop < member.booster.num_boosted_rounds(), (target, member.kind)
+
+
+def test_each_target_carries_both_members_and_the_count_model_reads_as_a_probability(models):
+    """The published score is the average of a classifier and a Poisson count model.
+    If a deployment ever ships one booster, every probability moves and nothing else
+    here would notice."""
+    for target, model in models.items():
+        assert [member.kind for member in model.members] == ["classifier", "counts"], target
+    rows = pd.DataFrame([{f: 0.0 for f in FEATURES}])
+    for target, model in models.items():
+        matrix = xgb.DMatrix(rows[FEATURES])
+        members = [member.probability(matrix)[0] for member in model.members]
+        assert all(0.0 <= value <= 1.0 for value in members), target
+        assert model.raw(rows)[0] == pytest.approx(float(np.mean(members)), abs=1e-9)
 
 
 def test_scores_are_probabilities_that_rise_with_fire_weather(models):
@@ -37,10 +55,16 @@ def test_scores_are_probabilities_that_rise_with_fire_weather(models):
             "temp_mean_3d": 18, "rh_mean_3d": 55, "precip_sum_3d": 4, "precip_sum_7d": 10, "precip_sum_14d": 20,
             "days_since_rain": 1, "dc_change_7d": 10, "doy_sin": np.sin(2 * np.pi * 200 / 365.25),
             "doy_cos": np.cos(2 * np.pi * 200 / 365.25), "lat": 50.5, "lon": -120.5, "lightning_share": 0.6,
-            "clim_month_rate": 0.05, "clim_cell_rate": 0.03, "station_km": 30}
+            "clim_month_rate": 0.05, "clim_cell_rate": 0.03, "station_km": 30,
+            "vpd": 0.93, "vpd_mean_3d": 0.93, "vpd_max_7d": 1.2, "bui_mean_7d": 30, "dc_mean_30d": 190,
+            "precip_sum_30d": 45, "fwi_anom": -2.0, "temp_anom": -1.0, "dc_anom": -20.0,
+            "fwi_neighbour": 6.0, "dc_neighbour": 200.0, "is_weekend": 0}
     severe = dict(mild, temp=33, rh=15, ws=25, precip=0, ffmc=94, dmc=80, dc=550, isi=18, bui=110, fwi=45, dsr=30,
                   fwi_mean_3d=40, fwi_mean_7d=35, fwi_max_7d=45, isi_mean_3d=16, temp_mean_3d=32, rh_mean_3d=18,
-                  precip_sum_3d=0, precip_sum_7d=0, precip_sum_14d=0, days_since_rain=20, dc_change_7d=40)
+                  precip_sum_3d=0, precip_sum_7d=0, precip_sum_14d=0, days_since_rain=20, dc_change_7d=40,
+                  vpd=4.29, vpd_mean_3d=4.0, vpd_max_7d=4.5, bui_mean_7d=105, dc_mean_30d=500,
+                  precip_sum_30d=3, fwi_anom=32.0, temp_anom=9.0, dc_anom=250.0,
+                  fwi_neighbour=42.0, dc_neighbour=540.0)
     rows = pd.DataFrame([mild, severe])[FEATURES]
     for target, model in models.items():
         p = model.predict(rows)

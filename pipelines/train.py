@@ -12,6 +12,10 @@ share would flatter the score. Seasons are:
     validation  2017-2019   stop boosting, fit the probability calibration
     test        2020-      scored once, reported as-is (when the 2020s file is present)
 
+Each target is two boosters read as one number - a classifier for whether a cell
+reports a fire, and a Poisson model of how many, read as `1 - exp(-lambda)`. Their
+average is what gets calibrated and published; see `wildfire.model`.
+
 Two baselines stand next to it, because a model that cannot beat them is not worth
 deploying:
 
@@ -46,7 +50,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from wildfire.evaluation import probability, ranking  # noqa: E402
-from wildfire.model import FEATURES, MODELS, TARGETS, Calibration, TrainedTarget, load  # noqa: E402
+from wildfire.model import FEATURES, MODELS, TARGETS, Calibration, Member, TrainedTarget, load  # noqa: E402
 
 PROCESSED = ROOT / "data" / "processed"
 REPORTS = ROOT / "reports"
@@ -74,19 +78,49 @@ def score(y: np.ndarray, p: np.ndarray, fires: np.ndarray | None = None, tiebrea
             **probability(y, p)}
 
 
+#: Chosen on the validation seasons, never on the test ones. Deeper and more
+#: strongly regularised than the first version shipped: twelve levels with a
+#: minimum child weight of 60 read the interactions between drought, wind and
+#: where you are, and 8.0 of L2 keeps them from memorising 2000-2016. Twelve
+#: configurations were compared; the choice is recorded in the model card.
+SETTINGS = dict(n_estimators=3000, learning_rate=0.03, max_depth=12, min_child_weight=60,
+                subsample=0.8, colsample_bytree=0.5, reg_lambda=8.0, tree_method="hist",
+                early_stopping_rounds=100, n_jobs=-1, random_state=1904)
+COUNTS_COLUMN = {"has_fire": "fires", "has_large_fire": "large_fires"}
+
+
 def fit_target(parts: dict[str, pd.DataFrame], target: str) -> TrainedTarget:
+    """Fit the classifier and the count model, then calibrate their average.
+
+    The calibration is fitted on what the app will actually score with - the mean
+    of the two members - rather than on either one, so the published probability is
+    the one that was calibrated."""
     train, valid = parts["train"], parts["validation"]
-    model = xgb.XGBClassifier(
-        n_estimators=2000, learning_rate=0.05, max_depth=7, min_child_weight=20,
-        subsample=0.8, colsample_bytree=0.8, reg_lambda=2.0, tree_method="hist",
-        eval_metric="logloss", early_stopping_rounds=100, n_jobs=-1, random_state=1904,
-    )
-    model.fit(train[FEATURES], train[target], eval_set=[(valid[FEATURES], valid[target])], verbose=False)
-    booster = model.get_booster()
-    booster.set_attr(best_iteration=str(model.best_iteration))
-    raw_valid = model.predict_proba(valid[FEATURES])[:, 1]
+    counts = COUNTS_COLUMN[target]
+
+    classifier = xgb.XGBClassifier(**SETTINGS, eval_metric="aucpr")
+    classifier.fit(train[FEATURES], train[target],
+                   eval_set=[(valid[FEATURES], valid[target])], verbose=False)
+    poisson = xgb.XGBRegressor(**SETTINGS, objective="count:poisson", eval_metric="poisson-nloglik")
+    poisson.fit(train[FEATURES], train[counts],
+                eval_set=[(valid[FEATURES], valid[counts])], verbose=False)
+
+    members = []
+    for model, kind in ((classifier, "classifier"), (poisson, "counts")):
+        booster = model.get_booster()
+        booster.set_attr(best_iteration=str(model.best_iteration))
+        members.append(Member(booster, kind))
+    trained = TrainedTarget(target, tuple(members), Calibration(np.array([0.0, 1.0]), np.array([0.0, 1.0])))
+    raw_valid = trained.raw(valid)
     isotonic = IsotonicRegression(out_of_bounds="clip", y_min=0.0, y_max=1.0).fit(raw_valid, valid[target])
-    return TrainedTarget(target, booster, Calibration.from_isotonic(isotonic))
+    return TrainedTarget(target, tuple(members), Calibration.from_isotonic(isotonic))
+
+
+
+def trained_trees(member) -> int:
+    """The round each member stopped at, for the model card."""
+    from wildfire.model import trees_of
+    return trees_of(member.booster)[1] - 1
 
 
 def evaluate_target(parts: dict[str, pd.DataFrame], target: str, trained: TrainedTarget) -> dict:
@@ -95,7 +129,9 @@ def evaluate_target(parts: dict[str, pd.DataFrame], target: str, trained: Traine
     baseline = make_pipeline(StandardScaler(), LogisticRegression(max_iter=500))
     baseline.fit(train[BASELINE_FWI].fillna(medians), train[target])
 
-    report = {"best_iteration": int(trained.trees[1] - 1), "splits": {}}
+    report = {"best_iteration": int(trained.trees[1] - 1),
+              "members": {member.kind: int(trained_trees(member)) for member in trained.members},
+              "splits": {}}
     counts_column = "fires" if target == "has_fire" else "large_fires"
     scored = {}
     for name, part in parts.items():
@@ -161,7 +197,9 @@ def main(argv: list[str] | None = None) -> int:
             trained = load(target)
         else:
             trained = fit_target(parts, target)
-            trained.booster.save_model(MODELS / f"{target}.json")
+            for member in trained.members:
+                suffix = "" if member.kind == "classifier" else "_counts"
+                member.booster.save_model(MODELS / f"{target}{suffix}.json")
             trained.calibration.save(MODELS / f"{target}_calibration.json")
         report = evaluate_target(parts, target, trained)
         metrics["targets"][target] = {"meaning": meaning, **report}

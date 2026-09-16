@@ -239,8 +239,10 @@ def feature_rows(cells: pd.DataFrame, climatology: pd.DataFrame, history: pd.Dat
     combined = pd.concat([history.assign(is_forecast=False), forecast.assign(is_forecast=True)],
                          ignore_index=True)
     combined = F.add_recent_weather(combined)
+    combined = F.add_neighbour_weather(combined)
     combined = combined.merge(cells[["cell_id", "lat", "lon", "province", "lightning_share"]], on="cell_id", how="left")
     combined = combined.merge(climatology, on=["cell_id", "month"], how="left")
+    combined = F.add_anomalies(combined)
     keep = combined["is_forecast"] | (include_latest_observed & (combined["date"] == as_of))
     rows = combined[keep].copy()
     rows["lead_days"] = (rows["date"] - as_of).dt.days

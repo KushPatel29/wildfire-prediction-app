@@ -8,7 +8,9 @@ hosted app needs a few megabytes: the grid, the model, and pre-computed evidence
 fire history, the out-of-time backtest, and daily risk maps for the test seasons so
 a reader can replay a real season against the fires that actually started.
 
-Writes data/published/:
+Writes the three artifacts the live forecast reads into models/ - the grid, the
+station list and the climatology the anomaly features are measured against - and
+into data/published/:
 
     fires_by_year.parquet        starts and area burned by year, province and cause
     fires_by_month.parquet       seasonality by province
@@ -29,10 +31,12 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT / "pipelines"))
 
+import build_table  # noqa: E402
+from build_table import TRAIN_YEARS  # noqa: E402
 from train import TEST_FROM  # noqa: E402
 from wildfire import features as F  # noqa: E402
 from wildfire.evaluation import TOP_SHARE, rank_within  # noqa: E402
-from wildfire.model import load_all  # noqa: E402
+from wildfire.model import MODELS, load_all  # noqa: E402
 
 PROCESSED = ROOT / "data" / "processed"
 PUBLISHED = ROOT / "data" / "published"
@@ -57,8 +61,28 @@ def daily_summary(daily: pd.DataFrame) -> pd.DataFrame:
     return summary.astype({column: "int32" for column in counts})
 
 
+def deploy_artifacts() -> None:
+    """The three small files the live forecast reads, rebuilt from the processed table.
+
+    They used to be copied into models/ by hand, which is fine until a feature is
+    added: the live forecast reads `climatology.parquet` for what is normal in each
+    cell, and a hand-copied one silently lacks the columns the new anomaly features
+    are measured against. Writing them here ties them to the table the model was
+    trained on."""
+    table = pd.read_parquet(PROCESSED / "cell_days.parquet",
+                            columns=["cell_id", "date", "month", "has_fire", "fwi", "temp", "dc"])
+    cells = pd.read_parquet(PROCESSED / "cells.parquet")
+    MODELS.mkdir(parents=True, exist_ok=True)
+    cells.to_parquet(MODELS / "cells.parquet", index=False)
+    F.cell_climatology(table, TRAIN_YEARS).to_parquet(MODELS / "climatology.parquet", index=False)
+    stations = build_table.station_locations()
+    stations.to_parquet(MODELS / "stations.parquet", index=False)
+    print(f"deploy artifacts: {len(cells)} cells, {len(stations):,} stations")
+
+
 def main() -> int:
     PUBLISHED.mkdir(parents=True, exist_ok=True)
+    deploy_artifacts()
     fires = pd.read_parquet(PROCESSED / "fires.parquet")
     fires["province"] = fires["src_agency"].map({**F.AGENCIES, "PC": "Parks Canada"}).fillna("Other")
     fires["cause_label"] = fires["cause"].map(CAUSES).fillna("Unknown")

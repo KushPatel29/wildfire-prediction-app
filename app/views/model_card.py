@@ -122,16 +122,20 @@ st.markdown(
 - **Fires.** The Canadian National Fire Database point layer, 2000–2024: report date, location, cause and final
   size of every fire agencies recorded. Prescribed burns and records without a valid date or location are
   dropped.
-- **Weather.** CWFIS noon observations from about 2,850 stations with the official FWI System codes, where CWFIS
+- **Weather.** CWFIS noon observations from about 3,200 stations with the official FWI System codes, where CWFIS
   computed them from the station's own record. Each cell takes an inverse-distance-weighted average of up to four
   stations within 200 km, variable by variable.
 - **Cells.** 1° cells with at least ten fires in 2000–2016 - 771 of them, holding almost all of Canada's recorded
   fires outside the far north.
-- **Features.** {len(metrics['features'])} per cell-day: the day's weather and codes, 3- to 14-day windows of FWI,
-  humidity and rain, days since rain, the week's change in Drought Code, season, position, the cell's lightning
-  share, its normal fire rate for the month, and how far the nearest station is.
-- **Model.** XGBoost (histogram trees, depth 7, learning rate 0.05, early stopping on {valid[0]}–{valid[1]}),
-  then an isotonic calibration fitted on the same validation seasons. The test seasons were scored once.
+- **Features.** {len(metrics['features'])} per cell-day: the day's weather and codes, vapour pressure deficit,
+  3- to 30-day windows of FWI, humidity, drought and rain, days since rain, the week's change in Drought Code,
+  today against this cell's own normal for the month and against its neighbours the same day, season, weekday,
+  position, the cell's lightning share, its normal fire rate for the month, and how far the nearest station is.
+- **Model.** Two boosters read as one number: a classifier for whether the cell reports a fire, and a Poisson
+  model of how many, read as `1 − exp(−λ)`. Their average is isotonically calibrated on {valid[0]}–{valid[1]},
+  so the published number is still a probability. XGBoost, histogram trees, depth 12, learning rate 0.03, early
+  stopping on the validation seasons. Twelve configurations were compared there; the test seasons were scored
+  once, afterwards.
 - **Split by season, never by row.** A random split would put a July day in training and the next July day in
   test, and the weather they share would inflate every score.
 """
