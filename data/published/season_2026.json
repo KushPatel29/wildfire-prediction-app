@@ -1,0 +1,100 @@
+{
+  "year": 2026,
+  "first_day": "2026-04-01",
+  "last_day": "2026-09-15",
+  "station_days": 168,
+  "hotspot_days": 176,
+  "hotspot_days_missing": 6,
+  "cell_days": 128757,
+  "new_detections": 936,
+  "positive_rate": 0.007269507677252499,
+  "lookback_days": 14,
+  "pooled": {
+    "model": {
+      "roc_auc": 0.6735695616205274,
+      "pr_auc": 0.014560274119993789,
+      "share_of_fires_in_top_decile": 0.2553418803418803,
+      "lift_top_decile": 2.5533593109024144
+    },
+    "large_fire_model": {
+      "roc_auc": 0.7244479325622095,
+      "pr_auc": 0.017154417438412874,
+      "share_of_fires_in_top_decile": 0.2767094017094017,
+      "lift_top_decile": 2.7670295461243737
+    },
+    "climatology": {
+      "roc_auc": 0.5956097283681366,
+      "pr_auc": 0.010122872064667342,
+      "share_of_fires_in_top_decile": 0.15705128205128205,
+      "lift_top_decile": 1.5704762288814011
+    },
+    "fwi_alone": {
+      "roc_auc": 0.7191685143694202,
+      "pr_auc": 0.0168969024283906,
+      "share_of_fires_in_top_decile": 0.27136752136752135,
+      "lift_top_decile": 2.713611987318884
+    }
+  },
+  "same_day_top_decile": {
+    "model": 0.20619658119658119,
+    "large_fire_model": 0.21153846153846154,
+    "climatology": 0.14743589743589744,
+    "fwi_alone": 0.2168803418803419
+  },
+  "by_month": [
+    {
+      "month": 4,
+      "cell_days": 22359,
+      "new_detections": 54,
+      "model_roc_auc": 0.8297786578329057,
+      "large_fire_model_roc_auc": 0.8394239790115154,
+      "climatology_roc_auc": 0.7477160078706817,
+      "fwi_alone_roc_auc": 0.6627084941924666
+    },
+    {
+      "month": 5,
+      "cell_days": 23901,
+      "new_detections": 130,
+      "model_roc_auc": 0.7535468233756064,
+      "large_fire_model_roc_auc": 0.7932553563974203,
+      "climatology_roc_auc": 0.6916941457431971,
+      "fwi_alone_roc_auc": 0.7407586166725454
+    },
+    {
+      "month": 6,
+      "cell_days": 23130,
+      "new_detections": 275,
+      "model_roc_auc": 0.593522324536107,
+      "large_fire_model_roc_auc": 0.6720598237902985,
+      "climatology_roc_auc": 0.4679385851514489,
+      "fwi_alone_roc_auc": 0.7067610429386847
+    },
+    {
+      "month": 7,
+      "cell_days": 23901,
+      "new_detections": 272,
+      "model_roc_auc": 0.6146263284398781,
+      "large_fire_model_roc_auc": 0.6232236123108941,
+      "climatology_roc_auc": 0.564061126905373,
+      "fwi_alone_roc_auc": 0.6603177831079955
+    },
+    {
+      "month": 8,
+      "cell_days": 23901,
+      "new_detections": 177,
+      "model_roc_auc": 0.567663011639504,
+      "large_fire_model_roc_auc": 0.6039408470480203,
+      "climatology_roc_auc": 0.5148904015767009,
+      "fwi_alone_roc_auc": 0.6762328929582858
+    },
+    {
+      "month": 9,
+      "cell_days": 11565,
+      "new_detections": 28,
+      "model_roc_auc": 0.6754030510531334,
+      "large_fire_model_roc_auc": 0.7277130103146399,
+      "climatology_roc_auc": 0.6387461459403905,
+      "fwi_alone_roc_auc": 0.6807012221548063
+    }
+  ]
+}

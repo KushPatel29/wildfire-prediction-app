@@ -1,0 +1,40 @@
+name: Live forecast
+
+# Rebuilds the seven-day forecast from CWFIS and Open-Meteo and attaches it to the
+# `live-forecast` release, which the app reads. Twice a day: early morning Pacific,
+# once the previous day's station file is complete, and mid-afternoon.
+on:
+  schedule:
+    - cron: "40 13 * * *"
+    - cron: "40 21 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: live-forecast
+  cancel-in-progress: false
+
+jobs:
+  forecast:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - run: python pipelines/forecast.py --out build/live
+      - name: Attach to the live-forecast release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view live-forecast > /dev/null 2>&1 || gh release create live-forecast \
+            --title "Live forecast" --latest=false \
+            --notes "Rebuilt twice a day by .github/workflows/forecast.yml. The app reads these files; they are overwritten on every run."
+          # Data first, metadata last, so a reader never sees a meta.json describing files not yet uploaded.
+          gh release upload live-forecast build/live/forecast.parquet build/live/hotspots.parquet --clobber
+          gh release upload live-forecast build/live/meta.json --clobber

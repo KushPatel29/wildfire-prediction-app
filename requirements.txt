@@ -1,0 +1,10 @@
+# The app and the scheduled forecast. Exact versions: the ones the models were trained,
+# tested and deployed with (Python 3.12).
+numpy==2.5.3
+pandas==3.0.3
+pyarrow==24.0.0
+xgboost==2.0.3
+requests==2.32.3
+streamlit==1.63.0
+pydeck==0.9.3
+plotly==6.3.1

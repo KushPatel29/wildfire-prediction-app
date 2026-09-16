@@ -1,0 +1,18 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.venv/
+.streamlit/secrets.toml
+
+# Downloaded and derived data: rebuilt by the pipelines, too large for git.
+data/raw/
+data/interim/
+data/processed/
+build/
+
+# Superseded by models/*_calibration.json
+models/*.joblib
+
+# Local editor/preview config
+.claude/

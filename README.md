@@ -1,0 +1,262 @@
+# Canada Wildfire Risk
+
+[![CI](https://github.com/KushPatel29/wildfire-prediction-app/actions/workflows/ci.yml/badge.svg)](https://github.com/KushPatel29/wildfire-prediction-app/actions/workflows/ci.yml)
+![Tests](https://img.shields.io/badge/tests-59%20passing-3B8C6E)
+![Model](https://img.shields.io/badge/ROC--AUC-0.802%20out%20of%20time-F28C38)
+![Data](https://img.shields.io/badge/NFDB%20%2B%20CWFIS-4.1M%20cell--days-0B5FA5)
+![Streamlit](https://img.shields.io/badge/Streamlit-live%20forecast-FF4B4B?logo=streamlit&logoColor=white)
+![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
+
+Seven-day wildfire ignition risk for Canada, rebuilt twice a day from public data:
+which 1° cells are most likely to report a new fire, and which are most likely to
+report one that grows past 200 hectares.
+
+It is the 2024 hackathon project this started as, taken from a yearly area-burned
+regression to a daily, calibrated, out-of-time-tested forecast that runs on live
+CWFIS observations and an Open-Meteo forecast — and that reports the seasons it got
+wrong as plainly as the ones it got right.
+
+**Everything below is produced by a pipeline in this repository and asserted by a
+test. No number is quoted that the code does not reproduce.**
+
+---
+
+![Seven-day risk](docs/screenshots/01-seven-day-risk.png)
+
+## What it scored on seasons it never saw
+
+Trained on 2000–2016, early-stopped and calibrated on 2017–2019, then scored **once**
+on 2020–2024. Two baselines stand next to it, because a model that cannot beat them
+is not worth deploying: each cell's own fire rate for that month (learned from
+training years only), and a logistic regression on FWI, ISI, BUI and month — roughly
+what a fire-danger class table gives an agency today.
+
+| 2020–2024, any new fire | ROC-AUC | PR-AUC | Fires in the riskiest 10% | Lift |
+|---|---:|---:|---:|---:|
+| **This model** | **0.802** | **0.112** | **45.6%** | **4.2×** |
+| Normal for the month | 0.780 | 0.095 | 40.0% | 3.8× |
+| FWI logistic regression | 0.639 | 0.045 | 23.1% | 2.2× |
+
+| 2020–2024, a fire that grows past 200 ha | ROC-AUC | PR-AUC | Fires in the riskiest 10% | Lift |
+|---|---:|---:|---:|---:|
+| **This model** | **0.845** | **0.016** | **55.5%** | **5.3×** |
+| Normal for the month | 0.752 | 0.008 | 32.4% | 3.2× |
+| FWI logistic regression | 0.714 | 0.008 | 34.1% | 3.4× |
+
+The operational number is the last one re-ranked daily: **rank the 771 cells fresh
+every morning, take the riskiest 78, and 36.6% of the 26,975 fires reported in
+2020–2024 started inside them.** Random cells would hold 10%. Ranking the whole test
+period at once scores higher (45.6%) because it also rewards knowing July is busier
+than April; both are reported, and which is which is stated on the page.
+
+Calibration is isotonic, fitted on the validation seasons, and it holds through the
+middle of the range on the test seasons: the decile the model calls 3.3% reports a
+fire on 3.3% of days, the 5.2% decile on 5.1%. The riskiest tenth is over-confident
+- 14.2% predicted against 10.8% observed - which the model card shows rather than
+smooths. Brier 0.0233 against a 2.5% base rate.
+
+Replaying 1 June 2023 — the day Quebec's lightning bust began. White rings are the
+fires that were actually reported:
+
+![Replay 2020-2024](docs/screenshots/03-replay.png)
+
+## The 2026 season, graded by satellite
+
+The National Fire Database is published a season or more after the fact, so it
+cannot grade 2026. CWFIS's satellite hotspot archive can. Every cell on every day
+from 1 April to 15 September 2026 was scored from that day's station weather, and
+checked against **new fire activity**: hotspots in a cell that had none in the
+previous 14 days. 936 such cell-days out of 128,757.
+
+| Ranking of 2026 satellite detections | ROC-AUC | New activity in the day's riskiest 10% |
+|---|---:|---:|
+| Large-fire model | **0.724** | 21.2% |
+| FWI alone | 0.719 | **21.7%** |
+| Any-fire model | 0.674 | 20.6% |
+| Normal for the month | 0.596 | 14.7% |
+
+**FWI alone edges the any-fire model on this label, and that is worth saying rather
+than hiding.** A satellite sees fires big and hot enough to detect from orbit — the
+fires weather drives. The any-fire model is trained on every reported start,
+including the small human-caused fires near roads and towns that its fire-history
+features exist to find and that satellites rarely see. Scored on the fires
+satellites *can* see, the large-fire model leads on ROC-AUC and is within half a
+point of FWI on same-day capture. The honest summary is that on this season, against
+this label, the model and the index are close, and both are far ahead of climatology.
+
+![2026 season check](docs/screenshots/02-season-check.png)
+
+## What is in it
+
+| | |
+|---|---|
+| Fires | 164,707 in the National Fire Database point layer, 2000–2024, prescribed burns excluded |
+| Grid | 771 one-degree cells — every cell with at least ten fires in 2000–2016 |
+| Weather | 2,852 CWFIS stations with the official FWI System codes |
+| Rows | 4,124,850 cell-days over 25 fire seasons, 2.7% of which report a fire |
+| Live sources | CWFIS station observations, CWFIS satellite hotspots, Open-Meteo forecast |
+
+## The app
+
+Six pages, all reading the same evidence files:
+
+- **Seven-day risk** — the live map, coloured by the chance of a new fire, the chance
+  of a large one, the day's risk against the cell's own normal, or the Fire Weather
+  Index; satellite hotspots from the last 48 hours; the week by province; the
+  riskiest cells with the weather behind them. A button rebuilds the whole forecast
+  from live data in about three minutes.
+- **2026 season check** — the table above, by month, with a map of any day.
+- **Replay 2020–2024** — any day of the test seasons, the risk map against the fires
+  that actually started, and the day the season's model did worst.
+- **Model card** — every metric, the calibration curve, per-province scores, what the
+  trees split on, and the limits.
+- **Fires since 2000** — the record the model learns from.
+- **From the hackathon** — what the original project was and what changed.
+
+![Model card](docs/screenshots/04-model-card.png)
+
+```bash
+pip install -r requirements.txt
+streamlit run app/streamlit_app.py
+```
+
+The app ships with a forecast snapshot, so it runs with no network. Given one, it
+reads the newest forecast the scheduled GitHub Actions run published.
+
+## How it works
+
+**The unit of prediction** is a 1° cell on one day of the April–October season — about
+110 km by 70 km, coarse enough for the station network to describe and fine enough
+to put crews against. 98% of Canada's recorded fires start in those months, and the
+5.6% that grow past 200 ha account for 99% of the area burned.
+
+**Fire weather.** `src/wildfire/fwi.py` implements the Canadian Forest Fire Weather
+Index System (Van Wagner 1987): FFMC, DMC, DC, ISI, BUI, FWI and the Daily Severity
+Rating. It is not trusted because it looks right — `tests/test_fwi.py` replays real
+station seasons through it from their official starting codes and requires the
+result to track CWFIS's published values (FFMC within 0.5, DC within 2, FWI within 1).
+The same implementation runs in training and in the live forecast, so a forecast day
+and a training day are built by the same arithmetic.
+
+**From stations to cells.** Each cell takes an inverse-distance-weighted average of
+up to four stations within 200 km, variable by variable, so a station reporting
+temperature but no codes still informs temperature. A cell with none in range gets
+NaN, which the model reads as "unobserved" rather than as zero.
+
+**Features (30).** The day's weather and codes, 3- to 14-day windows of FWI, humidity
+and rain, days since rain, the week's change in Drought Code, season, position, the
+cell's lightning share, its normal fire rate for the month, and how far the nearest
+reporting station is.
+
+**Model.** XGBoost (histogram trees, depth 7, learning rate 0.05, early stopping on
+the validation seasons), then isotonic calibration. Split by season, never by row: a
+random split would put a July day in training and the next July day in test, and the
+weather they share would flatter every score.
+
+**Live.** The last 30 days of CWFIS station files supply the starting codes and the
+rolling features; Open-Meteo's forecast for each cell centre steps the codes forward
+one day at a time; the same 30 features are assembled and scored.
+
+## Four things that would have been silently wrong
+
+Each of these produced a plausible number, and each is now a test.
+
+1. **The booster was predicting with trees the calibration had never seen.** Early
+   stopping keeps 100 rounds past the best iteration. XGBoost's scikit-learn wrapper
+   predicts with the trees up to the best round — a bare `Booster.predict` uses all
+   of them. Scoring with every tree moved probabilities by up to 0.15 against a
+   calibration fitted on the best round.
+2. **"The top 10%" was 10.8% of cells, and up to 14.4% on some days.** Isotonic
+   calibration outputs plateaus, so `score >= quantile(0.9)` swept in every cell tied
+   at the cut — and flattered whichever ranking had the biggest plateau there. Taking
+   exactly the top tenth, ties broken by the uncalibrated score, moved same-day
+   capture from 37.9% to 36.6%.
+3. **A partly published station file restarted the drought codes.** CWFIS posts a
+   day's file while stations are still reporting; the file for 15 September 2026 held
+   1,110 of about 2,100 stations, leaving 30% of cells with no station in range and
+   starting them from spring default codes. The mean Drought Code fell from 296 to
+   212 overnight. The forecast now starts from the latest *complete* day.
+4. **The hotspot map showed Idaho and Montana.** CWFIS's hotspot file covers North
+   America; a latitude-longitude box around Canada keeps the northern United States.
+   It is filtered against an outline now.
+
+## Reproduce it
+
+```bash
+pip install -r requirements-dev.txt
+
+python pipelines/build_table.py     # NFDB + CWFIS archives -> 4.1M cell-days   (slow, downloads)
+python pipelines/train.py           # fit, calibrate, evaluate -> models/, reports/metrics.json
+python pipelines/publish.py         # the evidence the app reads -> data/published/
+python pipelines/season_check.py    # this season against satellite hotspots
+python pipelines/forecast.py        # today's seven-day forecast -> data/live/
+
+pytest -q
+```
+
+`python pipelines/train.py --evaluate-only` re-scores the saved models without
+refitting, which is how the published metrics and the app are kept on the same code
+path.
+
+## Deploying
+
+The app runs on Streamlit Community Cloud with **Python 3.12** (set it in Advanced
+settings before deploying; the default is newer than the pinned scientific stack).
+Main file `app/streamlit_app.py`.
+
+`.github/workflows/forecast.yml` rebuilds the forecast twice a day and attaches
+`forecast.parquet`, `hotspots.parquet` and `meta.json` to the `live-forecast`
+release; the app reads them from there and falls back to the snapshot in
+`data/live/`. GitHub disables scheduled workflows on a public repository after 60
+days without commits, so the fallback matters.
+
+## Limits
+
+- **Lightning is not an input.** It starts most of the area burned in Canada. The
+  model knows which cells tend to get lightning fires, not where today's storms are.
+  The worst day in the 2023 replay is a lightning bust.
+- **The cell's own history is the largest single input** — 41% of the trees' gain is
+  the cell's normal rate for the month, 15% its rate over the season. Weather moves
+  the answer around a strong prior; it does not replace it.
+- **Report date, not ignition date.** A fire that smoulders before it is found is
+  labelled on the day it was reported.
+- **Coarse cells and thin northern coverage.** Where the nearest station is hundreds
+  of kilometres away the codes are interpolated from far off, and the model leans on
+  history instead.
+- **Not an official product.** This is not the Canadian Forest Fire Danger Rating
+  System. For decisions, follow [CWFIS](https://cwfis.cfs.nrcan.gc.ca/) and your
+  provincial or territorial wildfire service.
+
+## Layout
+
+```
+app/                 Streamlit app: streamlit_app.py + shared.py + views/
+src/wildfire/        fwi.py, features.py, model.py, evaluation.py, live.py, forecast.py
+pipelines/           build_table.py, train.py, publish.py, season_check.py, forecast.py
+models/              boosters, isotonic calibrations, the grid, climatology, stations
+data/published/      fire history, the 2020-2024 replay, the 2026 season check
+data/live/           the forecast snapshot shipped with the app
+reports/metrics.json every figure the model card shows
+legacy/2024-hackathon/  the original notebooks, .pbix, deck and source tables
+tests/               FWI against CWFIS, features, the live assembly, the evidence, every page
+```
+
+## Sources and licence
+
+Fire records: **Canadian National Fire Database (NFDB)**, Natural Resources Canada.
+Station weather, FWI System codes and satellite hotspots: **Canadian Wildland Fire
+Information System (CWFIS)**. Contains information licensed under the
+[Open Government Licence – Canada](https://open.canada.ca/en/open-government-licence-canada).
+Forecast weather by [Open-Meteo.com](https://open-meteo.com/), CC BY 4.0.
+
+Code: MIT.
+
+## Where it started
+
+**Wildfire Prevention Strategy Using Technology**, the first-prize project of team
+1904 Coders — Mrityunjay Gupta, Siddharth Alashi and Kush Patel — at a 2024
+hackathon: a Power BI dashboard over the National Forestry Database's summary
+tables, a random forest on area burned, and a DHT22/LM393 sensor prototype feeding a
+Django service. The originals are kept unchanged in
+[`legacy/2024-hackathon/`](legacy/2024-hackathon/), and the app's last page sets out
+what changed.

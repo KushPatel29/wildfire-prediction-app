@@ -1,0 +1,699 @@
+{
+  "features": [
+    "temp",
+    "rh",
+    "ws",
+    "precip",
+    "ffmc",
+    "dmc",
+    "dc",
+    "isi",
+    "bui",
+    "fwi",
+    "dsr",
+    "fwi_mean_3d",
+    "fwi_mean_7d",
+    "fwi_max_7d",
+    "isi_mean_3d",
+    "temp_mean_3d",
+    "rh_mean_3d",
+    "precip_sum_3d",
+    "precip_sum_7d",
+    "precip_sum_14d",
+    "days_since_rain",
+    "dc_change_7d",
+    "doy_sin",
+    "doy_cos",
+    "lat",
+    "lon",
+    "lightning_share",
+    "clim_month_rate",
+    "clim_cell_rate",
+    "station_km"
+  ],
+  "train_years": [
+    2000,
+    2016
+  ],
+  "validation_years": [
+    2017,
+    2019
+  ],
+  "test_from": 2020,
+  "targets": {
+    "has_fire": {
+      "meaning": "any new fire",
+      "best_iteration": 106,
+      "splits": {
+        "validation": {
+          "model": {
+            "rows": 494982,
+            "positive_rate": 0.024988787471059554,
+            "roc_auc": 0.8427430406335639,
+            "pr_auc": 0.16430865848471982,
+            "share_of_fires_in_top_decile": 0.5786971287434394,
+            "lift_top_decile": 5.074701715163625,
+            "brier": 0.022388012946443565,
+            "log_loss": 0.09425294754975433
+          },
+          "climatology": {
+            "rows": 494982,
+            "positive_rate": 0.024988787471059554,
+            "roc_auc": 0.8217370153009006,
+            "pr_auc": 0.1392196558575683,
+            "share_of_fires_in_top_decile": 0.5200370484717506,
+            "lift_top_decile": 4.554862109802751,
+            "brier": 0.02288281458383603,
+            "log_loss": 0.09970898771399854
+          },
+          "fwi_logistic": {
+            "rows": 494982,
+            "positive_rate": 0.024988787471059554,
+            "roc_auc": 0.6749064660241876,
+            "pr_auc": 0.06388146342382658,
+            "share_of_fires_in_top_decile": 0.3263352886693424,
+            "lift_top_decile": 2.787569143521456,
+            "brier": 0.024042093273312276,
+            "log_loss": 0.11156659434366889
+          }
+        },
+        "test": {
+          "model": {
+            "rows": 824970,
+            "positive_rate": 0.024900299404826843,
+            "roc_auc": 0.8020433676448293,
+            "pr_auc": 0.1115885278175813,
+            "share_of_fires_in_top_decile": 0.4563855421686747,
+            "lift_top_decile": 4.248856002336676,
+            "brier": 0.023349271629139374,
+            "log_loss": 0.1015948716053235
+          },
+          "climatology": {
+            "rows": 824970,
+            "positive_rate": 0.024900299404826843,
+            "roc_auc": 0.7804257239969002,
+            "pr_auc": 0.09499549486765801,
+            "share_of_fires_in_top_decile": 0.4003336422613531,
+            "lift_top_decile": 3.768863791256937,
+            "brier": 0.023560882118289835,
+            "log_loss": 0.10689022096804364
+          },
+          "fwi_logistic": {
+            "rows": 824970,
+            "positive_rate": 0.024900299404826843,
+            "roc_auc": 0.6390323898389293,
+            "pr_auc": 0.04461394758984007,
+            "share_of_fires_in_top_decile": 0.23136237256719183,
+            "lift_top_decile": 2.2398013825333463,
+            "brier": 0.024344079809401682,
+            "log_loss": 0.11434585165814035
+          }
+        }
+      },
+      "by_year": [
+        {
+          "year": 2020,
+          "rows": 164994,
+          "positive_rate": 0.01650969126150042,
+          "roc_auc": 0.7919050442750235,
+          "pr_auc": 0.06891455454985347,
+          "share_of_fires_in_top_decile": 0.38081239978621056,
+          "lift_top_decile": 4.041703243892671,
+          "brier": 0.016321223707552616,
+          "log_loss": 0.07673651206753375
+        },
+        {
+          "year": 2021,
+          "rows": 164994,
+          "positive_rate": 0.026188831109010026,
+          "roc_auc": 0.8162450293891033,
+          "pr_auc": 0.1267346301964784,
+          "share_of_fires_in_top_decile": 0.43435754189944137,
+          "lift_top_decile": 4.394656203319938,
+          "brier": 0.02436119073522726,
+          "log_loss": 0.10368540399926691
+        },
+        {
+          "year": 2022,
+          "rows": 164994,
+          "positive_rate": 0.024697867801253378,
+          "roc_auc": 0.8268282335543808,
+          "pr_auc": 0.14710696260014425,
+          "share_of_fires_in_top_decile": 0.5316354954237963,
+          "lift_top_decile": 4.817002744004462,
+          "brier": 0.022433942393207763,
+          "log_loss": 0.0964057596634617
+        },
+        {
+          "year": 2023,
+          "rows": 164994,
+          "positive_rate": 0.0322860225220311,
+          "roc_auc": 0.7826111893952594,
+          "pr_auc": 0.11903251963662824,
+          "share_of_fires_in_top_decile": 0.43089046493301814,
+          "lift_top_decile": 3.878214516101507,
+          "brier": 0.030011860401841665,
+          "log_loss": 0.12779801942912214
+        },
+        {
+          "year": 2024,
+          "rows": 164994,
+          "positive_rate": 0.024819084330339285,
+          "roc_auc": 0.7878693093486224,
+          "pr_auc": 0.09649927085944764,
+          "share_of_fires_in_top_decile": 0.4750830564784053,
+          "lift_top_decile": 4.016947940947941,
+          "brier": 0.023618140907867565,
+          "log_loss": 0.10334866286723295
+        }
+      ],
+      "by_province": [
+        {
+          "province": "Alberta",
+          "rows": 74900,
+          "positive_rate": 0.05078771695594125,
+          "roc_auc": 0.7320449301115288,
+          "pr_auc": 0.13189915368668959,
+          "share_of_fires_in_top_decile": 0.3591465823785065,
+          "lift_top_decile": 3.080967402733964,
+          "brier": 0.04690074023773736,
+          "log_loss": 0.18554406658587705
+        },
+        {
+          "province": "British Columbia",
+          "rows": 126260,
+          "positive_rate": 0.04211151591953113,
+          "roc_auc": 0.8217511254122167,
+          "pr_auc": 0.18637950603743245,
+          "share_of_fires_in_top_decile": 0.49241172051089405,
+          "lift_top_decile": 4.350197479781832,
+          "brier": 0.03713761408677576,
+          "log_loss": 0.14520439435981117
+        },
+        {
+          "province": "Manitoba",
+          "rows": 63130,
+          "positive_rate": 0.019737050530651036,
+          "roc_auc": 0.7010455369145586,
+          "pr_auc": 0.04386369005056441,
+          "share_of_fires_in_top_decile": 0.3490011750881316,
+          "lift_top_decile": 2.857142857142857,
+          "brier": 0.019295676113960936,
+          "log_loss": 0.09601649144498513
+        },
+        {
+          "province": "New Brunswick",
+          "rows": 20330,
+          "positive_rate": 0.04943433349729464,
+          "roc_auc": 0.7419802668417292,
+          "pr_auc": 0.11721765476003607,
+          "share_of_fires_in_top_decile": 0.34334763948497854,
+          "lift_top_decile": 2.845771144278607,
+          "brier": 0.04701599978718018,
+          "log_loss": 0.18755169247199271
+        },
+        {
+          "province": "Newfoundland and Labrador",
+          "rows": 7490,
+          "positive_rate": 0.06154873164218959,
+          "roc_auc": 0.672675087312587,
+          "pr_auc": 0.10752270670891315,
+          "share_of_fires_in_top_decile": 0.21185185185185185,
+          "lift_top_decile": 1.93058568329718,
+          "brier": 0.05762946246303032,
+          "log_loss": 0.22618161313308321
+        },
+        {
+          "province": "Northwest Territories",
+          "rows": 110210,
+          "positive_rate": 0.008955630160602485,
+          "roc_auc": 0.7939439469371108,
+          "pr_auc": 0.04231940256828985,
+          "share_of_fires_in_top_decile": 0.47048138056312444,
+          "lift_top_decile": 4.549138804457955,
+          "brier": 0.008740844696564517,
+          "log_loss": 0.046238598504902445
+        },
+        {
+          "province": "Nova Scotia",
+          "rows": 78110,
+          "positive_rate": 0.009000128024580719,
+          "roc_auc": 0.7292751209679027,
+          "pr_auc": 0.04428342753540043,
+          "share_of_fires_in_top_decile": 0.39081885856079407,
+          "lift_top_decile": 3.4992887624466573,
+          "brier": 0.008899468600910516,
+          "log_loss": 0.048327587972231835
+        },
+        {
+          "province": "Ontario",
+          "rows": 100580,
+          "positive_rate": 0.022996619606283554,
+          "roc_auc": 0.7609457061652322,
+          "pr_auc": 0.06903367925038545,
+          "share_of_fires_in_top_decile": 0.3896538890956457,
+          "lift_top_decile": 3.467358408992651,
+          "brier": 0.02252832162109385,
+          "log_loss": 0.10201808091914827
+        },
+        {
+          "province": "Quebec",
+          "rows": 143380,
+          "positive_rate": 0.017533826196122194,
+          "roc_auc": 0.7983422263292568,
+          "pr_auc": 0.06201414680136718,
+          "share_of_fires_in_top_decile": 0.38733850129198966,
+          "lift_top_decile": 4.021479713603818,
+          "brier": 0.016873770125055955,
+          "log_loss": 0.07825299691059984
+        },
+        {
+          "province": "Saskatchewan",
+          "rows": 77040,
+          "positive_rate": 0.027050882658359292,
+          "roc_auc": 0.7474670488708461,
+          "pr_auc": 0.08852567738797802,
+          "share_of_fires_in_top_decile": 0.4074074074074074,
+          "lift_top_decile": 3.6756238003838777,
+          "brier": 0.02601268523325549,
+          "log_loss": 0.11664720236054839
+        },
+        {
+          "province": "Yukon",
+          "rows": 23540,
+          "positive_rate": 0.004587935429056924,
+          "roc_auc": 0.7555410533869479,
+          "pr_auc": 0.021342760696210362,
+          "share_of_fires_in_top_decile": 0.4247787610619469,
+          "lift_top_decile": 4.166666666666667,
+          "brier": 0.004555183896211139,
+          "log_loss": 0.028683047169275538
+        }
+      ],
+      "reliability": [
+        {
+          "predicted": 0.0006878679209813021,
+          "observed": 0.0015315846796151752,
+          "rows": 88144
+        },
+        {
+          "predicted": 0.00267892136226795,
+          "observed": 0.0036112178255858626,
+          "rows": 91105
+        },
+        {
+          "predicted": 0.00392297840417379,
+          "observed": 0.005916608432331703,
+          "rows": 107325
+        },
+        {
+          "predicted": 0.005417255995031001,
+          "observed": 0.009070748503493238,
+          "rows": 59973
+        },
+        {
+          "predicted": 0.008489692975569613,
+          "observed": 0.01074548923777324,
+          "rows": 89619
+        },
+        {
+          "predicted": 0.012314735119409212,
+          "observed": 0.014361607070329635,
+          "rows": 61553
+        },
+        {
+          "predicted": 0.019818347354234437,
+          "observed": 0.02117608192930294,
+          "rows": 90810
+        },
+        {
+          "predicted": 0.03304505004017457,
+          "observed": 0.033305023845299535,
+          "rows": 76535
+        },
+        {
+          "predicted": 0.05195619601475157,
+          "observed": 0.05068133789987612,
+          "rows": 82338
+        },
+        {
+          "predicted": 0.14202118268785274,
+          "observed": 0.10838232260726073,
+          "rows": 77568
+        }
+      ],
+      "feature_gain": {
+        "clim_month_rate": 0.410539693065974,
+        "clim_cell_rate": 0.14857519274689007,
+        "fwi": 0.05106209517153178,
+        "temp_mean_3d": 0.04399161575312803,
+        "ffmc": 0.039147870152313774,
+        "fwi_mean_3d": 0.03273410816606877,
+        "rh_mean_3d": 0.018263065583598196,
+        "temp": 0.018151481889768048,
+        "doy_cos": 0.017756555435029645,
+        "dsr": 0.016223895474311273,
+        "dmc": 0.01589334056054211,
+        "isi_mean_3d": 0.014967830038591128,
+        "doy_sin": 0.014962661601625047,
+        "lat": 0.01437352076218778,
+        "lightning_share": 0.012740827932338876,
+        "fwi_mean_7d": 0.011864345500561214,
+        "rh": 0.011522896071548444,
+        "lon": 0.011433583662619973,
+        "isi": 0.011195614944643469,
+        "bui": 0.008991560388103986,
+        "precip": 0.008747454289809112,
+        "station_km": 0.008671575715058354,
+        "dc": 0.008128963003255042,
+        "fwi_max_7d": 0.008050430366278458,
+        "precip_sum_7d": 0.008040791375458725,
+        "precip_sum_14d": 0.007704673352145202,
+        "precip_sum_3d": 0.007134935769632081,
+        "dc_change_7d": 0.0070914818753115005,
+        "days_since_rain": 0.00619782010007043,
+        "ws": 0.005840119251605538
+      },
+      "held_out_split": "test"
+    },
+    "has_large_fire": {
+      "meaning": "a fire that grows past 200 ha",
+      "best_iteration": 139,
+      "splits": {
+        "validation": {
+          "model": {
+            "rows": 494982,
+            "positive_rate": 0.0019556266692526193,
+            "roc_auc": 0.8778020785086995,
+            "pr_auc": 0.016225773749723976,
+            "share_of_fires_in_top_decile": 0.6308277830637488,
+            "lift_top_decile": 6.14659487235655,
+            "brier": 0.0019338531906415604,
+            "log_loss": 0.011854278722125423
+          },
+          "climatology": {
+            "rows": 494982,
+            "positive_rate": 0.0019556266692526193,
+            "roc_auc": 0.777974586334372,
+            "pr_auc": 0.00859701688604933,
+            "share_of_fires_in_top_decile": 0.3882017126546147,
+            "lift_top_decile": 3.698287334964109,
+            "brier": 0.004273577882104728,
+            "log_loss": 0.0357766835650087
+          },
+          "fwi_logistic": {
+            "rows": 494982,
+            "positive_rate": 0.0019556266692526193,
+            "roc_auc": 0.716741253978582,
+            "pr_auc": 0.007503432593220107,
+            "share_of_fires_in_top_decile": 0.38629876308277833,
+            "lift_top_decile": 3.7809306273655414,
+            "brier": 0.0019529714427763004,
+            "log_loss": 0.013499429067954252
+          }
+        },
+        "test": {
+          "model": {
+            "rows": 824970,
+            "positive_rate": 0.002558880929003479,
+            "roc_auc": 0.8452056679398302,
+            "pr_auc": 0.015805467782281826,
+            "share_of_fires_in_top_decile": 0.5553669919389054,
+            "lift_top_decile": 5.343439128375177,
+            "brier": 0.0025325167731139095,
+            "log_loss": 0.015603320149050484
+          },
+          "climatology": {
+            "rows": 824970,
+            "positive_rate": 0.002558880929003479,
+            "roc_auc": 0.7521420303343485,
+            "pr_auc": 0.007801986001174254,
+            "share_of_fires_in_top_decile": 0.3241408570216377,
+            "lift_top_decile": 3.244907626717195,
+            "brier": 0.0048380372317365136,
+            "log_loss": 0.03818085927216619
+          },
+          "fwi_logistic": {
+            "rows": 824970,
+            "positive_rate": 0.002558880929003479,
+            "roc_auc": 0.7138407663370318,
+            "pr_auc": 0.007557424705448073,
+            "share_of_fires_in_top_decile": 0.3411115825201527,
+            "lift_top_decile": 3.415442918048318,
+            "brier": 0.002549253476488442,
+            "log_loss": 0.017207999982195143
+          }
+        }
+      },
+      "by_year": [
+        {
+          "year": 2020,
+          "rows": 164994,
+          "positive_rate": 0.0004000145459834903,
+          "roc_auc": 0.834879646288261,
+          "pr_auc": 0.0016043563497304607,
+          "share_of_fires_in_top_decile": 0.4142857142857143,
+          "lift_top_decile": 4.0907603305785125,
+          "brier": 0.00041372210989175026,
+          "log_loss": 0.004044500679344939
+        },
+        {
+          "year": 2021,
+          "rows": 164994,
+          "positive_rate": 0.0027697976896129558,
+          "roc_auc": 0.8513965033823644,
+          "pr_auc": 0.015371864839100228,
+          "share_of_fires_in_top_decile": 0.5910652920962199,
+          "lift_top_decile": 5.623427889397255,
+          "brier": 0.002741877931701646,
+          "log_loss": 0.016566537813615338
+        },
+        {
+          "year": 2022,
+          "rows": 164994,
+          "positive_rate": 0.0017576396717456392,
+          "roc_auc": 0.8384109968645947,
+          "pr_auc": 0.014278799832529948,
+          "share_of_fires_in_top_decile": 0.5451505016722408,
+          "lift_top_decile": 5.3446332288401255,
+          "brier": 0.0017429079040495294,
+          "log_loss": 0.01134814127636132
+        },
+        {
+          "year": 2023,
+          "rows": 164994,
+          "positive_rate": 0.005042607609973696,
+          "roc_auc": 0.826134287905568,
+          "pr_auc": 0.024259622667490748,
+          "share_of_fires_in_top_decile": 0.48783185840707965,
+          "lift_top_decile": 4.723385926573426,
+          "brier": 0.0049713912475381206,
+          "log_loss": 0.02901565532462645
+        },
+        {
+          "year": 2024,
+          "rows": 164994,
+          "positive_rate": 0.0028243451277016134,
+          "roc_auc": 0.842218169734288,
+          "pr_auc": 0.018156007911874987,
+          "share_of_fires_in_top_decile": 0.5378486055776892,
+          "lift_top_decile": 5.171485758876317,
+          "brier": 0.0027926846723885,
+          "log_loss": 0.017041765651304382
+        }
+      ],
+      "by_province": [
+        {
+          "province": "Alberta",
+          "rows": 74900,
+          "positive_rate": 0.002843791722296395,
+          "roc_auc": 0.8183261336465781,
+          "pr_auc": 0.013502812789414266,
+          "share_of_fires_in_top_decile": 0.5102880658436214,
+          "lift_top_decile": 4.600938967136151,
+          "brier": 0.0028180524457582057,
+          "log_loss": 0.0175028142059285
+        },
+        {
+          "province": "British Columbia",
+          "rows": 126260,
+          "positive_rate": 0.003199746554728338,
+          "roc_auc": 0.8461756269305419,
+          "pr_auc": 0.018722251680635797,
+          "share_of_fires_in_top_decile": 0.5571428571428572,
+          "lift_top_decile": 5.4950495049504955,
+          "brier": 0.0031590997637149943,
+          "log_loss": 0.018770848797315855
+        },
+        {
+          "province": "Manitoba",
+          "rows": 63130,
+          "positive_rate": 0.003389830508474576,
+          "roc_auc": 0.8233158972384482,
+          "pr_auc": 0.018423805454124597,
+          "share_of_fires_in_top_decile": 0.5763888888888888,
+          "lift_top_decile": 4.953271028037383,
+          "brier": 0.003352812837478154,
+          "log_loss": 0.020471859414254265
+        },
+        {
+          "province": "New Brunswick",
+          "rows": 20330,
+          "positive_rate": 0.001869158878504673,
+          "roc_auc": 0.7909825754510462,
+          "pr_auc": 0.008218546527339486,
+          "share_of_fires_in_top_decile": 0.5319148936170213,
+          "lift_top_decile": 4.7368421052631575,
+          "brier": 0.0018651421837916217,
+          "log_loss": 0.0136918218986702
+        },
+        {
+          "province": "Northwest Territories",
+          "rows": 110210,
+          "positive_rate": 0.0027765175573904364,
+          "roc_auc": 0.8713513909227495,
+          "pr_auc": 0.02075470420204858,
+          "share_of_fires_in_top_decile": 0.5981873111782477,
+          "lift_top_decile": 5.784313725490196,
+          "brier": 0.0027427023466556843,
+          "log_loss": 0.01639969128185239
+        },
+        {
+          "province": "Nova Scotia",
+          "rows": 78110,
+          "positive_rate": 0.0009729868134681859,
+          "roc_auc": 0.8260577710390747,
+          "pr_auc": 0.00407266218254814,
+          "share_of_fires_in_top_decile": 0.40789473684210525,
+          "lift_top_decile": 4.078947368421052,
+          "brier": 0.0009721416368233206,
+          "log_loss": 0.007178534377587456
+        },
+        {
+          "province": "Ontario",
+          "rows": 100580,
+          "positive_rate": 0.002028236229866773,
+          "roc_auc": 0.8462595835736063,
+          "pr_auc": 0.010023934746141685,
+          "share_of_fires_in_top_decile": 0.507177033492823,
+          "lift_top_decile": 5.147058823529411,
+          "brier": 0.002015742427746055,
+          "log_loss": 0.012935675972385664
+        },
+        {
+          "province": "Quebec",
+          "rows": 143380,
+          "positive_rate": 0.00235737201841261,
+          "roc_auc": 0.8630146717366662,
+          "pr_auc": 0.018303215656771253,
+          "share_of_fires_in_top_decile": 0.6361386138613861,
+          "lift_top_decile": 6.242603550295858,
+          "brier": 0.0023342172773619095,
+          "log_loss": 0.014547687026168543
+        },
+        {
+          "province": "Saskatchewan",
+          "rows": 77040,
+          "positive_rate": 0.003426791277258567,
+          "roc_auc": 0.8676308894272516,
+          "pr_auc": 0.023303381506980626,
+          "share_of_fires_in_top_decile": 0.624113475177305,
+          "lift_top_decile": 6.0606060606060606,
+          "brier": 0.003377150514453775,
+          "log_loss": 0.019371927446005795
+        },
+        {
+          "province": "Yukon",
+          "rows": 23540,
+          "positive_rate": 0.0013169073916737468,
+          "roc_auc": 0.8534775288530543,
+          "pr_auc": 0.010024602698874941,
+          "share_of_fires_in_top_decile": 0.5,
+          "lift_top_decile": 5.161290322580645,
+          "brier": 0.0013168078531274378,
+          "log_loss": 0.009243971036505745
+        }
+      ],
+      "reliability": [
+        {
+          "predicted": 1.9236869199823787e-05,
+          "observed": 6.06424795055984e-05,
+          "rows": 181391
+        },
+        {
+          "predicted": 0.00022316726169722398,
+          "observed": 0.00033129821572246674,
+          "rows": 147903
+        },
+        {
+          "predicted": 0.00024982919473933536,
+          "observed": 0.0,
+          "rows": 694
+        },
+        {
+          "predicted": 0.00036004351073668097,
+          "observed": 0.0007534950971906852,
+          "rows": 98209
+        },
+        {
+          "predicted": 0.0006115505656923916,
+          "observed": 0.0013658555486670799,
+          "rows": 103232
+        },
+        {
+          "predicted": 0.001347434909496294,
+          "observed": 0.002179573729385669,
+          "rows": 51845
+        },
+        {
+          "predicted": 0.002004012902190751,
+          "observed": 0.00279448864738987,
+          "rows": 77295
+        },
+        {
+          "predicted": 0.004256092517210317,
+          "observed": 0.004886434673890393,
+          "rows": 95980
+        },
+        {
+          "predicted": 0.015896102245658638,
+          "observed": 0.015170780900600693,
+          "rows": 68421
+        }
+      ],
+      "feature_gain": {
+        "temp_mean_3d": 0.1374449265455944,
+        "doy_cos": 0.1036427682849774,
+        "clim_month_rate": 0.06008329712538659,
+        "temp": 0.0583917481049151,
+        "lightning_share": 0.05040572941818938,
+        "lat": 0.04537387825818433,
+        "doy_sin": 0.037781458005496676,
+        "lon": 0.03396171908526706,
+        "dmc": 0.0313899880137723,
+        "bui": 0.026050937360116638,
+        "clim_cell_rate": 0.02593130783226896,
+        "fwi_mean_7d": 0.023127329529265602,
+        "dsr": 0.02262650507052479,
+        "ffmc": 0.022532617361023684,
+        "fwi_max_7d": 0.022193007625187104,
+        "fwi": 0.021471064160724255,
+        "isi_mean_3d": 0.021324935572738377,
+        "precip_sum_3d": 0.02126530131412533,
+        "precip": 0.021099168922144116,
+        "dc": 0.02103958015673948,
+        "dc_change_7d": 0.020706534650619807,
+        "ws": 0.02031613688392191,
+        "precip_sum_7d": 0.020280869374743132,
+        "fwi_mean_3d": 0.01997909971564485,
+        "rh": 0.01932469018530725,
+        "rh_mean_3d": 0.019127590126103565,
+        "precip_sum_14d": 0.018908274705966607,
+        "isi": 0.018739631382385658,
+        "days_since_rain": 0.01838396988159412,
+        "station_km": 0.017095935347071517
+      },
+      "held_out_split": "test"
+    }
+  }
+}
