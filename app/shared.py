@@ -130,6 +130,13 @@ def load_metrics() -> dict:
 
 
 @st.cache_data(show_spinner=False)
+def load_hackathon() -> dict | None:
+    """The 2024 model rebuilt and re-scored, if that pipeline has been run."""
+    path = REPORTS / "hackathon_2024.json"
+    return json.loads(path.read_text(encoding="utf-8")) if path.exists() else None
+
+
+@st.cache_data(show_spinner=False)
 def load_published(name: str) -> pd.DataFrame:
     frame = pd.read_parquet(PUBLISHED / f"{name}.parquet")
     if "date" in frame:

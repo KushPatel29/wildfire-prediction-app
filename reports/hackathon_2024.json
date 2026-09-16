@@ -1,0 +1,93 @@
+{
+  "weather": "CWFIS station archives, national monthly means",
+  "features": [
+    "Number_of_Fires",
+    "tempmin",
+    "tempmax",
+    "temp",
+    "precip",
+    "humidity",
+    "Month",
+    "windspeed"
+  ],
+  "model": {
+    "kind": "RandomForestRegressor",
+    "n_estimators": 1200,
+    "min_samples_split": 10,
+    "min_samples_leaf": 2,
+    "max_features": "sqrt",
+    "max_depth": 20,
+    "random_state": 42
+  },
+  "target": "hectares burned in the month, nationally",
+  "panels": {
+    "legacy": {
+      "source": "the NFD monthly tables the 2024 project read",
+      "years": [
+        2000,
+        2020
+      ],
+      "rows": 251,
+      "scorings": {
+        "as_scored_in_2024": {
+          "rows_train": 200,
+          "rows_test": 51,
+          "r2": 0.3150219976223232,
+          "mae": 156085.25393327622,
+          "rmse": 325179.4119430825,
+          "mean_observed_ha": 155349.61732570865
+        },
+        "out_of_time": {
+          "rows_train": 204,
+          "rows_test": 12,
+          "r2": -64.82856798575331,
+          "mae": 160712.97792337535,
+          "rmse": 243006.0259458514,
+          "mean_observed_ha": 18186.010943583333
+        },
+        "out_of_time_without_the_fire_count": {
+          "rows_train": 204,
+          "rows_test": 12,
+          "r2": -101.87164983170881,
+          "mae": 205025.22551662437,
+          "rmse": 303778.9606066658,
+          "mean_observed_ha": 18186.010943583333
+        }
+      }
+    },
+    "nfdb": {
+      "source": "the NFDB point layer, aggregated to the same two columns",
+      "years": [
+        2000,
+        2024
+      ],
+      "rows": 299,
+      "scorings": {
+        "as_scored_in_2024": {
+          "rows_train": 239,
+          "rows_test": 60,
+          "r2": 0.35106636199146357,
+          "mae": 293247.22661091445,
+          "rmse": 778448.1932693259,
+          "mean_observed_ha": 324031.37610882457
+        },
+        "out_of_time": {
+          "rows_train": 204,
+          "rows_test": 60,
+          "r2": 0.20146619232853558,
+          "mae": 412889.017451339,
+          "rmse": 1143744.3044285153,
+          "mean_observed_ha": 477821.6156769657
+        },
+        "out_of_time_without_the_fire_count": {
+          "rows_train": 204,
+          "rows_test": 60,
+          "r2": 0.18605041006500644,
+          "mae": 448458.3809463031,
+          "rmse": 1154731.5845335396,
+          "mean_observed_ha": 477821.6156769657
+        }
+      }
+    }
+  }
+}

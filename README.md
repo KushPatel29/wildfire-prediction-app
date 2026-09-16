@@ -1,7 +1,7 @@
 # Canada Wildfire Risk
 
 [![CI](https://github.com/KushPatel29/wildfire-prediction-app/actions/workflows/ci.yml/badge.svg)](https://github.com/KushPatel29/wildfire-prediction-app/actions/workflows/ci.yml)
-![Tests](https://img.shields.io/badge/tests-67%20passing-3B8C6E)
+![Tests](https://img.shields.io/badge/tests-76%20passing-3B8C6E)
 ![Model](https://img.shields.io/badge/ROC--AUC-0.807%20out%20of%20time-F28C38)
 ![Data](https://img.shields.io/badge/NFDB%20%2B%20CWFIS-4.1M%20cell--days-0B5FA5)
 ![Streamlit](https://img.shields.io/badge/Streamlit-live%20forecast-FF4B4B?logo=streamlit&logoColor=white)
@@ -261,12 +261,33 @@ Forecast weather by [Open-Meteo.com](https://open-meteo.com/), CC BY 4.0.
 
 Code: MIT.
 
-## Where it started
+## Where it started, and what re-scoring it showed
 
 **Wildfire Prevention Strategy Using Technology**, the first-prize project of team
 1904 Coders — Mrityunjay Gupta, Siddharth Alashi and Kush Patel — at a 2024
 hackathon: a Power BI dashboard over the National Forestry Database's summary
 tables, a random forest on area burned, and a DHT22/LM393 sensor prototype feeding a
 Django service. The originals are kept unchanged in
-[`legacy/2024-hackathon/`](legacy/2024-hackathon/), and the app's last page sets out
-what changed.
+[`legacy/2024-hackathon/`](legacy/2024-hackathon/).
+
+`pipelines/hackathon_2024.py` rebuilds that random forest — the same 1,200 trees at
+depth 20, the same eight features, the same target of hectares burned in a month
+nationally — and changes only how it is scored.
+
+| The 2024 model, scored | R² | Mean error | Months |
+|---|---:|---:|---:|
+| As it was scored in 2024 — random 80/20 split over months | **+0.351** | 293,247 ha | 60 |
+| Out of time — fit to 2016, scored on 2020–2024 | **+0.201** | 412,889 ha | 60 |
+| As a forecast — out of time, without the month's own fire count | **+0.186** | 448,458 ha | 60 |
+
+Splitting months at random puts June 2015 in training and June 2016 in the hold-out,
+and a fire season is strongly autocorrelated, so the first number measures
+interpolation into a year the model has already seen. The feature it leans on
+hardest — the count of fires in the month — is not knowable until that month is
+over. Neither observation makes the 2024 project wrong; both are why this one asks a
+different question, on cells and days, against baselines, on seasons held out in
+time. The app's last page shows the same comparison.
+
+The original weather series (`Weather_area.csv`) is not in the repository, so the
+rebuild joins CWFIS station archives instead: the same monthly shape from a
+different source, stated rather than implied.
