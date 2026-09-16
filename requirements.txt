@@ -5,6 +5,9 @@ pandas==3.0.3
 pyarrow==24.0.0
 xgboost==2.0.3
 requests==2.32.3
+# BallTree carries the stations onto the grid, so the live forecast and the app's
+# own rebuild both need it at runtime - not only training.
+scikit-learn==1.9.0
 streamlit==1.63.0
 pydeck==0.9.3
 plotly==6.3.1
