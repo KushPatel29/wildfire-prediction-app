@@ -95,7 +95,6 @@ def test_a_cell_sees_its_neighbours_and_not_itself():
     """The neighbour average is what the eight cells around it reported, so a cell
     whose own stations were silent still has a reading of the airmass it sits in."""
     ids = ["50_-121", "50_-120", "51_-121", "60_-100"]
-    cells = pd.DataFrame({"cell_id": ids})
     table = pd.DataFrame({"cell_id": ids, "date": pd.Timestamp("2026-07-01"),
                           "fwi": [10.0, 20.0, 30.0, 99.0], "dc": [100.0, 200.0, 300.0, 900.0]})
     out = F.add_neighbour_weather(table).set_index("cell_id")

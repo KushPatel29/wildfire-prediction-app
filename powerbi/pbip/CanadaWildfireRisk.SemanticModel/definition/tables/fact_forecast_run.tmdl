@@ -1,0 +1,53 @@
+table fact_forecast_run
+	lineageTag: b1fd863d-7c96-5e99-8f32-fd233c550bb6
+
+	column generated_at
+		dataType: string
+		lineageTag: 9f636ec1-ad86-500b-9fc6-bc1155898e9e
+		summarizeBy: none
+		sourceColumn: generated_at
+
+	column as_of
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: eb548c02-1c80-5e7b-a8e9-f3d4c542eca6
+		summarizeBy: none
+		sourceColumn: as_of
+
+	column cells
+		dataType: int64
+		formatString: 0
+		lineageTag: 533c5409-b02e-5379-8ba9-7be4215f5041
+		summarizeBy: sum
+		sourceColumn: cells
+
+	column rows
+		dataType: int64
+		formatString: 0
+		lineageTag: aec3dd0e-3341-5870-b9b1-ceb710ea57e7
+		summarizeBy: sum
+		sourceColumn: rows
+
+	column hotspots
+		dataType: int64
+		formatString: 0
+		lineageTag: a2102116-83c2-533f-ab30-39ba3288c10f
+		summarizeBy: sum
+		sourceColumn: hotspots
+
+	column stations_used
+		dataType: int64
+		formatString: 0
+		lineageTag: fd2e6bf0-0afb-58ff-aa6f-10d27bf695b9
+		summarizeBy: sum
+		sourceColumn: stations_used
+
+	partition fact_forecast_run = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(DataPath & "\data\fact_forecast_run.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"generated_at", type text}, {"as_of", type date}, {"cells", Int64.Type}, {"rows", Int64.Type}, {"hotspots", Int64.Type}, {"stations_used", Int64.Type}})
+				in
+				    Typed

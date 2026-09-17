@@ -1,0 +1,105 @@
+table fact_model_scores
+	lineageTag: 5f2ea765-8232-5e2a-b4ac-d98fcb444ca2
+
+	column target
+		dataType: string
+		lineageTag: c6b054a2-c924-51ff-8f54-d7af0e3f6a52
+		summarizeBy: none
+		sourceColumn: target
+
+	column target_label
+		dataType: string
+		lineageTag: f019af10-456b-501e-a3c1-790c9aea5eb8
+		summarizeBy: none
+		sourceColumn: target_label
+
+	column split
+		dataType: string
+		lineageTag: 5b716fa0-2dd8-58c7-a138-402f6a8f457f
+		summarizeBy: none
+		sourceColumn: split
+
+	column method
+		dataType: string
+		lineageTag: c28be175-d5e6-50a8-b7a9-02e4c092379c
+		summarizeBy: none
+		sourceColumn: method
+
+	column method_label
+		dataType: string
+		lineageTag: 817c6761-aeea-5ce9-875b-b0bf0a44e819
+		summarizeBy: none
+		sourceColumn: method_label
+
+	column is_model
+		dataType: int64
+		formatString: 0
+		lineageTag: eb3ae723-dd5c-5479-8eed-420eed3b1847
+		summarizeBy: sum
+		sourceColumn: is_model
+
+	column rows
+		dataType: int64
+		formatString: 0
+		lineageTag: 59c4bd30-fd6b-5b06-abfe-bb910229ca79
+		summarizeBy: sum
+		sourceColumn: rows
+
+	column positive_rate
+		dataType: double
+		formatString: 0.0%
+		lineageTag: c5e0f235-b5f3-5dca-9119-0bd93b985de5
+		summarizeBy: sum
+		sourceColumn: positive_rate
+
+	column roc_auc
+		dataType: double
+		formatString: 0.000
+		lineageTag: 4d44f174-567e-5a9f-939d-577cdf67e715
+		summarizeBy: sum
+		sourceColumn: roc_auc
+
+	column pr_auc
+		dataType: double
+		formatString: 0.000
+		lineageTag: 37fe595e-c370-56b4-8c13-b67fa4c42674
+		summarizeBy: sum
+		sourceColumn: pr_auc
+
+	column share_of_fires_in_top_decile
+		dataType: double
+		formatString: 0.0%
+		lineageTag: 8de14057-34f7-5df5-a4aa-cea3f88a8d21
+		summarizeBy: sum
+		sourceColumn: share_of_fires_in_top_decile
+
+	column lift_top_decile
+		dataType: double
+		formatString: 0.000
+		lineageTag: 9a9fb57f-3690-501d-a7ed-21cc0e4b228f
+		summarizeBy: sum
+		sourceColumn: lift_top_decile
+
+	column brier
+		dataType: double
+		formatString: 0.000
+		lineageTag: 6992861d-6517-549e-981f-d286ea7c9aba
+		summarizeBy: sum
+		sourceColumn: brier
+
+	column log_loss
+		dataType: double
+		formatString: 0.000
+		lineageTag: 991d15cb-8bbf-5aa4-a5ea-fab237798612
+		summarizeBy: sum
+		sourceColumn: log_loss
+
+	partition fact_model_scores = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(DataPath & "\data\fact_model_scores.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"target", type text}, {"target_label", type text}, {"split", type text}, {"method", type text}, {"method_label", type text}, {"is_model", Int64.Type}, {"rows", Int64.Type}, {"positive_rate", type number}, {"roc_auc", type number}, {"pr_auc", type number}, {"share_of_fires_in_top_decile", type number}, {"lift_top_decile", type number}, {"brier", type number}, {"log_loss", type number}})
+				in
+				    Typed

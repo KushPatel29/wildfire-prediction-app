@@ -1,0 +1,80 @@
+table fact_hackathon_scores
+	lineageTag: fcf99bf2-f45d-5430-a792-4921c2e2276a
+
+	column panel
+		dataType: string
+		lineageTag: f9da3198-4a32-56a1-b4ec-e2316b7dc9f6
+		summarizeBy: none
+		sourceColumn: panel
+
+	column scoring
+		dataType: string
+		lineageTag: a93ff3f3-8191-5743-af56-7f4eb5b6a948
+		summarizeBy: none
+		sourceColumn: scoring
+
+	column scoring_label
+		dataType: string
+		lineageTag: ba3c7585-ea11-5533-8e25-cc050c1f9685
+		summarizeBy: none
+		sourceColumn: scoring_label
+		sortByColumn: sort_order
+
+	column sort_order
+		dataType: int64
+		formatString: 0
+		lineageTag: 9cc3b089-6b1a-554a-ba30-f2619bf4f224
+		summarizeBy: none
+		sourceColumn: sort_order
+
+	column rows_train
+		dataType: int64
+		formatString: 0
+		lineageTag: 8704c0f2-2e7e-59f5-b305-95ca73006f8b
+		summarizeBy: sum
+		sourceColumn: rows_train
+
+	column rows_test
+		dataType: int64
+		formatString: 0
+		lineageTag: 0725f6f0-a407-5c6c-9cd6-406be8aa0005
+		summarizeBy: sum
+		sourceColumn: rows_test
+
+	column r2
+		dataType: double
+		formatString: 0.000
+		lineageTag: 57028b07-b079-52ef-9af5-6cd2c9439897
+		summarizeBy: sum
+		sourceColumn: r2
+
+	column mae
+		dataType: double
+		formatString: #,0.00
+		lineageTag: 863672c1-00ad-5d8e-bff6-90a8f43ef30c
+		summarizeBy: sum
+		sourceColumn: mae
+
+	column rmse
+		dataType: double
+		formatString: #,0.00
+		lineageTag: baf871c5-63ae-5e05-8d0c-22116d769640
+		summarizeBy: sum
+		sourceColumn: rmse
+
+	column mean_observed_ha
+		dataType: double
+		formatString: #,0
+		lineageTag: d41f324e-9233-5b14-8113-e2de09dca55a
+		summarizeBy: sum
+		sourceColumn: mean_observed_ha
+
+	partition fact_hackathon_scores = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(DataPath & "\data\fact_hackathon_scores.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"panel", type text}, {"scoring", type text}, {"scoring_label", type text}, {"sort_order", Int64.Type}, {"rows_train", Int64.Type}, {"rows_test", Int64.Type}, {"r2", type number}, {"mae", type number}, {"rmse", type number}, {"mean_observed_ha", type number}})
+				in
+				    Typed

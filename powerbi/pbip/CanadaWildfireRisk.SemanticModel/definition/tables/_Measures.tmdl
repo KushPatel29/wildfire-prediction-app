@@ -1,0 +1,1214 @@
+table _Measures
+	lineageTag: b3af0e1a-e074-5138-8219-b2afbf523da6
+
+	measure 'Cells forecast' = DISTINCTCOUNT(fact_forecast[cell_id])
+		formatString: #,0
+		lineageTag: 9fbc9d9a-4bb7-54e3-a16f-51aef320242b
+		displayFolder: 01 Forecast
+
+	measure 'Mean risk' = AVERAGE(fact_forecast[risk])
+		formatString: 0.0%
+		lineageTag: 5216fafe-4122-5144-a940-2ff92937bce5
+		displayFolder: 01 Forecast
+
+	measure 'Peak risk' = MAX(fact_forecast[risk])
+		formatString: 0.0%
+		lineageTag: b77abcb1-d48c-57c0-8e9c-dfff2a9e434c
+		displayFolder: 01 Forecast
+
+	measure 'Peak large-fire risk' = MAX(fact_forecast[large_risk])
+		formatString: 0.00%
+		lineageTag: 9b114d33-1b4f-5464-a3da-afde7868b7f5
+		displayFolder: 01 Forecast
+
+	measure 'Cells in the riskiest tenth' = CALCULATE(DISTINCTCOUNT(fact_forecast[cell_id]), fact_forecast[in_top_decile] = 1)
+		formatString: #,0
+		lineageTag: 39a8b9d7-ed09-54c1-a8fb-723a3411d471
+		displayFolder: 01 Forecast
+
+	measure 'Risk against normal' = DIVIDE(AVERAGE(fact_forecast[risk]), AVERAGE(fact_forecast[clim_month_rate]))
+		formatString: 0.00
+		lineageTag: f45df131-6dfd-5e27-b938-c58d55694d30
+		displayFolder: 01 Forecast
+
+	measure 'Mean FWI' = AVERAGE(fact_forecast[fwi])
+		formatString: 0.0
+		lineageTag: 1b53ee98-7744-5cf7-a567-8519c13b86d9
+		displayFolder: 01 Forecast
+
+	measure 'Hotspots in the last two days' = COUNTROWS(fact_hotspot)
+		formatString: #,0
+		lineageTag: d7002e3a-68ef-5db7-be08-aabf14187343
+		displayFolder: 01 Forecast
+
+	measure 'Stations behind the forecast' = MAX(fact_forecast_run[stations_used])
+		formatString: #,0
+		lineageTag: 0611c20c-0078-5ccf-8f87-5f52212753d0
+		displayFolder: 01 Forecast
+
+	measure 'Forecast built' = MAX(fact_forecast_run[generated_at])
+		lineageTag: f5c510b4-0745-58d8-9f2c-dd1360703cc4
+		displayFolder: 01 Forecast
+
+	measure 'Starts from' = FORMAT(MAX(fact_forecast_run[as_of]), "yyyy-mm-dd")
+		lineageTag: 769c1541-9493-5704-a393-a445b2f4298f
+		displayFolder: 01 Forecast
+
+	measure 'Fires recorded' = SUM(fact_fires_year[fires])
+		formatString: #,0
+		lineageTag: a172c3ec-26af-54f1-9d29-d5aa69217abb
+		displayFolder: 02 Fire record
+
+	measure 'Area burned' = SUM(fact_fires_year[area_ha])
+		formatString: #,0
+		lineageTag: 89810919-8414-5851-97b1-cd92236a5ea9
+		displayFolder: 02 Fire record
+
+	measure 'Area burned (million ha)' = DIVIDE(SUM(fact_fires_year[area_ha]), 1000000)
+		formatString: 0.0
+		lineageTag: f3283c03-cc8c-5f70-8d5e-d480f2a65c19
+		displayFolder: 02 Fire record
+
+	measure 'Large fires recorded' = SUM(fact_fires_year[large_fires])
+		formatString: #,0
+		lineageTag: 1365662f-2414-534d-9640-28d99d1e43d2
+		displayFolder: 02 Fire record
+
+	measure 'Lightning share of fires' = DIVIDE(CALCULATE([Fires recorded], fact_fires_year[cause_label] = "Lightning"), [Fires recorded])
+		formatString: 0.0%
+		lineageTag: 54c4b707-24be-54e8-b682-a6c94b77f94c
+		displayFolder: 02 Fire record
+
+	measure 'Lightning share of area' = DIVIDE(CALCULATE([Area burned], fact_fires_year[cause_label] = "Lightning"), [Area burned])
+		formatString: 0.0%
+		lineageTag: 02c405a0-aad5-583e-a1e9-1868bd8c0394
+		displayFolder: 02 Fire record
+
+	measure 'Fires in the month' = SUM(fact_fires_month[fires])
+		formatString: #,0
+		lineageTag: ace4f6e6-2278-5f4d-9bdc-98698831c429
+		displayFolder: 02 Fire record
+
+	measure 'Share of the season' = DIVIDE([Fires in the month], CALCULATE([Fires in the month], ALL(fact_fires_month[month], fact_fires_month[month_name])))
+		formatString: 0.0%
+		lineageTag: 4ff1d7af-65b3-5323-8a27-a5b285b3a1df
+		displayFolder: 02 Fire record
+
+	measure 'Fires in the test seasons' = SUM(fact_backtest_day[fires])
+		formatString: #,0
+		lineageTag: 7c295944-1b05-537c-b58b-660b1ccb0fad
+		displayFolder: 03 Backtest
+
+	measure 'Fires in the riskiest tenth' = SUM(fact_backtest_day[fires_in_top_decile])
+		formatString: #,0
+		lineageTag: 405a8adf-0f13-54b0-b9cf-6056ff715966
+		displayFolder: 03 Backtest
+
+	measure 'Same-day capture' = DIVIDE([Fires in the riskiest tenth], [Fires in the test seasons])
+		formatString: 0.0%
+		lineageTag: dcb170ef-525f-5dc9-a980-c3a6f7adb1b2
+		displayFolder: 03 Backtest
+
+	measure 'Large fires in the test seasons' = SUM(fact_backtest_day[large_fires])
+		formatString: #,0
+		lineageTag: acb5244d-0820-59d4-bb0a-304f95f286f0
+		displayFolder: 03 Backtest
+
+	measure 'Large fires in the riskiest tenth' = SUM(fact_backtest_day[large_in_top_decile])
+		formatString: #,0
+		lineageTag: a51187a1-3e47-5562-a32d-161817debda0
+		displayFolder: 03 Backtest
+
+	measure 'Same-day capture, large fires' = DIVIDE([Large fires in the riskiest tenth], [Large fires in the test seasons])
+		formatString: 0.0%
+		lineageTag: 0b5177dd-3f33-5cfc-aa6e-2f35bc5aea1b
+		displayFolder: 03 Backtest
+
+	measure 'Days scored' = DISTINCTCOUNT(fact_backtest_day[date])
+		formatString: #,0
+		lineageTag: a30dee00-5c73-59b9-8931-b8032e01553c
+		displayFolder: 03 Backtest
+
+	measure 'Cells ranked each day' = AVERAGE(fact_backtest_day[cells])
+		formatString: #,0
+		lineageTag: 46498dc9-75fd-55c0-8bd8-236c01720900
+		displayFolder: 03 Backtest
+
+	measure 'Cell fires' = SUM(fact_backtest_cell[fires])
+		formatString: #,0
+		lineageTag: 2185e697-cbc0-50fe-b45a-1dabe9a6c230
+		displayFolder: 03 Backtest
+
+	measure 'Cell fires caught' = SUM(fact_backtest_cell[fires_caught])
+		formatString: #,0
+		lineageTag: 64e2d8d7-6a24-5275-8161-bdd2ee3b1cf4
+		displayFolder: 03 Backtest
+
+	measure 'Capture by cell' = DIVIDE([Cell fires caught], [Cell fires])
+		formatString: 0.0%
+		lineageTag: bde3c353-bc7a-5acd-8298-afb59aa8dcb8
+		displayFolder: 03 Backtest
+
+	measure 'Days a cell was flagged' = SUM(fact_backtest_cell[days_flagged])
+		formatString: #,0
+		lineageTag: b61a3654-2600-59b5-bd34-0c12fb927848
+		displayFolder: 03 Backtest
+
+	measure 'Mean risk in the backtest' = AVERAGE(fact_backtest_cell[mean_risk])
+		formatString: 0.0%
+		lineageTag: daad7fd5-5f1f-554a-9e36-4bf0163bcdca
+		displayFolder: 03 Backtest
+
+	measure 'ROC-AUC' = AVERAGE(fact_model_scores[roc_auc])
+		formatString: 0.000
+		lineageTag: 2db81adb-e061-5d41-ad02-739a2c0adc3d
+		displayFolder: 04 Scores
+
+	measure 'PR-AUC' = AVERAGE(fact_model_scores[pr_auc])
+		formatString: 0.000
+		lineageTag: 1295c27e-3026-57bb-b072-06aceb95d82f
+		displayFolder: 04 Scores
+
+	measure 'Fires in the top decile' = AVERAGE(fact_model_scores[share_of_fires_in_top_decile])
+		formatString: 0.0%
+		lineageTag: 63ef5740-6bdd-578f-8566-487f00680b2d
+		displayFolder: 04 Scores
+
+	measure 'Lift' = AVERAGE(fact_model_scores[lift_top_decile])
+		formatString: 0.0
+		lineageTag: a70f603b-d9ef-5150-810d-3e1b78e1fe69
+		displayFolder: 04 Scores
+
+	measure 'Brier score' = AVERAGE(fact_model_scores[brier])
+		formatString: 0.0000
+		lineageTag: c608db93-5f1f-594e-9fd3-2220853dff39
+		displayFolder: 04 Scores
+
+	measure 'Model ROC-AUC out of time' = CALCULATE([ROC-AUC], fact_model_scores[method] = "model", fact_model_scores[split] = "Test", fact_model_scores[target] = "has_fire")
+		formatString: 0.000
+		lineageTag: c6cfb917-2053-53cd-b726-3f8f55d406af
+		displayFolder: 04 Scores
+
+	measure 'Climatology ROC-AUC out of time' = CALCULATE([ROC-AUC], fact_model_scores[method] = "climatology", fact_model_scores[split] = "Test", fact_model_scores[target] = "has_fire")
+		formatString: 0.000
+		lineageTag: a4a75820-89c0-588d-bc20-7a36fdf761a4
+		displayFolder: 04 Scores
+
+	measure 'Ahead of climatology' = [Model ROC-AUC out of time] - [Climatology ROC-AUC out of time]
+		formatString: 0.000
+		lineageTag: 033a2511-80ba-565a-a28c-737f67e241b9
+		displayFolder: 04 Scores
+
+	measure 'ROC-AUC by year' = AVERAGE(fact_model_year[roc_auc])
+		formatString: 0.000
+		lineageTag: 9e9c1d58-a26b-5e60-8dfc-d62292535974
+		displayFolder: 04 Scores
+
+	measure 'Capture by year' = AVERAGE(fact_model_year[share_of_fires_in_top_decile])
+		formatString: 0.0%
+		lineageTag: c2ec355c-2d03-5673-913a-6f6e21928303
+		displayFolder: 04 Scores
+
+	measure 'ROC-AUC by province' = AVERAGE(fact_model_province[roc_auc])
+		formatString: 0.000
+		lineageTag: 68c4e50a-d872-557c-8d21-5d51518c0dca
+		displayFolder: 04 Scores
+
+	measure 'Capture by province' = AVERAGE(fact_model_province[share_of_fires_in_top_decile])
+		formatString: 0.0%
+		lineageTag: cfbfcec3-bf9b-58e2-880a-eadc55842217
+		displayFolder: 04 Scores
+
+	measure 'Cell-days behind the province scores' = SUM(fact_model_province[rows])
+		formatString: #,0
+		lineageTag: c6329504-18b3-5476-b1eb-321fe0ecf0a6
+		displayFolder: 04 Scores
+
+	measure 'Predicted' = AVERAGE(fact_reliability[predicted])
+		formatString: 0.0%
+		lineageTag: f7157ef2-3a37-5b83-a6aa-54a4dc1d7ded
+		displayFolder: 04 Scores
+
+	measure 'Observed' = AVERAGE(fact_reliability[observed])
+		formatString: 0.0%
+		lineageTag: d3ae0480-ec84-52e3-8b6a-8f04a70ccd70
+		displayFolder: 04 Scores
+
+	measure 'Share of the tree gain' = SUM(fact_feature_gain[gain])
+		formatString: 0.0%
+		lineageTag: 449474a8-22c8-5014-a18a-9d63f8206731
+		displayFolder: 04 Scores
+
+	measure 'ROC-AUC out of time' = CALCULATE([ROC-AUC], fact_model_scores[split] = "Test")
+		formatString: 0.000
+		lineageTag: 33f8768f-01cf-5490-9f0e-485837033eb8
+		displayFolder: 04 Scores
+
+	measure 'PR-AUC out of time' = CALCULATE([PR-AUC], fact_model_scores[split] = "Test")
+		formatString: 0.000
+		lineageTag: bbf3b2aa-5ad2-5e7d-b5a4-8360229052a0
+		displayFolder: 04 Scores
+
+	measure 'Top-decile capture out of time' = CALCULATE([Fires in the top decile], fact_model_scores[split] = "Test")
+		formatString: 0.0%
+		lineageTag: a5501eaa-48e4-56fb-8ca5-c0624ed34e09
+		displayFolder: 04 Scores
+
+	measure 'Lift out of time' = CALCULATE([Lift], fact_model_scores[split] = "Test")
+		formatString: 0.0
+		lineageTag: 822e21b4-c3db-54b7-8fd8-f69e07467927
+		displayFolder: 04 Scores
+
+	measure 'Capture out of time, this model' = CALCULATE([Fires in the top decile], fact_model_scores[method] = "model", fact_model_scores[split] = "Test", fact_model_scores[target] = "has_fire")
+		formatString: 0.0%
+		lineageTag: 5de06340-17cb-5a61-a463-9504ddf15750
+		displayFolder: 04 Scores
+
+	measure 'Lift out of time, this model' = CALCULATE([Lift], fact_model_scores[method] = "model", fact_model_scores[split] = "Test", fact_model_scores[target] = "has_fire")
+		formatString: 0.0
+		lineageTag: 169080c2-98d5-5ed3-a32e-8b3262d74608
+		displayFolder: 04 Scores
+
+	measure 'Brier score, this model' = CALCULATE([Brier score], fact_model_scores[method] = "model", fact_model_scores[split] = "Test", fact_model_scores[target] = "has_fire")
+		formatString: 0.0000
+		lineageTag: aa4e858f-e73d-58be-a412-7cde9fd901b0
+		displayFolder: 04 Scores
+
+	measure 'ROC-AUC out of time, any fire' = CALCULATE([ROC-AUC], fact_model_scores[split] = "Test", fact_model_scores[target] = "has_fire")
+		formatString: 0.000
+		lineageTag: 87a97fff-0b85-5063-b990-5a75dc91c942
+		displayFolder: 04 Scores
+
+	measure 'Top-decile capture out of time, any fire' = CALCULATE([Fires in the top decile], fact_model_scores[split] = "Test", fact_model_scores[target] = "has_fire")
+		formatString: 0.0%
+		lineageTag: 794f7e85-48c9-5ca5-bfa9-ebfeeec65a14
+		displayFolder: 04 Scores
+
+	measure 'ROC-AUC by year, any fire' = CALCULATE([ROC-AUC by year], fact_model_year[target] = "has_fire")
+		formatString: 0.000
+		lineageTag: d407438f-8b5c-5421-9bc2-5d1869ed6be8
+		displayFolder: 04 Scores
+
+	measure 'Capture by year, any fire' = CALCULATE([Capture by year], fact_model_year[target] = "has_fire")
+		formatString: 0.0%
+		lineageTag: 15b3c972-ce03-58f5-a529-639aac00d2ca
+		displayFolder: 04 Scores
+
+	measure 'ROC-AUC by province, any fire' = CALCULATE([ROC-AUC by province], fact_model_province[target] = "has_fire")
+		formatString: 0.000
+		lineageTag: 62ad7fac-bd7e-5935-91e3-99831bd533ac
+		displayFolder: 04 Scores
+
+	measure 'Capture by province, any fire' = CALCULATE([Capture by province], fact_model_province[target] = "has_fire")
+		formatString: 0.0%
+		lineageTag: a20d866c-60df-54ee-8e50-d7df69010f53
+		displayFolder: 04 Scores
+
+	measure 'Predicted, any fire' = CALCULATE([Predicted], fact_reliability[target] = "has_fire")
+		formatString: 0.0%
+		lineageTag: e49eda92-a9f7-537e-a290-d15098872549
+		displayFolder: 04 Scores
+
+	measure 'Observed, any fire' = CALCULATE([Observed], fact_reliability[target] = "has_fire")
+		formatString: 0.0%
+		lineageTag: 1a59f09a-1592-58da-b6ee-45d1ae443118
+		displayFolder: 04 Scores
+
+	measure 'Share of the tree gain, any fire' = CALCULATE([Share of the tree gain], fact_feature_gain[target] = "has_fire")
+		formatString: 0.0%
+		lineageTag: b5f8f495-2f07-553e-a76c-be133fe00f68
+		displayFolder: 04 Scores
+
+	measure 'New detections' = SUM(fact_season_day[detections])
+		formatString: #,0
+		lineageTag: fe91e088-248f-5c84-ab98-156e4d61ad33
+		displayFolder: 05 This season
+
+	measure 'Detections in the riskiest tenth' = SUM(fact_season_day[detections_in_top_decile])
+		formatString: #,0
+		lineageTag: efe856da-7235-5e99-89e7-b0f7ed9ab5fe
+		displayFolder: 05 This season
+
+	measure 'Season capture' = DIVIDE([Detections in the riskiest tenth], [New detections])
+		formatString: 0.0%
+		lineageTag: 360a5843-1a6f-557c-b811-552568d67704
+		displayFolder: 05 This season
+
+	measure 'Season ROC-AUC' = AVERAGE(fact_season_scores[roc_auc])
+		formatString: 0.000
+		lineageTag: 79de2369-cb17-5850-8a1a-ff76dad071ec
+		displayFolder: 05 This season
+
+	measure 'Season same-day capture' = AVERAGE(fact_season_scores[same_day_top_decile])
+		formatString: 0.0%
+		lineageTag: 668ed670-ed27-5554-8b65-0cfe07bb2084
+		displayFolder: 05 This season
+
+	measure 'Season ROC-AUC, this model' = CALCULATE([Season ROC-AUC], fact_season_scores[method] = "model")
+		formatString: 0.000
+		lineageTag: d8a2686c-5605-5226-84b8-f15e2fb09457
+		displayFolder: 05 This season
+
+	measure 'Season ROC-AUC by month' = AVERAGE(fact_season_month[model_roc_auc])
+		formatString: 0.000
+		lineageTag: ae6f07a0-c7b7-5737-91df-6d771dba5558
+		displayFolder: 05 This season
+
+	measure 'Season cell-days' = SUM(fact_season_month[cell_days])
+		formatString: #,0
+		lineageTag: f889ab79-d56e-5b1e-ba72-4055eb24b828
+		displayFolder: 05 This season
+
+	measure 'Cell detections' = SUM(fact_season_cell[detections])
+		formatString: #,0
+		lineageTag: 9553fd7d-04e8-573d-ad32-f63eb7a24885
+		displayFolder: 05 This season
+
+	measure 'R squared' = AVERAGE(fact_hackathon_scores[r2])
+		formatString: 0.000
+		lineageTag: 2ab12a79-630d-5e1b-9497-6ebb543a0ee2
+		displayFolder: 06 The 2024 model
+
+	measure 'Mean error, hectares' = AVERAGE(fact_hackathon_scores[mae])
+		formatString: #,0
+		lineageTag: f104e071-e7af-580b-bea9-86fa5b92bedb
+		displayFolder: 06 The 2024 model
+
+	measure 'Months scored' = AVERAGE(fact_hackathon_scores[rows_test])
+		formatString: #,0
+		lineageTag: 96ae33e4-75aa-53ff-a687-a4bd3bcf26ec
+		displayFolder: 06 The 2024 model
+
+	measure 'Hectares burned' = SUM(fact_hackathon_month[actual_ha])
+		formatString: #,0
+		lineageTag: 141cfc57-3b78-524e-94c5-de8f9ad5cbb2
+		displayFolder: 06 The 2024 model
+
+	measure 'Hectares the 2024 model forecast' = SUM(fact_hackathon_month[predicted_ha_without_count])
+		formatString: #,0
+		lineageTag: 2103ca2e-9f12-5566-920f-4562d80bd724
+		displayFolder: 06 The 2024 model
+
+	measure 'How wrong the 2024 model was' = DIVIDE([Hectares the 2024 model forecast] - [Hectares burned], [Hectares burned])
+		formatString: 0.0%
+		lineageTag: 58751584-03fd-5a42-bed6-6f5a5e09fdac
+		displayFolder: 06 The 2024 model
+
+	measure 'R squared, the longer panel' = CALCULATE([R squared], fact_hackathon_scores[panel] = "nfdb")
+		formatString: 0.000
+		lineageTag: 97709180-1016-5a3f-8cec-2fba22894b6c
+		displayFolder: 06 The 2024 model
+
+	measure 'Mean error, the longer panel' = CALCULATE([Mean error, hectares], fact_hackathon_scores[panel] = "nfdb")
+		formatString: #,0
+		lineageTag: 26e7c3d4-6efb-522a-8db2-1d06819e013c
+		displayFolder: 06 The 2024 model
+
+	measure 'R squared as scored in 2024' = CALCULATE([R squared], fact_hackathon_scores[scoring] = "as_scored_in_2024", fact_hackathon_scores[panel] = "nfdb")
+		formatString: 0.000
+		lineageTag: 486367b8-03eb-52d6-861e-e69fbf6c4a7e
+		displayFolder: 06 The 2024 model
+
+	measure 'R squared out of time' = CALCULATE([R squared], fact_hackathon_scores[scoring] = "out_of_time", fact_hackathon_scores[panel] = "nfdb")
+		formatString: 0.000
+		lineageTag: e4edc3ea-ba7f-5492-93e9-6806adb594a9
+		displayFolder: 06 The 2024 model
+
+	measure 'What the random split was worth' = [R squared as scored in 2024] - [R squared out of time]
+		formatString: 0.000
+		lineageTag: 79fcb284-11db-5b4c-b8a2-909449046705
+		displayFolder: 06 The 2024 model
+
+	measure 'Forecast reference' = "Built " & [Forecast built] & "  ·  from station day " & [Starts from]
+		lineageTag: 5de60a7f-c6e2-52bd-bafb-c4b8a68c793e
+		displayFolder: 07 Reference
+
+	measure 'Capture reference' = FORMAT([Fires in the riskiest tenth], "#,0") & " of " & FORMAT([Fires in the test seasons], "#,0") & " fires, " & FORMAT([Days scored], "#,0") & " days"
+		lineageTag: 7059cbde-863d-52ac-ac17-0dbf0428701d
+		displayFolder: 07 Reference
+
+	measure 'Baseline reference' = "Climatology " & FORMAT([Climatology ROC-AUC out of time], "0.000") & "  ·  ahead by " & FORMAT([Ahead of climatology], "0.000")
+		lineageTag: 0c3d6cfd-fc30-57dc-a105-8787719c8483
+		displayFolder: 07 Reference
+
+	measure 'Season reference' = FORMAT([New detections], "#,0") & " new detections over " & FORMAT([Season cell-days], "#,0") & " cell-days"
+		lineageTag: f4294be6-621b-5394-9bf2-fd3875df7073
+		displayFolder: 07 Reference
+
+	measure 'Fire record reference' = FORMAT([Lightning share of fires], "0%") & " of starts are lightning, " & FORMAT([Lightning share of area], "0%") & " of the area"
+		lineageTag: c9b2ffb4-0e30-5bfb-8610-e8687d13d3f8
+		displayFolder: 07 Reference
+
+	measure 'Riskiest tenth reference' = FORMAT([Cells in the riskiest tenth], "#,0") & " of " & FORMAT([Cells forecast], "#,0") & " cells, " & FORMAT([Risk against normal], "0.0") & "x normal"
+		lineageTag: f4d0edad-673e-5b17-a033-df86f16ba280
+		displayFolder: 07 Reference
+
+	measure 'The 2024 model reference' = "Random split " & FORMAT([R squared as scored in 2024], "0.000") & "  ·  out of time " & FORMAT([R squared out of time], "0.000")
+		lineageTag: f6a3b172-d642-5e1b-86f5-fdf03b06ceff
+		displayFolder: 07 Reference
+
+	measure 'Forecast verdict' =
+			VAR vCells = [Cells in the riskiest tenth]
+			VAR vPeak = [Peak risk]
+			VAR vNormal = [Risk against normal]
+			VAR vTop =
+			    MAXX(TOPN(1, VALUES(fact_forecast[cell_id]), [Peak risk], DESC, fact_forecast[cell_id], ASC), CALCULATE(SELECTEDVALUE(fact_forecast[province])))
+			RETURN
+			    "The riskiest " & FORMAT(vCells, "#,0") & " cells hold the day's highest chance of a new fire," & " peaking at " & FORMAT(vPeak, "0.0%") & IF(ISBLANK(vTop), "", " in " & vTop) & ". Across the grid the forecast runs at " & FORMAT(vNormal, "0.0") & "x the normal rate for this month."
+		lineageTag: 578ec2bc-fa74-5129-a7ab-9515da5c7d06
+		displayFolder: 08 Verdict
+
+	measure 'Backtest verdict' = "Ranked fresh every morning, the riskiest tenth of cells held " & FORMAT([Same-day capture], "0.0%") & " of the " & FORMAT([Fires in the test seasons], "#,0") & " fires reported over " & FORMAT([Days scored], "#,0") & " days of the 2020-2024 seasons, and " & FORMAT([Same-day capture, large fires], "0.0%") & " of the fires that grew past 200 hectares."
+		lineageTag: 7dc5feba-3f0a-5444-9bab-ca70fe7f20bd
+		displayFolder: 08 Verdict
+
+	measure 'Scores verdict' = "Out of time, the model scores " & FORMAT([Model ROC-AUC out of time], "0.000") & " against " & FORMAT([Climatology ROC-AUC out of time], "0.000") & " for each cell's own rate" & " for the month - " & FORMAT([Ahead of climatology], "0.000") & " ahead of the baseline that" & " is hardest to beat, and the one a fire agency already has."
+		lineageTag: 1cdfb6ce-d700-546e-bac9-adeab2ea883e
+		displayFolder: 08 Verdict
+
+	measure 'Filter Context - Seven-day fire risk' =
+			VAR vText = IF(ISFILTERED('dim_province'[province]), CONCATENATEX(VALUES('dim_province'[province]), 'dim_province'[province], ", "), "all province") & " · " & IF(ISFILTERED('fact_forecast'[lead_days]), CONCATENATEX(VALUES('fact_forecast'[lead_days]), 'fact_forecast'[lead_days], ", "), "all lead days")
+			RETURN IF(LEN(vText) > 72, LEFT(vText, 70) & "…", vText)
+		lineageTag: 19383283-7db9-5a40-84e4-fdcf943678a8
+		displayFolder: Report UI
+
+	measure 'Header SVG - Seven-day fire risk' =
+			VAR vContext = "Page 1 of 8 · " & SUBSTITUTE(SUBSTITUTE([Filter Context - Seven-day fire risk], "&", "&amp;"), "<", "&lt;")
+			VAR vSvg =
+			    "<svg xmlns='http://www.w3.org/2000/svg' width='720' height='56' viewBox='0 0 720 56'>"
+			        & "<text x='0' y='24' font-family='Segoe UI Semibold' font-size='18' fill='#f2f2f4'>Seven-day fire risk</text>"
+			        & "<text x='0' y='46' font-family='Segoe UI' font-size='11' fill='#7d7d85'>" & vContext & "</text>"
+			        & "</svg>"
+			RETURN
+			    "data:image/svg+xml;utf8," & SUBSTITUTE(SUBSTITUTE(vSvg, "%", "%25"), "#", "%23")
+		lineageTag: 4589d293-0544-55fd-990f-1f790030475d
+		dataCategory: ImageUrl
+		displayFolder: Report UI
+
+	measure 'Filter Button Label - Seven-day fire risk' =
+			VAR vOn = INT(ISFILTERED('dim_province'[province])) + INT(ISFILTERED('fact_forecast'[lead_days]))
+			RETURN IF(vOn = 0, "Filters", "Filters · " & vOn)
+		lineageTag: 8e126d7d-e8ee-5e37-b0ed-f3e888a7c6ac
+		displayFolder: Report UI
+
+	measure 'KPI SVG Cells in the riskiest tenth | Riskiest tenth reference @335' =
+			VAR vValue = [Cells in the riskiest tenth]
+			VAR vShown = IF(ISBLANK(vValue), "—", FORMAT(vValue, "#,0"))
+			VAR vCaptionRaw = SUBSTITUTE(SUBSTITUTE(COALESCE([Riskiest tenth reference], ""), "&", "&amp;"), "<", "&lt;")
+			VAR vCaption = IF(LEN(vCaptionRaw) > 66, LEFT(vCaptionRaw, 64) & "…", vCaptionRaw)
+			VAR vSvg =
+			    "<svg xmlns='http://www.w3.org/2000/svg' width='335' height='112' viewBox='0 0 335 112'>"
+			        & "<rect x='0' y='18' width='3' height='76' rx='1.5' fill='#3987e5'/>"
+			        & "<text x='16' y='28' font-family='Segoe UI' font-size='11' fill='#a6a6ad'>Cells in the riskiest tenth</text>"
+			        & "<text x='16' y='64' font-family='Segoe UI Light' font-size='30' fill='#f2f2f4'>" & vShown & "</text>"
+			        & ""
+			        & "<text x='16' y='90' font-family='Segoe UI' font-size='10' fill='#7d7d85'>" & vCaption & "</text>"
+			        & "</svg>"
+			RETURN
+			    "data:image/svg+xml;utf8," & SUBSTITUTE(SUBSTITUTE(vSvg, "%", "%25"), "#", "%23")
+		lineageTag: 283763b6-f3c0-5944-a0ef-bd1058815b6a
+		dataCategory: ImageUrl
+		displayFolder: Report UI
+
+	measure 'KPI SVG Peak risk @304' =
+			VAR vValue = [Peak risk]
+			VAR vShown = IF(ISBLANK(vValue), "—", FORMAT(vValue, "0.0%"))
+			VAR vCaptionRaw = ""
+			VAR vCaption = IF(LEN(vCaptionRaw) > 59, LEFT(vCaptionRaw, 57) & "…", vCaptionRaw)
+			VAR vRail = ROUND(272 * MAX(0, MIN(1, COALESCE(vValue, 0))), 0)
+			VAR vSvg =
+			    "<svg xmlns='http://www.w3.org/2000/svg' width='304' height='112' viewBox='0 0 304 112'>"
+			        & "<rect x='0' y='18' width='3' height='76' rx='1.5' fill='#3987e5'/>"
+			        & "<text x='16' y='28' font-family='Segoe UI' font-size='11' fill='#a6a6ad'>Peak risk</text>"
+			        & "<text x='16' y='64' font-family='Segoe UI Light' font-size='30' fill='#f2f2f4'>" & vShown & "</text>"
+			        & "<rect x='16' y='76' width='272' height='6' rx='3' fill='#26262a'/>" & "<rect x='16' y='76' width='" & vRail & "' height='6' rx='3' fill='#3987e5'/>"
+			        & "<text x='16' y='100' font-family='Segoe UI' font-size='10' fill='#7d7d85'>" & vCaption & "</text>"
+			        & "</svg>"
+			RETURN
+			    "data:image/svg+xml;utf8," & SUBSTITUTE(SUBSTITUTE(vSvg, "%", "%25"), "#", "%23")
+		lineageTag: c79bc94a-9357-52c7-bb90-67b42a182492
+		dataCategory: ImageUrl
+		displayFolder: Report UI
+
+	measure 'KPI SVG Peak large-fire risk @304' =
+			VAR vValue = [Peak large-fire risk]
+			VAR vShown = IF(ISBLANK(vValue), "—", FORMAT(vValue, "0.00%"))
+			VAR vCaptionRaw = ""
+			VAR vCaption = IF(LEN(vCaptionRaw) > 59, LEFT(vCaptionRaw, 57) & "…", vCaptionRaw)
+			VAR vRail = ROUND(272 * MAX(0, MIN(1, COALESCE(vValue, 0))), 0)
+			VAR vSvg =
+			    "<svg xmlns='http://www.w3.org/2000/svg' width='304' height='112' viewBox='0 0 304 112'>"
+			        & "<rect x='0' y='18' width='3' height='76' rx='1.5' fill='#3987e5'/>"
+			        & "<text x='16' y='28' font-family='Segoe UI' font-size='11' fill='#a6a6ad'>Peak large-fire risk</text>"
+			        & "<text x='16' y='64' font-family='Segoe UI Light' font-size='30' fill='#f2f2f4'>" & vShown & "</text>"
+			        & "<rect x='16' y='76' width='272' height='6' rx='3' fill='#26262a'/>" & "<rect x='16' y='76' width='" & vRail & "' height='6' rx='3' fill='#3987e5'/>"
+			        & "<text x='16' y='100' font-family='Segoe UI' font-size='10' fill='#7d7d85'>" & vCaption & "</text>"
+			        & "</svg>"
+			RETURN
+			    "data:image/svg+xml;utf8," & SUBSTITUTE(SUBSTITUTE(vSvg, "%", "%25"), "#", "%23")
+		lineageTag: fd400411-bd60-5d7a-81ff-3bfa81e4680a
+		dataCategory: ImageUrl
+		displayFolder: Report UI
+
+	measure 'KPI SVG Hotspots in the last two days | Forecast reference @324' =
+			VAR vValue = [Hotspots in the last two days]
+			VAR vShown = IF(ISBLANK(vValue), "—", FORMAT(vValue, "#,0"))
+			VAR vCaptionRaw = SUBSTITUTE(SUBSTITUTE(COALESCE([Forecast reference], ""), "&", "&amp;"), "<", "&lt;")
+			VAR vCaption = IF(LEN(vCaptionRaw) > 64, LEFT(vCaptionRaw, 62) & "…", vCaptionRaw)
+			VAR vSvg =
+			    "<svg xmlns='http://www.w3.org/2000/svg' width='324' height='112' viewBox='0 0 324 112'>"
+			        & "<rect x='0' y='18' width='3' height='76' rx='1.5' fill='#3987e5'/>"
+			        & "<text x='16' y='28' font-family='Segoe UI' font-size='11' fill='#a6a6ad'>Hotspots in the last two days</text>"
+			        & "<text x='16' y='64' font-family='Segoe UI Light' font-size='30' fill='#f2f2f4'>" & vShown & "</text>"
+			        & ""
+			        & "<text x='16' y='90' font-family='Segoe UI' font-size='10' fill='#7d7d85'>" & vCaption & "</text>"
+			        & "</svg>"
+			RETURN
+			    "data:image/svg+xml;utf8," & SUBSTITUTE(SUBSTITUTE(vSvg, "%", "%25"), "#", "%23")
+		lineageTag: 43d47c74-087a-5046-b1aa-e18c2d2841ae
+		dataCategory: ImageUrl
+		displayFolder: Report UI
+
+	measure 'Filter Context - Canada’s fires since 2000' =
+			VAR vText = IF(ISFILTERED('dim_province'[province]), CONCATENATEX(VALUES('dim_province'[province]), 'dim_province'[province], ", "), "all province") & " · " & IF(ISFILTERED('fact_fires_year'[cause_label]), CONCATENATEX(VALUES('fact_fires_year'[cause_label]), 'fact_fires_year'[cause_label], ", "), "all cause label") & " · " & IF(ISFILTERED('dim_season'[decade]), CONCATENATEX(VALUES('dim_season'[decade]), 'dim_season'[decade], ", "), "all decade")
+			RETURN IF(LEN(vText) > 72, LEFT(vText, 70) & "…", vText)
+		lineageTag: 43e2ac62-ef4b-5e97-b55c-d1bbe2f7ef05
+		displayFolder: Report UI
+
+	measure 'Header SVG - Canada’s fires since 2000' =
+			VAR vContext = "Page 2 of 8 · " & SUBSTITUTE(SUBSTITUTE([Filter Context - Canada’s fires since 2000], "&", "&amp;"), "<", "&lt;")
+			VAR vSvg =
+			    "<svg xmlns='http://www.w3.org/2000/svg' width='720' height='56' viewBox='0 0 720 56'>"
+			        & "<text x='0' y='24' font-family='Segoe UI Semibold' font-size='18' fill='#f2f2f4'>Canada’s fires since 2000</text>"
+			        & "<text x='0' y='46' font-family='Segoe UI' font-size='11' fill='#7d7d85'>" & vContext & "</text>"
+			        & "</svg>"
+			RETURN
+			    "data:image/svg+xml;utf8," & SUBSTITUTE(SUBSTITUTE(vSvg, "%", "%25"), "#", "%23")
+		lineageTag: 610e8121-87e1-52b8-a7e7-8619a444479f
+		dataCategory: ImageUrl
+		displayFolder: Report UI
+
+	measure 'Filter Button Label - Canada’s fires since 2000' =
+			VAR vOn = INT(ISFILTERED('dim_province'[province])) + INT(ISFILTERED('fact_fires_year'[cause_label])) + INT(ISFILTERED('dim_season'[decade]))
+			RETURN IF(vOn = 0, "Filters", "Filters · " & vOn)
+		lineageTag: edc42108-2fc3-5588-8a9d-10d2e3ad6c89
+		displayFolder: Report UI
+
+	measure 'KPI SVG Fires recorded | Fire record reference @335' =
+			VAR vValue = [Fires recorded]
+			VAR vShown = IF(ISBLANK(vValue), "—", FORMAT(vValue, "#,0"))
+			VAR vCaptionRaw = SUBSTITUTE(SUBSTITUTE(COALESCE([Fire record reference], ""), "&", "&amp;"), "<", "&lt;")
+			VAR vCaption = IF(LEN(vCaptionRaw) > 66, LEFT(vCaptionRaw, 64) & "…", vCaptionRaw)
+			VAR vSvg =
+			    "<svg xmlns='http://www.w3.org/2000/svg' width='335' height='112' viewBox='0 0 335 112'>"
+			        & "<rect x='0' y='18' width='3' height='76' rx='1.5' fill='#3987e5'/>"
+			        & "<text x='16' y='28' font-family='Segoe UI' font-size='11' fill='#a6a6ad'>Fires recorded</text>"
+			        & "<text x='16' y='64' font-family='Segoe UI Light' font-size='30' fill='#f2f2f4'>" & vShown & "</text>"
+			        & ""
+			        & "<text x='16' y='90' font-family='Segoe UI' font-size='10' fill='#7d7d85'>" & vCaption & "</text>"
+			        & "</svg>"
+			RETURN
+			    "data:image/svg+xml;utf8," & SUBSTITUTE(SUBSTITUTE(vSvg, "%", "%25"), "#", "%23")
+		lineageTag: 7ddbf958-d299-585d-890b-b13ee0b2a95c
+		dataCategory: ImageUrl
+		displayFolder: Report UI
+
+	measure 'KPI SVG Area burned (million ha) @304' =
+			VAR vValue = [Area burned (million ha)]
+			VAR vShown = IF(ISBLANK(vValue), "—", FORMAT(vValue, "0.0"))
+			VAR vCaptionRaw = ""
+			VAR vCaption = IF(LEN(vCaptionRaw) > 59, LEFT(vCaptionRaw, 57) & "…", vCaptionRaw)
+			VAR vSvg =
+			    "<svg xmlns='http://www.w3.org/2000/svg' width='304' height='112' viewBox='0 0 304 112'>"
+			        & "<rect x='0' y='18' width='3' height='76' rx='1.5' fill='#3987e5'/>"
+			        & "<text x='16' y='28' font-family='Segoe UI' font-size='11' fill='#a6a6ad'>Area burned (million ha)</text>"
+			        & "<text x='16' y='64' font-family='Segoe UI Light' font-size='30' fill='#f2f2f4'>" & vShown & "</text>"
+			        & ""
+			        & "<text x='16' y='90' font-family='Segoe UI' font-size='10' fill='#7d7d85'>" & vCaption & "</text>"
+			        & "</svg>"
+			RETURN
+			    "data:image/svg+xml;utf8," & SUBSTITUTE(SUBSTITUTE(vSvg, "%", "%25"), "#", "%23")
+		lineageTag: 84035569-265c-51e2-9d0e-6e93de85b156
+		dataCategory: ImageUrl
+		displayFolder: Report UI
+
+	measure 'KPI SVG Large fires recorded @304' =
+			VAR vValue = [Large fires recorded]
+			VAR vShown = IF(ISBLANK(vValue), "—", FORMAT(vValue, "#,0"))
+			VAR vCaptionRaw = ""
+			VAR vCaption = IF(LEN(vCaptionRaw) > 59, LEFT(vCaptionRaw, 57) & "…", vCaptionRaw)
+			VAR vSvg =
+			    "<svg xmlns='http://www.w3.org/2000/svg' width='304' height='112' viewBox='0 0 304 112'>"
+			        & "<rect x='0' y='18' width='3' height='76' rx='1.5' fill='#3987e5'/>"
+			        & "<text x='16' y='28' font-family='Segoe UI' font-size='11' fill='#a6a6ad'>Large fires recorded</text>"
+			        & "<text x='16' y='64' font-family='Segoe UI Light' font-size='30' fill='#f2f2f4'>" & vShown & "</text>"
+			        & ""
+			        & "<text x='16' y='90' font-family='Segoe UI' font-size='10' fill='#7d7d85'>" & vCaption & "</text>"
+			        & "</svg>"
+			RETURN
+			    "data:image/svg+xml;utf8," & SUBSTITUTE(SUBSTITUTE(vSvg, "%", "%25"), "#", "%23")
+		lineageTag: e20cb33d-1621-5cca-af37-e4f305bdda54
+		dataCategory: ImageUrl
+		displayFolder: Report UI
+
+	measure 'KPI SVG Lightning share of area @324' =
+			VAR vValue = [Lightning share of area]
+			VAR vShown = IF(ISBLANK(vValue), "—", FORMAT(vValue, "0.0%"))
+			VAR vCaptionRaw = ""
+			VAR vCaption = IF(LEN(vCaptionRaw) > 64, LEFT(vCaptionRaw, 62) & "…", vCaptionRaw)
+			VAR vRail = ROUND(292 * MAX(0, MIN(1, COALESCE(vValue, 0))), 0)
+			VAR vSvg =
+			    "<svg xmlns='http://www.w3.org/2000/svg' width='324' height='112' viewBox='0 0 324 112'>"
+			        & "<rect x='0' y='18' width='3' height='76' rx='1.5' fill='#3987e5'/>"
+			        & "<text x='16' y='28' font-family='Segoe UI' font-size='11' fill='#a6a6ad'>Lightning share of area</text>"
+			        & "<text x='16' y='64' font-family='Segoe UI Light' font-size='30' fill='#f2f2f4'>" & vShown & "</text>"
+			        & "<rect x='16' y='76' width='292' height='6' rx='3' fill='#26262a'/>" & "<rect x='16' y='76' width='" & vRail & "' height='6' rx='3' fill='#3987e5'/>"
+			        & "<text x='16' y='100' font-family='Segoe UI' font-size='10' fill='#7d7d85'>" & vCaption & "</text>"
+			        & "</svg>"
+			RETURN
+			    "data:image/svg+xml;utf8," & SUBSTITUTE(SUBSTITUTE(vSvg, "%", "%25"), "#", "%23")
+		lineageTag: 069f010d-a77d-5de5-bedb-fb5ced2606ef
+		dataCategory: ImageUrl
+		displayFolder: Report UI
+
+	measure 'Filter Context - Out of time: 2020-2024' =
+			VAR vText = IF(ISFILTERED('dim_season'[year]), CONCATENATEX(VALUES('dim_season'[year]), 'dim_season'[year], ", "), "all year")
+			RETURN IF(LEN(vText) > 72, LEFT(vText, 70) & "…", vText)
+		lineageTag: 630af362-4465-5c08-bc6c-605ba6c65897
+		displayFolder: Report UI
+
+	measure 'Header SVG - Out of time: 2020-2024' =
+			VAR vContext = "Page 3 of 8 · " & SUBSTITUTE(SUBSTITUTE([Filter Context - Out of time: 2020-2024], "&", "&amp;"), "<", "&lt;")
+			VAR vSvg =
+			    "<svg xmlns='http://www.w3.org/2000/svg' width='720' height='56' viewBox='0 0 720 56'>"
+			        & "<text x='0' y='24' font-family='Segoe UI Semibold' font-size='18' fill='#f2f2f4'>Out of time: 2020-2024</text>"
+			        & "<text x='0' y='46' font-family='Segoe UI' font-size='11' fill='#7d7d85'>" & vContext & "</text>"
+			        & "</svg>"
+			RETURN
+			    "data:image/svg+xml;utf8," & SUBSTITUTE(SUBSTITUTE(vSvg, "%", "%25"), "#", "%23")
+		lineageTag: 5e0a6943-2b3a-51ab-ba02-88c08e5016fa
+		dataCategory: ImageUrl
+		displayFolder: Report UI
+
+	measure 'Filter Button Label - Out of time: 2020-2024' =
+			VAR vOn = INT(ISFILTERED('dim_season'[year]))
+			RETURN IF(vOn = 0, "Filters", "Filters · " & vOn)
+		lineageTag: 1c705584-6c31-561b-ae27-b4e2118551de
+		displayFolder: Report UI
+
+	measure 'KPI SVG Same-day capture | Capture reference @335' =
+			VAR vValue = [Same-day capture]
+			VAR vShown = IF(ISBLANK(vValue), "—", FORMAT(vValue, "0.0%"))
+			VAR vCaptionRaw = SUBSTITUTE(SUBSTITUTE(COALESCE([Capture reference], ""), "&", "&amp;"), "<", "&lt;")
+			VAR vCaption = IF(LEN(vCaptionRaw) > 66, LEFT(vCaptionRaw, 64) & "…", vCaptionRaw)
+			VAR vRail = ROUND(303 * MAX(0, MIN(1, COALESCE(vValue, 0))), 0)
+			VAR vSvg =
+			    "<svg xmlns='http://www.w3.org/2000/svg' width='335' height='112' viewBox='0 0 335 112'>"
+			        & "<rect x='0' y='18' width='3' height='76' rx='1.5' fill='#3987e5'/>"
+			        & "<text x='16' y='28' font-family='Segoe UI' font-size='11' fill='#a6a6ad'>Same-day capture</text>"
+			        & "<text x='16' y='64' font-family='Segoe UI Light' font-size='30' fill='#f2f2f4'>" & vShown & "</text>"
+			        & "<rect x='16' y='76' width='303' height='6' rx='3' fill='#26262a'/>" & "<rect x='16' y='76' width='" & vRail & "' height='6' rx='3' fill='#3987e5'/>"
+			        & "<text x='16' y='100' font-family='Segoe UI' font-size='10' fill='#7d7d85'>" & vCaption & "</text>"
+			        & "</svg>"
+			RETURN
+			    "data:image/svg+xml;utf8," & SUBSTITUTE(SUBSTITUTE(vSvg, "%", "%25"), "#", "%23")
+		lineageTag: df962512-3ac9-57de-b2aa-ccfcbd0c440d
+		dataCategory: ImageUrl
+		displayFolder: Report UI
+
+	measure 'KPI SVG Same-day capture, large fires @304' =
+			VAR vValue = [Same-day capture, large fires]
+			VAR vShown = IF(ISBLANK(vValue), "—", FORMAT(vValue, "0.0%"))
+			VAR vCaptionRaw = ""
+			VAR vCaption = IF(LEN(vCaptionRaw) > 59, LEFT(vCaptionRaw, 57) & "…", vCaptionRaw)
+			VAR vRail = ROUND(272 * MAX(0, MIN(1, COALESCE(vValue, 0))), 0)
+			VAR vSvg =
+			    "<svg xmlns='http://www.w3.org/2000/svg' width='304' height='112' viewBox='0 0 304 112'>"
+			        & "<rect x='0' y='18' width='3' height='76' rx='1.5' fill='#3987e5'/>"
+			        & "<text x='16' y='28' font-family='Segoe UI' font-size='11' fill='#a6a6ad'>Same-day capture, large fires</text>"
+			        & "<text x='16' y='64' font-family='Segoe UI Light' font-size='30' fill='#f2f2f4'>" & vShown & "</text>"
+			        & "<rect x='16' y='76' width='272' height='6' rx='3' fill='#26262a'/>" & "<rect x='16' y='76' width='" & vRail & "' height='6' rx='3' fill='#3987e5'/>"
+			        & "<text x='16' y='100' font-family='Segoe UI' font-size='10' fill='#7d7d85'>" & vCaption & "</text>"
+			        & "</svg>"
+			RETURN
+			    "data:image/svg+xml;utf8," & SUBSTITUTE(SUBSTITUTE(vSvg, "%", "%25"), "#", "%23")
+		lineageTag: 9377439f-03a7-5952-9144-6d8c2de02e16
+		dataCategory: ImageUrl
+		displayFolder: Report UI
+
+	measure 'KPI SVG Fires in the test seasons @304' =
+			VAR vValue = [Fires in the test seasons]
+			VAR vShown = IF(ISBLANK(vValue), "—", FORMAT(vValue, "#,0"))
+			VAR vCaptionRaw = ""
+			VAR vCaption = IF(LEN(vCaptionRaw) > 59, LEFT(vCaptionRaw, 57) & "…", vCaptionRaw)
+			VAR vSvg =
+			    "<svg xmlns='http://www.w3.org/2000/svg' width='304' height='112' viewBox='0 0 304 112'>"
+			        & "<rect x='0' y='18' width='3' height='76' rx='1.5' fill='#3987e5'/>"
+			        & "<text x='16' y='28' font-family='Segoe UI' font-size='11' fill='#a6a6ad'>Fires in the test seasons</text>"
+			        & "<text x='16' y='64' font-family='Segoe UI Light' font-size='30' fill='#f2f2f4'>" & vShown & "</text>"
+			        & ""
+			        & "<text x='16' y='90' font-family='Segoe UI' font-size='10' fill='#7d7d85'>" & vCaption & "</text>"
+			        & "</svg>"
+			RETURN
+			    "data:image/svg+xml;utf8," & SUBSTITUTE(SUBSTITUTE(vSvg, "%", "%25"), "#", "%23")
+		lineageTag: aa312d20-7f7a-5c18-b764-201fa0fd1b73
+		dataCategory: ImageUrl
+		displayFolder: Report UI
+
+	measure 'KPI SVG Days scored @324' =
+			VAR vValue = [Days scored]
+			VAR vShown = IF(ISBLANK(vValue), "—", FORMAT(vValue, "#,0"))
+			VAR vCaptionRaw = ""
+			VAR vCaption = IF(LEN(vCaptionRaw) > 64, LEFT(vCaptionRaw, 62) & "…", vCaptionRaw)
+			VAR vSvg =
+			    "<svg xmlns='http://www.w3.org/2000/svg' width='324' height='112' viewBox='0 0 324 112'>"
+			        & "<rect x='0' y='18' width='3' height='76' rx='1.5' fill='#3987e5'/>"
+			        & "<text x='16' y='28' font-family='Segoe UI' font-size='11' fill='#a6a6ad'>Days scored</text>"
+			        & "<text x='16' y='64' font-family='Segoe UI Light' font-size='30' fill='#f2f2f4'>" & vShown & "</text>"
+			        & ""
+			        & "<text x='16' y='90' font-family='Segoe UI' font-size='10' fill='#7d7d85'>" & vCaption & "</text>"
+			        & "</svg>"
+			RETURN
+			    "data:image/svg+xml;utf8," & SUBSTITUTE(SUBSTITUTE(vSvg, "%", "%25"), "#", "%23")
+		lineageTag: 36fddb09-766a-55e7-a244-2dda10bf1f31
+		dataCategory: ImageUrl
+		displayFolder: Report UI
+
+	measure 'Header SVG - What it scored, and against what' =
+			VAR vContext = "Page 4 of 8"
+			VAR vSvg =
+			    "<svg xmlns='http://www.w3.org/2000/svg' width='720' height='56' viewBox='0 0 720 56'>"
+			        & "<text x='0' y='24' font-family='Segoe UI Semibold' font-size='18' fill='#f2f2f4'>What it scored, and against what</text>"
+			        & "<text x='0' y='46' font-family='Segoe UI' font-size='11' fill='#7d7d85'>" & vContext & "</text>"
+			        & "</svg>"
+			RETURN
+			    "data:image/svg+xml;utf8," & SUBSTITUTE(SUBSTITUTE(vSvg, "%", "%25"), "#", "%23")
+		lineageTag: f71684b9-e821-5e42-8f82-51383e764407
+		dataCategory: ImageUrl
+		displayFolder: Report UI
+
+	measure 'KPI SVG Model ROC-AUC out of time | Baseline reference @335' =
+			VAR vValue = [Model ROC-AUC out of time]
+			VAR vShown = IF(ISBLANK(vValue), "—", FORMAT(vValue, "0.000"))
+			VAR vCaptionRaw = SUBSTITUTE(SUBSTITUTE(COALESCE([Baseline reference], ""), "&", "&amp;"), "<", "&lt;")
+			VAR vCaption = IF(LEN(vCaptionRaw) > 66, LEFT(vCaptionRaw, 64) & "…", vCaptionRaw)
+			VAR vSvg =
+			    "<svg xmlns='http://www.w3.org/2000/svg' width='335' height='112' viewBox='0 0 335 112'>"
+			        & "<rect x='0' y='18' width='3' height='76' rx='1.5' fill='#3987e5'/>"
+			        & "<text x='16' y='28' font-family='Segoe UI' font-size='11' fill='#a6a6ad'>Model ROC-AUC out of time</text>"
+			        & "<text x='16' y='64' font-family='Segoe UI Light' font-size='30' fill='#f2f2f4'>" & vShown & "</text>"
+			        & ""
+			        & "<text x='16' y='90' font-family='Segoe UI' font-size='10' fill='#7d7d85'>" & vCaption & "</text>"
+			        & "</svg>"
+			RETURN
+			    "data:image/svg+xml;utf8," & SUBSTITUTE(SUBSTITUTE(vSvg, "%", "%25"), "#", "%23")
+		lineageTag: 03ca3901-bb8a-5eee-ab74-864efea1d1b9
+		dataCategory: ImageUrl
+		displayFolder: Report UI
+
+	measure 'KPI SVG Capture out of time, this model @304' =
+			VAR vValue = [Capture out of time, this model]
+			VAR vShown = IF(ISBLANK(vValue), "—", FORMAT(vValue, "0.0%"))
+			VAR vCaptionRaw = ""
+			VAR vCaption = IF(LEN(vCaptionRaw) > 59, LEFT(vCaptionRaw, 57) & "…", vCaptionRaw)
+			VAR vRail = ROUND(272 * MAX(0, MIN(1, COALESCE(vValue, 0))), 0)
+			VAR vSvg =
+			    "<svg xmlns='http://www.w3.org/2000/svg' width='304' height='112' viewBox='0 0 304 112'>"
+			        & "<rect x='0' y='18' width='3' height='76' rx='1.5' fill='#3987e5'/>"
+			        & "<text x='16' y='28' font-family='Segoe UI' font-size='11' fill='#a6a6ad'>Capture out of time, this model</text>"
+			        & "<text x='16' y='64' font-family='Segoe UI Light' font-size='30' fill='#f2f2f4'>" & vShown & "</text>"
+			        & "<rect x='16' y='76' width='272' height='6' rx='3' fill='#26262a'/>" & "<rect x='16' y='76' width='" & vRail & "' height='6' rx='3' fill='#3987e5'/>"
+			        & "<text x='16' y='100' font-family='Segoe UI' font-size='10' fill='#7d7d85'>" & vCaption & "</text>"
+			        & "</svg>"
+			RETURN
+			    "data:image/svg+xml;utf8," & SUBSTITUTE(SUBSTITUTE(vSvg, "%", "%25"), "#", "%23")
+		lineageTag: 286e5d0d-cbed-509a-aca3-32f9e4eba256
+		dataCategory: ImageUrl
+		displayFolder: Report UI
+
+	measure 'KPI SVG Lift out of time, this model @304' =
+			VAR vValue = [Lift out of time, this model]
+			VAR vShown = IF(ISBLANK(vValue), "—", FORMAT(vValue, "0.0"))
+			VAR vCaptionRaw = ""
+			VAR vCaption = IF(LEN(vCaptionRaw) > 59, LEFT(vCaptionRaw, 57) & "…", vCaptionRaw)
+			VAR vSvg =
+			    "<svg xmlns='http://www.w3.org/2000/svg' width='304' height='112' viewBox='0 0 304 112'>"
+			        & "<rect x='0' y='18' width='3' height='76' rx='1.5' fill='#3987e5'/>"
+			        & "<text x='16' y='28' font-family='Segoe UI' font-size='11' fill='#a6a6ad'>Lift out of time, this model</text>"
+			        & "<text x='16' y='64' font-family='Segoe UI Light' font-size='30' fill='#f2f2f4'>" & vShown & "</text>"
+			        & ""
+			        & "<text x='16' y='90' font-family='Segoe UI' font-size='10' fill='#7d7d85'>" & vCaption & "</text>"
+			        & "</svg>"
+			RETURN
+			    "data:image/svg+xml;utf8," & SUBSTITUTE(SUBSTITUTE(vSvg, "%", "%25"), "#", "%23")
+		lineageTag: 0dac0f05-dad9-5cea-8819-432d71ef6fb6
+		dataCategory: ImageUrl
+		displayFolder: Report UI
+
+	measure 'KPI SVG Brier score, this model @324' =
+			VAR vValue = [Brier score, this model]
+			VAR vShown = IF(ISBLANK(vValue), "—", FORMAT(vValue, "0.0000"))
+			VAR vCaptionRaw = ""
+			VAR vCaption = IF(LEN(vCaptionRaw) > 64, LEFT(vCaptionRaw, 62) & "…", vCaptionRaw)
+			VAR vSvg =
+			    "<svg xmlns='http://www.w3.org/2000/svg' width='324' height='112' viewBox='0 0 324 112'>"
+			        & "<rect x='0' y='18' width='3' height='76' rx='1.5' fill='#3987e5'/>"
+			        & "<text x='16' y='28' font-family='Segoe UI' font-size='11' fill='#a6a6ad'>Brier score, this model</text>"
+			        & "<text x='16' y='64' font-family='Segoe UI Light' font-size='30' fill='#f2f2f4'>" & vShown & "</text>"
+			        & ""
+			        & "<text x='16' y='90' font-family='Segoe UI' font-size='10' fill='#7d7d85'>" & vCaption & "</text>"
+			        & "</svg>"
+			RETURN
+			    "data:image/svg+xml;utf8," & SUBSTITUTE(SUBSTITUTE(vSvg, "%", "%25"), "#", "%23")
+		lineageTag: 19071aac-b5da-56b3-841a-2a84300047a4
+		dataCategory: ImageUrl
+		displayFolder: Report UI
+
+	measure 'Filter Context - Where it works, and where it does not' =
+			VAR vText = IF(ISFILTERED('dim_season'[year]), CONCATENATEX(VALUES('dim_season'[year]), 'dim_season'[year], ", "), "all year")
+			RETURN IF(LEN(vText) > 72, LEFT(vText, 70) & "…", vText)
+		lineageTag: f7f75bdf-39b5-5091-8acf-b34c3283b731
+		displayFolder: Report UI
+
+	measure 'Header SVG - Where it works, and where it does not' =
+			VAR vContext = "Page 5 of 8 · " & SUBSTITUTE(SUBSTITUTE([Filter Context - Where it works, and where it does not], "&", "&amp;"), "<", "&lt;")
+			VAR vSvg =
+			    "<svg xmlns='http://www.w3.org/2000/svg' width='720' height='56' viewBox='0 0 720 56'>"
+			        & "<text x='0' y='24' font-family='Segoe UI Semibold' font-size='18' fill='#f2f2f4'>Where it works, and where it does not</text>"
+			        & "<text x='0' y='46' font-family='Segoe UI' font-size='11' fill='#7d7d85'>" & vContext & "</text>"
+			        & "</svg>"
+			RETURN
+			    "data:image/svg+xml;utf8," & SUBSTITUTE(SUBSTITUTE(vSvg, "%", "%25"), "#", "%23")
+		lineageTag: abba4d31-716a-58d2-965f-43501aab2065
+		dataCategory: ImageUrl
+		displayFolder: Report UI
+
+	measure 'Filter Button Label - Where it works, and where it does not' =
+			VAR vOn = INT(ISFILTERED('dim_season'[year]))
+			RETURN IF(vOn = 0, "Filters", "Filters · " & vOn)
+		lineageTag: a700318f-6abb-56dc-83bb-efbb3489f8a1
+		displayFolder: Report UI
+
+	measure 'KPI SVG Capture out of time, this model | Baseline reference @335' =
+			VAR vValue = [Capture out of time, this model]
+			VAR vShown = IF(ISBLANK(vValue), "—", FORMAT(vValue, "0.0%"))
+			VAR vCaptionRaw = SUBSTITUTE(SUBSTITUTE(COALESCE([Baseline reference], ""), "&", "&amp;"), "<", "&lt;")
+			VAR vCaption = IF(LEN(vCaptionRaw) > 66, LEFT(vCaptionRaw, 64) & "…", vCaptionRaw)
+			VAR vRail = ROUND(303 * MAX(0, MIN(1, COALESCE(vValue, 0))), 0)
+			VAR vSvg =
+			    "<svg xmlns='http://www.w3.org/2000/svg' width='335' height='112' viewBox='0 0 335 112'>"
+			        & "<rect x='0' y='18' width='3' height='76' rx='1.5' fill='#3987e5'/>"
+			        & "<text x='16' y='28' font-family='Segoe UI' font-size='11' fill='#a6a6ad'>Capture out of time, this model</text>"
+			        & "<text x='16' y='64' font-family='Segoe UI Light' font-size='30' fill='#f2f2f4'>" & vShown & "</text>"
+			        & "<rect x='16' y='76' width='303' height='6' rx='3' fill='#26262a'/>" & "<rect x='16' y='76' width='" & vRail & "' height='6' rx='3' fill='#3987e5'/>"
+			        & "<text x='16' y='100' font-family='Segoe UI' font-size='10' fill='#7d7d85'>" & vCaption & "</text>"
+			        & "</svg>"
+			RETURN
+			    "data:image/svg+xml;utf8," & SUBSTITUTE(SUBSTITUTE(vSvg, "%", "%25"), "#", "%23")
+		lineageTag: 4a8df00f-6331-5844-b30e-5a18c1c208db
+		dataCategory: ImageUrl
+		displayFolder: Report UI
+
+	measure 'KPI SVG Model ROC-AUC out of time @304' =
+			VAR vValue = [Model ROC-AUC out of time]
+			VAR vShown = IF(ISBLANK(vValue), "—", FORMAT(vValue, "0.000"))
+			VAR vCaptionRaw = ""
+			VAR vCaption = IF(LEN(vCaptionRaw) > 59, LEFT(vCaptionRaw, 57) & "…", vCaptionRaw)
+			VAR vSvg =
+			    "<svg xmlns='http://www.w3.org/2000/svg' width='304' height='112' viewBox='0 0 304 112'>"
+			        & "<rect x='0' y='18' width='3' height='76' rx='1.5' fill='#3987e5'/>"
+			        & "<text x='16' y='28' font-family='Segoe UI' font-size='11' fill='#a6a6ad'>Model ROC-AUC out of time</text>"
+			        & "<text x='16' y='64' font-family='Segoe UI Light' font-size='30' fill='#f2f2f4'>" & vShown & "</text>"
+			        & ""
+			        & "<text x='16' y='90' font-family='Segoe UI' font-size='10' fill='#7d7d85'>" & vCaption & "</text>"
+			        & "</svg>"
+			RETURN
+			    "data:image/svg+xml;utf8," & SUBSTITUTE(SUBSTITUTE(vSvg, "%", "%25"), "#", "%23")
+		lineageTag: 466d9e35-fe82-5266-ade2-0d9ac2aab6e7
+		dataCategory: ImageUrl
+		displayFolder: Report UI
+
+	measure 'KPI SVG Cell-days behind the province scores @304' =
+			VAR vValue = [Cell-days behind the province scores]
+			VAR vShown = IF(ISBLANK(vValue), "—", FORMAT(vValue, "#,0"))
+			VAR vCaptionRaw = ""
+			VAR vCaption = IF(LEN(vCaptionRaw) > 59, LEFT(vCaptionRaw, 57) & "…", vCaptionRaw)
+			VAR vSvg =
+			    "<svg xmlns='http://www.w3.org/2000/svg' width='304' height='112' viewBox='0 0 304 112'>"
+			        & "<rect x='0' y='18' width='3' height='76' rx='1.5' fill='#3987e5'/>"
+			        & "<text x='16' y='28' font-family='Segoe UI' font-size='11' fill='#a6a6ad'>Cell-days behind the province scores</text>"
+			        & "<text x='16' y='64' font-family='Segoe UI Light' font-size='30' fill='#f2f2f4'>" & vShown & "</text>"
+			        & ""
+			        & "<text x='16' y='90' font-family='Segoe UI' font-size='10' fill='#7d7d85'>" & vCaption & "</text>"
+			        & "</svg>"
+			RETURN
+			    "data:image/svg+xml;utf8," & SUBSTITUTE(SUBSTITUTE(vSvg, "%", "%25"), "#", "%23")
+		lineageTag: 2e32947e-03d8-57ed-8ed9-ae50be69fcb6
+		dataCategory: ImageUrl
+		displayFolder: Report UI
+
+	measure 'KPI SVG Cells forecast @324' =
+			VAR vValue = [Cells forecast]
+			VAR vShown = IF(ISBLANK(vValue), "—", FORMAT(vValue, "#,0"))
+			VAR vCaptionRaw = ""
+			VAR vCaption = IF(LEN(vCaptionRaw) > 64, LEFT(vCaptionRaw, 62) & "…", vCaptionRaw)
+			VAR vSvg =
+			    "<svg xmlns='http://www.w3.org/2000/svg' width='324' height='112' viewBox='0 0 324 112'>"
+			        & "<rect x='0' y='18' width='3' height='76' rx='1.5' fill='#3987e5'/>"
+			        & "<text x='16' y='28' font-family='Segoe UI' font-size='11' fill='#a6a6ad'>Cells forecast</text>"
+			        & "<text x='16' y='64' font-family='Segoe UI Light' font-size='30' fill='#f2f2f4'>" & vShown & "</text>"
+			        & ""
+			        & "<text x='16' y='90' font-family='Segoe UI' font-size='10' fill='#7d7d85'>" & vCaption & "</text>"
+			        & "</svg>"
+			RETURN
+			    "data:image/svg+xml;utf8," & SUBSTITUTE(SUBSTITUTE(vSvg, "%", "%25"), "#", "%23")
+		lineageTag: 261a0dae-2fe5-5c7e-b0d4-7d94968570f0
+		dataCategory: ImageUrl
+		displayFolder: Report UI
+
+	measure 'Header SVG - This season, graded by satellite' =
+			VAR vContext = "Page 6 of 8"
+			VAR vSvg =
+			    "<svg xmlns='http://www.w3.org/2000/svg' width='720' height='56' viewBox='0 0 720 56'>"
+			        & "<text x='0' y='24' font-family='Segoe UI Semibold' font-size='18' fill='#f2f2f4'>This season, graded by satellite</text>"
+			        & "<text x='0' y='46' font-family='Segoe UI' font-size='11' fill='#7d7d85'>" & vContext & "</text>"
+			        & "</svg>"
+			RETURN
+			    "data:image/svg+xml;utf8," & SUBSTITUTE(SUBSTITUTE(vSvg, "%", "%25"), "#", "%23")
+		lineageTag: c8607bf7-a471-5bb3-94c1-1bcd608fb6ff
+		dataCategory: ImageUrl
+		displayFolder: Report UI
+
+	measure 'KPI SVG New detections | Season reference @335' =
+			VAR vValue = [New detections]
+			VAR vShown = IF(ISBLANK(vValue), "—", FORMAT(vValue, "#,0"))
+			VAR vCaptionRaw = SUBSTITUTE(SUBSTITUTE(COALESCE([Season reference], ""), "&", "&amp;"), "<", "&lt;")
+			VAR vCaption = IF(LEN(vCaptionRaw) > 66, LEFT(vCaptionRaw, 64) & "…", vCaptionRaw)
+			VAR vSvg =
+			    "<svg xmlns='http://www.w3.org/2000/svg' width='335' height='112' viewBox='0 0 335 112'>"
+			        & "<rect x='0' y='18' width='3' height='76' rx='1.5' fill='#3987e5'/>"
+			        & "<text x='16' y='28' font-family='Segoe UI' font-size='11' fill='#a6a6ad'>New detections</text>"
+			        & "<text x='16' y='64' font-family='Segoe UI Light' font-size='30' fill='#f2f2f4'>" & vShown & "</text>"
+			        & ""
+			        & "<text x='16' y='90' font-family='Segoe UI' font-size='10' fill='#7d7d85'>" & vCaption & "</text>"
+			        & "</svg>"
+			RETURN
+			    "data:image/svg+xml;utf8," & SUBSTITUTE(SUBSTITUTE(vSvg, "%", "%25"), "#", "%23")
+		lineageTag: 9607cff1-6cfc-5866-8b9a-144c0410a655
+		dataCategory: ImageUrl
+		displayFolder: Report UI
+
+	measure 'KPI SVG Season capture @304' =
+			VAR vValue = [Season capture]
+			VAR vShown = IF(ISBLANK(vValue), "—", FORMAT(vValue, "0.0%"))
+			VAR vCaptionRaw = ""
+			VAR vCaption = IF(LEN(vCaptionRaw) > 59, LEFT(vCaptionRaw, 57) & "…", vCaptionRaw)
+			VAR vRail = ROUND(272 * MAX(0, MIN(1, COALESCE(vValue, 0))), 0)
+			VAR vSvg =
+			    "<svg xmlns='http://www.w3.org/2000/svg' width='304' height='112' viewBox='0 0 304 112'>"
+			        & "<rect x='0' y='18' width='3' height='76' rx='1.5' fill='#3987e5'/>"
+			        & "<text x='16' y='28' font-family='Segoe UI' font-size='11' fill='#a6a6ad'>Season capture</text>"
+			        & "<text x='16' y='64' font-family='Segoe UI Light' font-size='30' fill='#f2f2f4'>" & vShown & "</text>"
+			        & "<rect x='16' y='76' width='272' height='6' rx='3' fill='#26262a'/>" & "<rect x='16' y='76' width='" & vRail & "' height='6' rx='3' fill='#3987e5'/>"
+			        & "<text x='16' y='100' font-family='Segoe UI' font-size='10' fill='#7d7d85'>" & vCaption & "</text>"
+			        & "</svg>"
+			RETURN
+			    "data:image/svg+xml;utf8," & SUBSTITUTE(SUBSTITUTE(vSvg, "%", "%25"), "#", "%23")
+		lineageTag: 34a1316b-4ea7-57f1-975e-1e5a98cd3b52
+		dataCategory: ImageUrl
+		displayFolder: Report UI
+
+	measure 'KPI SVG Season ROC-AUC, this model @304' =
+			VAR vValue = [Season ROC-AUC, this model]
+			VAR vShown = IF(ISBLANK(vValue), "—", FORMAT(vValue, "0.000"))
+			VAR vCaptionRaw = ""
+			VAR vCaption = IF(LEN(vCaptionRaw) > 59, LEFT(vCaptionRaw, 57) & "…", vCaptionRaw)
+			VAR vSvg =
+			    "<svg xmlns='http://www.w3.org/2000/svg' width='304' height='112' viewBox='0 0 304 112'>"
+			        & "<rect x='0' y='18' width='3' height='76' rx='1.5' fill='#3987e5'/>"
+			        & "<text x='16' y='28' font-family='Segoe UI' font-size='11' fill='#a6a6ad'>Season ROC-AUC, this model</text>"
+			        & "<text x='16' y='64' font-family='Segoe UI Light' font-size='30' fill='#f2f2f4'>" & vShown & "</text>"
+			        & ""
+			        & "<text x='16' y='90' font-family='Segoe UI' font-size='10' fill='#7d7d85'>" & vCaption & "</text>"
+			        & "</svg>"
+			RETURN
+			    "data:image/svg+xml;utf8," & SUBSTITUTE(SUBSTITUTE(vSvg, "%", "%25"), "#", "%23")
+		lineageTag: 3001301c-64a3-5805-8f36-cbe0d4c53bf2
+		dataCategory: ImageUrl
+		displayFolder: Report UI
+
+	measure 'Header SVG - The 2024 model, re-scored' =
+			VAR vContext = "Page 7 of 8"
+			VAR vSvg =
+			    "<svg xmlns='http://www.w3.org/2000/svg' width='720' height='56' viewBox='0 0 720 56'>"
+			        & "<text x='0' y='24' font-family='Segoe UI Semibold' font-size='18' fill='#f2f2f4'>The 2024 model, re-scored</text>"
+			        & "<text x='0' y='46' font-family='Segoe UI' font-size='11' fill='#7d7d85'>" & vContext & "</text>"
+			        & "</svg>"
+			RETURN
+			    "data:image/svg+xml;utf8," & SUBSTITUTE(SUBSTITUTE(vSvg, "%", "%25"), "#", "%23")
+		lineageTag: be579223-4032-543e-855b-f7aca8182bae
+		dataCategory: ImageUrl
+		displayFolder: Report UI
+
+	measure 'KPI SVG R squared as scored in 2024 | The 2024 model reference @335' =
+			VAR vValue = [R squared as scored in 2024]
+			VAR vShown = IF(ISBLANK(vValue), "—", FORMAT(vValue, "0.000"))
+			VAR vCaptionRaw = SUBSTITUTE(SUBSTITUTE(COALESCE([The 2024 model reference], ""), "&", "&amp;"), "<", "&lt;")
+			VAR vCaption = IF(LEN(vCaptionRaw) > 66, LEFT(vCaptionRaw, 64) & "…", vCaptionRaw)
+			VAR vSvg =
+			    "<svg xmlns='http://www.w3.org/2000/svg' width='335' height='112' viewBox='0 0 335 112'>"
+			        & "<rect x='0' y='18' width='3' height='76' rx='1.5' fill='#3987e5'/>"
+			        & "<text x='16' y='28' font-family='Segoe UI' font-size='11' fill='#a6a6ad'>R squared as scored in 2024</text>"
+			        & "<text x='16' y='64' font-family='Segoe UI Light' font-size='30' fill='#f2f2f4'>" & vShown & "</text>"
+			        & ""
+			        & "<text x='16' y='90' font-family='Segoe UI' font-size='10' fill='#7d7d85'>" & vCaption & "</text>"
+			        & "</svg>"
+			RETURN
+			    "data:image/svg+xml;utf8," & SUBSTITUTE(SUBSTITUTE(vSvg, "%", "%25"), "#", "%23")
+		lineageTag: a3652e1e-72f9-5cbd-8427-f2c314dbb1c3
+		dataCategory: ImageUrl
+		displayFolder: Report UI
+
+	measure 'KPI SVG R squared out of time @304' =
+			VAR vValue = [R squared out of time]
+			VAR vShown = IF(ISBLANK(vValue), "—", FORMAT(vValue, "0.000"))
+			VAR vCaptionRaw = ""
+			VAR vCaption = IF(LEN(vCaptionRaw) > 59, LEFT(vCaptionRaw, 57) & "…", vCaptionRaw)
+			VAR vSvg =
+			    "<svg xmlns='http://www.w3.org/2000/svg' width='304' height='112' viewBox='0 0 304 112'>"
+			        & "<rect x='0' y='18' width='3' height='76' rx='1.5' fill='#3987e5'/>"
+			        & "<text x='16' y='28' font-family='Segoe UI' font-size='11' fill='#a6a6ad'>R squared out of time</text>"
+			        & "<text x='16' y='64' font-family='Segoe UI Light' font-size='30' fill='#f2f2f4'>" & vShown & "</text>"
+			        & ""
+			        & "<text x='16' y='90' font-family='Segoe UI' font-size='10' fill='#7d7d85'>" & vCaption & "</text>"
+			        & "</svg>"
+			RETURN
+			    "data:image/svg+xml;utf8," & SUBSTITUTE(SUBSTITUTE(vSvg, "%", "%25"), "#", "%23")
+		lineageTag: b1409a43-39c7-5155-b4af-93b69989a963
+		dataCategory: ImageUrl
+		displayFolder: Report UI
+
+	measure 'KPI SVG What the random split was worth @304' =
+			VAR vValue = [What the random split was worth]
+			VAR vShown = IF(ISBLANK(vValue), "—", FORMAT(vValue, "0.000"))
+			VAR vCaptionRaw = ""
+			VAR vCaption = IF(LEN(vCaptionRaw) > 59, LEFT(vCaptionRaw, 57) & "…", vCaptionRaw)
+			VAR vSvg =
+			    "<svg xmlns='http://www.w3.org/2000/svg' width='304' height='112' viewBox='0 0 304 112'>"
+			        & "<rect x='0' y='18' width='3' height='76' rx='1.5' fill='#3987e5'/>"
+			        & "<text x='16' y='28' font-family='Segoe UI' font-size='11' fill='#a6a6ad'>What the random split was worth</text>"
+			        & "<text x='16' y='64' font-family='Segoe UI Light' font-size='30' fill='#f2f2f4'>" & vShown & "</text>"
+			        & ""
+			        & "<text x='16' y='90' font-family='Segoe UI' font-size='10' fill='#7d7d85'>" & vCaption & "</text>"
+			        & "</svg>"
+			RETURN
+			    "data:image/svg+xml;utf8," & SUBSTITUTE(SUBSTITUTE(vSvg, "%", "%25"), "#", "%23")
+		lineageTag: cf282efb-71e3-5be7-bc5f-298d7ee7b904
+		dataCategory: ImageUrl
+		displayFolder: Report UI
+
+	measure 'KPI SVG Mean error, the longer panel @324' =
+			VAR vValue = [Mean error, the longer panel]
+			VAR vShown = IF(ISBLANK(vValue), "—", FORMAT(vValue, "#,0"))
+			VAR vCaptionRaw = ""
+			VAR vCaption = IF(LEN(vCaptionRaw) > 64, LEFT(vCaptionRaw, 62) & "…", vCaptionRaw)
+			VAR vSvg =
+			    "<svg xmlns='http://www.w3.org/2000/svg' width='324' height='112' viewBox='0 0 324 112'>"
+			        & "<rect x='0' y='18' width='3' height='76' rx='1.5' fill='#3987e5'/>"
+			        & "<text x='16' y='28' font-family='Segoe UI' font-size='11' fill='#a6a6ad'>Mean error, the longer panel</text>"
+			        & "<text x='16' y='64' font-family='Segoe UI Light' font-size='30' fill='#f2f2f4'>" & vShown & "</text>"
+			        & ""
+			        & "<text x='16' y='90' font-family='Segoe UI' font-size='10' fill='#7d7d85'>" & vCaption & "</text>"
+			        & "</svg>"
+			RETURN
+			    "data:image/svg+xml;utf8," & SUBSTITUTE(SUBSTITUTE(vSvg, "%", "%25"), "#", "%23")
+		lineageTag: ec5d7ebf-b9e5-5bd1-9cc2-f80a987143cd
+		dataCategory: ImageUrl
+		displayFolder: Report UI
+
+	measure 'Header SVG - What the evidence says' =
+			VAR vContext = "Page 8 of 8"
+			VAR vSvg =
+			    "<svg xmlns='http://www.w3.org/2000/svg' width='720' height='56' viewBox='0 0 720 56'>"
+			        & "<text x='0' y='24' font-family='Segoe UI Semibold' font-size='18' fill='#f2f2f4'>What the evidence says</text>"
+			        & "<text x='0' y='46' font-family='Segoe UI' font-size='11' fill='#7d7d85'>" & vContext & "</text>"
+			        & "</svg>"
+			RETURN
+			    "data:image/svg+xml;utf8," & SUBSTITUTE(SUBSTITUTE(vSvg, "%", "%25"), "#", "%23")
+		lineageTag: e2736f50-e2f8-5052-8057-aaf0d5f77571
+		dataCategory: ImageUrl
+		displayFolder: Report UI
+
+	measure 'KPI SVG Model ROC-AUC out of time | Baseline reference @304' =
+			VAR vValue = [Model ROC-AUC out of time]
+			VAR vShown = IF(ISBLANK(vValue), "—", FORMAT(vValue, "0.000"))
+			VAR vCaptionRaw = SUBSTITUTE(SUBSTITUTE(COALESCE([Baseline reference], ""), "&", "&amp;"), "<", "&lt;")
+			VAR vCaption = IF(LEN(vCaptionRaw) > 59, LEFT(vCaptionRaw, 57) & "…", vCaptionRaw)
+			VAR vSvg =
+			    "<svg xmlns='http://www.w3.org/2000/svg' width='304' height='112' viewBox='0 0 304 112'>"
+			        & "<rect x='0' y='18' width='3' height='76' rx='1.5' fill='#3987e5'/>"
+			        & "<text x='16' y='28' font-family='Segoe UI' font-size='11' fill='#a6a6ad'>Model ROC-AUC out of time</text>"
+			        & "<text x='16' y='64' font-family='Segoe UI Light' font-size='30' fill='#f2f2f4'>" & vShown & "</text>"
+			        & ""
+			        & "<text x='16' y='90' font-family='Segoe UI' font-size='10' fill='#7d7d85'>" & vCaption & "</text>"
+			        & "</svg>"
+			RETURN
+			    "data:image/svg+xml;utf8," & SUBSTITUTE(SUBSTITUTE(vSvg, "%", "%25"), "#", "%23")
+		lineageTag: b73838f2-1e37-5d0a-bf3e-3c67e79a614e
+		dataCategory: ImageUrl
+		displayFolder: Report UI
+
+	measure 'KPI SVG Season capture | Season reference @304' =
+			VAR vValue = [Season capture]
+			VAR vShown = IF(ISBLANK(vValue), "—", FORMAT(vValue, "0.0%"))
+			VAR vCaptionRaw = SUBSTITUTE(SUBSTITUTE(COALESCE([Season reference], ""), "&", "&amp;"), "<", "&lt;")
+			VAR vCaption = IF(LEN(vCaptionRaw) > 59, LEFT(vCaptionRaw, 57) & "…", vCaptionRaw)
+			VAR vRail = ROUND(272 * MAX(0, MIN(1, COALESCE(vValue, 0))), 0)
+			VAR vSvg =
+			    "<svg xmlns='http://www.w3.org/2000/svg' width='304' height='112' viewBox='0 0 304 112'>"
+			        & "<rect x='0' y='18' width='3' height='76' rx='1.5' fill='#3987e5'/>"
+			        & "<text x='16' y='28' font-family='Segoe UI' font-size='11' fill='#a6a6ad'>Season capture</text>"
+			        & "<text x='16' y='64' font-family='Segoe UI Light' font-size='30' fill='#f2f2f4'>" & vShown & "</text>"
+			        & "<rect x='16' y='76' width='272' height='6' rx='3' fill='#26262a'/>" & "<rect x='16' y='76' width='" & vRail & "' height='6' rx='3' fill='#3987e5'/>"
+			        & "<text x='16' y='100' font-family='Segoe UI' font-size='10' fill='#7d7d85'>" & vCaption & "</text>"
+			        & "</svg>"
+			RETURN
+			    "data:image/svg+xml;utf8," & SUBSTITUTE(SUBSTITUTE(vSvg, "%", "%25"), "#", "%23")
+		lineageTag: cd4c248d-730a-5ce7-87a6-e9775685b956
+		dataCategory: ImageUrl
+		displayFolder: Report UI
+
+	measure 'KPI SVG R squared out of time | The 2024 model reference @324' =
+			VAR vValue = [R squared out of time]
+			VAR vShown = IF(ISBLANK(vValue), "—", FORMAT(vValue, "0.000"))
+			VAR vCaptionRaw = SUBSTITUTE(SUBSTITUTE(COALESCE([The 2024 model reference], ""), "&", "&amp;"), "<", "&lt;")
+			VAR vCaption = IF(LEN(vCaptionRaw) > 64, LEFT(vCaptionRaw, 62) & "…", vCaptionRaw)
+			VAR vSvg =
+			    "<svg xmlns='http://www.w3.org/2000/svg' width='324' height='112' viewBox='0 0 324 112'>"
+			        & "<rect x='0' y='18' width='3' height='76' rx='1.5' fill='#3987e5'/>"
+			        & "<text x='16' y='28' font-family='Segoe UI' font-size='11' fill='#a6a6ad'>R squared out of time</text>"
+			        & "<text x='16' y='64' font-family='Segoe UI Light' font-size='30' fill='#f2f2f4'>" & vShown & "</text>"
+			        & ""
+			        & "<text x='16' y='90' font-family='Segoe UI' font-size='10' fill='#7d7d85'>" & vCaption & "</text>"
+			        & "</svg>"
+			RETURN
+			    "data:image/svg+xml;utf8," & SUBSTITUTE(SUBSTITUTE(vSvg, "%", "%25"), "#", "%23")
+		lineageTag: 7e60495a-6b3b-5a67-b45f-6275cdbf615a
+		dataCategory: ImageUrl
+		displayFolder: Report UI
+
+	column _placeholder
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: e1366f0d-34fb-5d66-ab46-e8e9e22bfa9a
+		summarizeBy: none
+		sourceColumn: _placeholder
+
+	partition _Measures = m
+		mode: import
+		source =
+				let
+				    Source = #table(type table [_placeholder = Int64.Type], {{0}})
+				in
+				    Source

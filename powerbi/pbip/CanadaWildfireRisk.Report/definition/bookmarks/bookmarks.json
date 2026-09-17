@@ -1,0 +1,29 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/bookmarksMetadata/1.0.0/schema.json",
+  "items": [
+    {
+      "name": "p01FiltersOpen"
+    },
+    {
+      "name": "p01FiltersClosed"
+    },
+    {
+      "name": "p02FiltersOpen"
+    },
+    {
+      "name": "p02FiltersClosed"
+    },
+    {
+      "name": "p03FiltersOpen"
+    },
+    {
+      "name": "p03FiltersClosed"
+    },
+    {
+      "name": "p05FiltersOpen"
+    },
+    {
+      "name": "p05FiltersClosed"
+    }
+  ]
+}

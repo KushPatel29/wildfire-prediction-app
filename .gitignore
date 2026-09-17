@@ -16,3 +16,8 @@ models/*.joblib
 
 # Local editor/preview config
 .claude/
+
+# Power BI Desktop's machine-local state, created when the .pbip is opened.
+**/.pbi/localSettings.json
+**/.pbi/cache.abf
+**/.pbi/unappliedChanges.json

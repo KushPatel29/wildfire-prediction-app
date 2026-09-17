@@ -1,0 +1,140 @@
+province,month,fires,area_ha,month_name,province_short
+Alberta,1,184,197.02,Jan,AB
+Alberta,2,132,579.4,Feb,AB
+Alberta,3,529,8203.01,Mar,AB
+Alberta,4,3981,30700.469999999998,Apr,AB
+Alberta,5,8550,4698921.54,May,AB
+Alberta,6,6439,1901555.53,Jun,AB
+Alberta,7,7607,1672201.75,Jul,AB
+Alberta,8,4134,79839.7,Aug,AB
+Alberta,9,2144,53280.61,Sep,AB
+Alberta,10,1263,6035.23,Oct,AB
+Alberta,11,400,1542.26,Nov,AB
+Alberta,12,108,734.12,Dec,AB
+British Columbia,1,49,461.174,Jan,BC
+British Columbia,2,63,700.6669999999999,Feb,BC
+British Columbia,3,496,3280.933,Mar,BC
+British Columbia,4,2840,114426.566,Apr,BC
+British Columbia,5,3828,2062299.232,May,BC
+British Columbia,6,5099,2001852.614,Jun,BC
+British Columbia,7,13457,4858365.078,Jul,BC
+British Columbia,8,13366,1529848.386,Aug,BC
+British Columbia,9,3058,39372.332,Sep,BC
+British Columbia,10,1219,9648.358,Oct,BC
+British Columbia,11,171,757.746,Nov,BC
+British Columbia,12,31,112.72800000000001,Dec,BC
+Manitoba,3,16,2338.50525685405,Mar,MB
+Manitoba,4,507,37471.02327523847,Apr,MB
+Manitoba,5,1236,1618961.509145654,May,MB
+Manitoba,6,1532,1968789.3761909762,Jun,MB
+Manitoba,7,2692,2694074.8857881282,Jul,MB
+Manitoba,8,1471,505709.9851928069,Aug,MB
+Manitoba,9,407,141153.23069516273,Sep,MB
+Manitoba,10,108,28206.02549905335,Oct,MB
+Manitoba,11,16,36916.0102720494,Nov,MB
+New Brunswick,1,1,0.1,Jan,NB
+New Brunswick,2,2,3.1,Feb,NB
+New Brunswick,3,43,101.1,Mar,NB
+New Brunswick,4,1713,2799.5,Apr,NB
+New Brunswick,5,2228,4816.9,May,NB
+New Brunswick,6,681,698.0,Jun,NB
+New Brunswick,7,614,580.8,Jul,NB
+New Brunswick,8,902,2678.3,Aug,NB
+New Brunswick,9,513,1369.1,Sep,NB
+New Brunswick,10,279,872.0,Oct,NB
+New Brunswick,11,50,80.5,Nov,NB
+New Brunswick,12,5,62.1,Dec,NB
+Newfoundland and Labrador,1,1,2.0,Jan,NL
+Newfoundland and Labrador,3,15,8.8,Mar,NL
+Newfoundland and Labrador,4,185,253.5,Apr,NL
+Newfoundland and Labrador,5,652,5332.7,May,NL
+Newfoundland and Labrador,6,471,66990.6,Jun,NL
+Newfoundland and Labrador,7,429,56899.848,Jul,NL
+Newfoundland and Labrador,8,358,14834.41818,Aug,NL
+Newfoundland and Labrador,9,169,330.5,Sep,NL
+Newfoundland and Labrador,10,59,48.4,Oct,NL
+Newfoundland and Labrador,11,16,2.8000000000000003,Nov,NL
+Newfoundland and Labrador,12,1,0.1,Dec,NL
+Northwest Territories,2,1,0.1,Feb,NT
+Northwest Territories,4,9,4.0600000000000005,Apr,NT
+Northwest Territories,5,239,1224506.7310501107,May,NT
+Northwest Territories,6,1553,6286177.88243415,Jun,NT
+Northwest Territories,7,2527,7446288.213267805,Jul,NT
+Northwest Territories,8,765,1694170.273047578,Aug,NT
+Northwest Territories,9,99,27711.084210955418,Sep,NT
+Northwest Territories,10,16,271.72000000894,Oct,NT
+Northwest Territories,11,9,3348.91,Nov,NT
+Northwest Territories,12,2,1.01,Dec,NT
+Nova Scotia,3,326,1671.9759627604155,Mar,NS
+Nova Scotia,4,1712,4716.652233798292,Apr,NS
+Nova Scotia,5,1784,31973.06337105912,May,NS
+Nova Scotia,6,532,3100.0757689738193,Jun,NS
+Nova Scotia,7,431,169.29669401027243,Jul,NS
+Nova Scotia,8,614,9250.19745974972,Aug,NS
+Nova Scotia,9,306,365.38089905916644,Sep,NS
+Nova Scotia,10,101,163.9280860039479,Oct,NS
+Nova Scotia,11,18,8.540000000000001,Nov,NS
+Ontario,1,31,69.800000056622,Jan,ON
+Ontario,2,28,29.59999990462,Feb,ON
+Ontario,3,139,945.200003315572,Mar,ON
+Ontario,4,1273,5450.399995994721,Apr,ON
+Ontario,5,3305,736190.4003366025,May,ON
+Ontario,6,3592,1910401.5930049948,Jun,ON
+Ontario,7,6839,1463089.6017185128,Jul,ON
+Ontario,8,5697,150022.6994670285,Aug,ON
+Ontario,9,2165,71900.30037673542,Sep,ON
+Ontario,10,474,4107.000006905376,Oct,ON
+Ontario,11,70,255.199998636645,Nov,ON
+Ontario,12,44,39.300000078972,Dec,ON
+Parks Canada,1,25,1575.971,Jan,Parks
+Parks Canada,2,16,1500.961,Feb,Parks
+Parks Canada,3,34,7158.708801,Mar,Parks
+Parks Canada,4,147,66151.4212762,Apr,Parks
+Parks Canada,5,310,1596206.5834750999,May,Parks
+Parks Canada,6,467,563492.29887902,Jun,Parks
+Parks Canada,7,774,971695.38401093,Jul,Parks
+Parks Canada,8,516,122668.48230677392,Aug,Parks
+Parks Canada,9,150,41577.17341,Sep,Parks
+Parks Canada,10,53,930.7081000000001,Oct,Parks
+Parks Canada,11,19,140.042,Nov,Parks
+Parks Canada,12,19,206.4601,Dec,Parks
+Prince Edward Island,4,5,14.427247118699999,Apr,PE
+Prince Edward Island,5,18,14.8836068005934,May,PE
+Prince Edward Island,6,4,17.11693313475,Jun,PE
+Prince Edward Island,7,2,0.17278738328,Jul,PE
+Prince Edward Island,8,9,5.783143009050001,Aug,PE
+Prince Edward Island,9,10,5.8029508386878,Sep,PE
+Prince Edward Island,10,4,0.5700000000000001,Oct,PE
+Prince Edward Island,11,1,0.0332091300829,Nov,PE
+Prince Edward Island,12,1,5.70866475355,Dec,PE
+Quebec,3,42,30.0,Mar,QC
+Quebec,4,1457,1255.3015898836813,Apr,QC
+Quebec,5,3994,1895708.8003188276,May,QC
+Quebec,6,3235,5070630.212595867,Jun,QC
+Quebec,7,2956,2716647.4262011955,Jul,QC
+Quebec,8,2300,45486.53737344575,Aug,QC
+Quebec,9,1052,22700.547768864013,Sep,QC
+Quebec,10,485,740.4,Oct,QC
+Quebec,11,112,108.2,Nov,QC
+Quebec,12,2,0.1,Dec,QC
+Saskatchewan,1,18,11974.87,Jan,SK
+Saskatchewan,2,28,57942.61,Feb,SK
+Saskatchewan,3,32,273797.73,Mar,SK
+Saskatchewan,4,1134,219234.302452,Apr,SK
+Saskatchewan,5,3139,3837950.124707,May,SK
+Saskatchewan,6,2831,7035001.252488,Jun,SK
+Saskatchewan,7,3057,4315828.470733,Jul,SK
+Saskatchewan,8,1527,1257544.55148,Aug,SK
+Saskatchewan,9,530,76234.29,Sep,SK
+Saskatchewan,10,225,15548.777555,Oct,SK
+Saskatchewan,11,25,236.41,Nov,SK
+Saskatchewan,12,17,6.07,Dec,SK
+Yukon,4,24,2334.6200000000003,Apr,YT
+Yukon,5,354,364740.11,May,YT
+Yukon,6,1131,2922352.032,Jun,YT
+Yukon,7,809,1286487.842,Jul,YT
+Yukon,8,316,123414.05,Aug,YT
+Yukon,9,38,289.39,Sep,YT
+Yukon,10,18,415.75,Oct,YT
+Yukon,11,5,616.0,Nov,YT
+Yukon,12,9,724.3,Dec,YT

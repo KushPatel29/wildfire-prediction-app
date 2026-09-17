@@ -1,0 +1,37 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-US
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation PBI_QueryOrder = ["dim_cell", "dim_province", "dim_date", "dim_season", "fact_forecast", "fact_forecast_run", "fact_hotspot", "fact_backtest_day", "fact_backtest_cell", "fact_fires_year", "fact_fires_month", "fact_model_scores", "fact_model_year", "fact_model_province", "fact_reliability", "fact_feature_gain", "fact_season_scores", "fact_season_month", "fact_season_day", "fact_season_cell", "fact_hackathon_scores", "fact_hackathon_month", "_Measures"]
+
+annotation __PBI_TimeIntelligenceEnabled = 0
+
+annotation PBI_ProTooling = ["DevMode"]
+
+ref table dim_cell
+ref table dim_province
+ref table dim_date
+ref table dim_season
+ref table fact_forecast
+ref table fact_forecast_run
+ref table fact_hotspot
+ref table fact_backtest_day
+ref table fact_backtest_cell
+ref table fact_fires_year
+ref table fact_fires_month
+ref table fact_model_scores
+ref table fact_model_year
+ref table fact_model_province
+ref table fact_reliability
+ref table fact_feature_gain
+ref table fact_season_scores
+ref table fact_season_month
+ref table fact_season_day
+ref table fact_season_cell
+ref table fact_hackathon_scores
+ref table fact_hackathon_month
+ref table _Measures

@@ -1,0 +1,129 @@
+table fact_forecast
+	lineageTag: 5f8ba0c9-f566-5101-bb19-f0db40ea1687
+
+	column cell_id
+		dataType: string
+		lineageTag: f3635cac-5722-592a-8213-6c5ffe04ef2d
+		summarizeBy: none
+		sourceColumn: cell_id
+
+	column date
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: c5a3221a-b580-55e8-9199-ec462e459163
+		summarizeBy: none
+		sourceColumn: date
+
+	column lead_days
+		dataType: int64
+		formatString: 0
+		lineageTag: 7f120268-3106-5e55-88f2-dda6ddf758eb
+		summarizeBy: sum
+		sourceColumn: lead_days
+
+	column province
+		dataType: string
+		lineageTag: b11c5ee2-ba62-5702-97b6-cf9568541a6c
+		summarizeBy: none
+		sourceColumn: province
+
+	column lat
+		dataType: double
+		formatString: #,0.00
+		lineageTag: 286742fd-1675-5baf-9374-b0092609b170
+		summarizeBy: sum
+		sourceColumn: lat
+
+	column lon
+		dataType: double
+		formatString: #,0.00
+		lineageTag: 5616e6e3-c543-53ec-bf6a-4cc070fe48cf
+		summarizeBy: sum
+		sourceColumn: lon
+
+	column temp
+		dataType: double
+		formatString: #,0.00
+		lineageTag: 2d50c1d2-7a4c-5f57-b232-3481d3c3a62f
+		summarizeBy: sum
+		sourceColumn: temp
+
+	column rh
+		dataType: double
+		formatString: #,0.00
+		lineageTag: 405c50cb-5e9c-54d4-89c9-554124df0995
+		summarizeBy: sum
+		sourceColumn: rh
+
+	column ws
+		dataType: double
+		formatString: #,0.00
+		lineageTag: 4c970085-4c04-5450-9383-9fa811be7914
+		summarizeBy: sum
+		sourceColumn: ws
+
+	column precip
+		dataType: double
+		formatString: #,0.00
+		lineageTag: 4b85bc25-3617-564a-a99b-3c6127ce3dcc
+		summarizeBy: sum
+		sourceColumn: precip
+
+	column fwi
+		dataType: double
+		formatString: #,0.00
+		lineageTag: 22898262-31e5-51c3-8b7c-870c35145ee9
+		summarizeBy: sum
+		sourceColumn: fwi
+
+	column risk
+		dataType: double
+		formatString: 0.0%
+		lineageTag: 802fd610-254b-569d-8f7b-c25c3228ec75
+		summarizeBy: sum
+		sourceColumn: risk
+
+	column large_risk
+		dataType: double
+		formatString: 0.0%
+		lineageTag: f8db765f-6421-5605-b3fc-0e0300ff32e8
+		summarizeBy: sum
+		sourceColumn: large_risk
+
+	column clim_month_rate
+		dataType: double
+		formatString: 0.0%
+		lineageTag: f18548b7-fd14-517f-9911-dbb40f5e8ffd
+		summarizeBy: sum
+		sourceColumn: clim_month_rate
+
+	column risk_vs_normal
+		dataType: double
+		formatString: 0.0%
+		lineageTag: cd7ca9e9-eafd-5d0c-9183-6bff288d0a10
+		summarizeBy: sum
+		sourceColumn: risk_vs_normal
+
+	column rank_in_day
+		dataType: int64
+		formatString: 0
+		lineageTag: 1489f325-8c3c-5c32-9467-f41b91cef71c
+		summarizeBy: sum
+		sourceColumn: rank_in_day
+
+	column in_top_decile
+		dataType: int64
+		formatString: 0
+		lineageTag: f07a26c0-e588-5cc8-802b-0ea54eab8327
+		summarizeBy: sum
+		sourceColumn: in_top_decile
+
+	partition fact_forecast = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(DataPath & "\data\fact_forecast.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"cell_id", type text}, {"date", type date}, {"lead_days", Int64.Type}, {"province", type text}, {"lat", type number}, {"lon", type number}, {"temp", type number}, {"rh", type number}, {"ws", type number}, {"precip", type number}, {"fwi", type number}, {"risk", type number}, {"large_risk", type number}, {"clim_month_rate", type number}, {"risk_vs_normal", type number}, {"rank_in_day", Int64.Type}, {"in_top_decile", Int64.Type}})
+				in
+				    Typed

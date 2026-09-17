@@ -1,0 +1,58 @@
+table fact_fires_year
+	lineageTag: fc18c38a-b808-5fec-a1ee-9877e5c83dfd
+
+	column year
+		dataType: int64
+		formatString: 0
+		lineageTag: 0fca1752-7aa4-51ef-b266-651a28a55b94
+		summarizeBy: sum
+		sourceColumn: year
+
+	column province
+		dataType: string
+		lineageTag: 426dc61e-101b-5188-8034-3343cb9db73d
+		summarizeBy: none
+		sourceColumn: province
+
+	column cause_label
+		dataType: string
+		lineageTag: 5363435e-bc3f-5439-834d-6b46cce14f5b
+		summarizeBy: none
+		sourceColumn: cause_label
+
+	column fires
+		dataType: int64
+		formatString: 0
+		lineageTag: 197acad2-c4b9-58cf-b493-b81861e70e9e
+		summarizeBy: sum
+		sourceColumn: fires
+
+	column area_ha
+		dataType: double
+		formatString: #,0
+		lineageTag: b1717575-a7ad-57a8-8854-c508bd3f6d13
+		summarizeBy: sum
+		sourceColumn: area_ha
+
+	column large_fires
+		dataType: int64
+		formatString: 0
+		lineageTag: f8ff209f-8a9e-55de-ab8f-462b3cad5dd9
+		summarizeBy: sum
+		sourceColumn: large_fires
+
+	column province_short
+		dataType: string
+		lineageTag: 1c5bc76b-b8d6-5973-a9ab-d26e1d44205b
+		summarizeBy: none
+		sourceColumn: province_short
+
+	partition fact_fires_year = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(DataPath & "\data\fact_fires_year.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"year", Int64.Type}, {"province", type text}, {"cause_label", type text}, {"fires", Int64.Type}, {"area_ha", type number}, {"large_fires", Int64.Type}, {"province_short", type text}})
+				in
+				    Typed

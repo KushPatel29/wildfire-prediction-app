@@ -1,0 +1,24 @@
+table dim_province
+	lineageTag: 55b1b2c5-4d98-5414-a898-09598a97b935
+
+	column province
+		dataType: string
+		lineageTag: 903baf77-9c2d-5856-9326-1daf1ff1dd00
+		summarizeBy: none
+		sourceColumn: province
+
+	column province_short
+		dataType: string
+		lineageTag: 99d4c072-2fb0-589a-a6c1-8672da415532
+		summarizeBy: none
+		sourceColumn: province_short
+
+	partition dim_province = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(DataPath & "\data\dim_province.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"province", type text}, {"province_short", type text}})
+				in
+				    Typed

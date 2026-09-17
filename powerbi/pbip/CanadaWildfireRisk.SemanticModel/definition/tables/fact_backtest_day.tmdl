@@ -1,0 +1,75 @@
+table fact_backtest_day
+	lineageTag: 923a5cfb-ecf0-537e-a800-6f5da26749e0
+
+	column date
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: a31b886d-d1dc-55dc-8c35-960e4bc74270
+		summarizeBy: none
+		sourceColumn: date
+
+	column cells
+		dataType: int64
+		formatString: 0
+		lineageTag: cb5ae3ef-4766-5f2c-855c-721ff42b06ee
+		summarizeBy: sum
+		sourceColumn: cells
+
+	column fires
+		dataType: int64
+		formatString: 0
+		lineageTag: addf7e77-d623-54b7-a8a5-8b2414039c6a
+		summarizeBy: sum
+		sourceColumn: fires
+
+	column fires_in_top_decile
+		dataType: int64
+		formatString: 0
+		lineageTag: 7bb5179f-8cef-5321-8039-01f848c8fd68
+		summarizeBy: sum
+		sourceColumn: fires_in_top_decile
+
+	column large_fires
+		dataType: int64
+		formatString: 0
+		lineageTag: 75969c93-ac23-5c60-b937-f82ed50f4387
+		summarizeBy: sum
+		sourceColumn: large_fires
+
+	column large_in_top_decile
+		dataType: int64
+		formatString: 0
+		lineageTag: bb38bd9b-f668-51f2-8160-68fa5bf08045
+		summarizeBy: sum
+		sourceColumn: large_in_top_decile
+
+	column mean_risk
+		dataType: double
+		formatString: 0.0%
+		lineageTag: e3a5eaf0-32ce-526d-b8b9-0f16001760df
+		summarizeBy: sum
+		sourceColumn: mean_risk
+
+	column mean_fwi
+		dataType: double
+		formatString: #,0.00
+		lineageTag: 2c44d4c1-32e4-5347-be8a-82ed13e479df
+		summarizeBy: sum
+		sourceColumn: mean_fwi
+
+	column year
+		dataType: int64
+		formatString: 0
+		lineageTag: 0efe644f-43de-5a4a-beef-3afbd334c282
+		summarizeBy: sum
+		sourceColumn: year
+
+	partition fact_backtest_day = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(DataPath & "\data\fact_backtest_day.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"date", type date}, {"cells", Int64.Type}, {"fires", Int64.Type}, {"fires_in_top_decile", Int64.Type}, {"large_fires", Int64.Type}, {"large_in_top_decile", Int64.Type}, {"mean_risk", type number}, {"mean_fwi", type number}, {"year", Int64.Type}})
+				in
+				    Typed

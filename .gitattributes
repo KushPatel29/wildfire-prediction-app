@@ -1,0 +1,12 @@
+# The Power BI project is generated and CI compares it byte for byte
+# (`python -m powerbi.build_pbip --check`). A Windows checkout that rewrote its
+# line endings would fail that check with nothing changed, so text stays LF
+# everywhere.
+* text=auto eol=lf
+
+*.png binary
+*.parquet binary
+*.pdf binary
+*.pbix binary
+*.zip binary
+

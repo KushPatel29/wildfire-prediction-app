@@ -1,0 +1,68 @@
+table fact_hackathon_month
+	lineageTag: 7357ab92-8ba5-5e9f-9dca-d08af979971b
+
+	column year
+		dataType: int64
+		formatString: 0
+		lineageTag: ae640f8d-ba99-5ba8-a9d0-a0647048588e
+		summarizeBy: sum
+		sourceColumn: year
+
+	column month
+		dataType: int64
+		formatString: 0
+		lineageTag: 2dd91245-7065-599d-a7ff-7b4024e65d95
+		summarizeBy: sum
+		sourceColumn: month
+
+	column fires
+		dataType: int64
+		formatString: 0
+		lineageTag: 7ad3b6b0-7c20-585e-bbd7-9e545dc831cd
+		summarizeBy: sum
+		sourceColumn: fires
+
+	column actual_ha
+		dataType: double
+		formatString: #,0
+		lineageTag: 6e73448b-5b89-5a35-8f95-0f86bed176f8
+		summarizeBy: sum
+		sourceColumn: actual_ha
+
+	column predicted_ha
+		dataType: double
+		formatString: #,0
+		lineageTag: 3ae34056-111c-5cf4-ba1a-2397ccd26ed6
+		summarizeBy: sum
+		sourceColumn: predicted_ha
+
+	column predicted_ha_without_count
+		dataType: double
+		formatString: #,0
+		lineageTag: 8d855a1e-0145-59a0-a0b3-f21ebc2d1fe9
+		summarizeBy: sum
+		sourceColumn: predicted_ha_without_count
+
+	column month_name
+		dataType: string
+		lineageTag: fa4656e6-3c15-5ee3-87a0-41704a65db47
+		summarizeBy: none
+		sourceColumn: month_name
+		sortByColumn: month
+
+	column error_ha
+		dataType: double
+		formatString: #,0
+		lineageTag: e8ccfe74-2d0c-5c97-b6b0-77625ea933c1
+		summarizeBy: sum
+		sourceColumn: error_ha
+
+	partition fact_hackathon_month = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(DataPath & "\data\fact_hackathon_month.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"year", Int64.Type}, {"month", Int64.Type}, {"fires", Int64.Type}, {"actual_ha", type number}, {"predicted_ha", type number}, {"predicted_ha_without_count", type number}, {"month_name", type text}, {"error_ha", type number}})
+				in
+				    Typed

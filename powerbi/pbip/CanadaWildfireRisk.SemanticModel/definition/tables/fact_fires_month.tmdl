@@ -1,0 +1,52 @@
+table fact_fires_month
+	lineageTag: 3ae074f7-5f35-5371-b027-485eb5a88bd4
+
+	column province
+		dataType: string
+		lineageTag: 1fb839e9-c688-5223-b832-d4732186fef0
+		summarizeBy: none
+		sourceColumn: province
+
+	column month
+		dataType: int64
+		formatString: 0
+		lineageTag: beb4222f-2293-524e-b397-4f26237a0139
+		summarizeBy: sum
+		sourceColumn: month
+
+	column fires
+		dataType: int64
+		formatString: 0
+		lineageTag: 4d1cefac-c6a5-5f2a-9739-f3e858bfba70
+		summarizeBy: sum
+		sourceColumn: fires
+
+	column area_ha
+		dataType: double
+		formatString: #,0
+		lineageTag: f5ec53a5-af68-5301-adcf-091d15d6b47f
+		summarizeBy: sum
+		sourceColumn: area_ha
+
+	column month_name
+		dataType: string
+		lineageTag: 3a2ac543-548e-5e49-8418-c4db45a87b64
+		summarizeBy: none
+		sourceColumn: month_name
+		sortByColumn: month
+
+	column province_short
+		dataType: string
+		lineageTag: a10c6dcb-0e1b-546f-bccb-69a59a8ac1e0
+		summarizeBy: none
+		sourceColumn: province_short
+
+	partition fact_fires_month = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(DataPath & "\data\fact_fires_month.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"province", type text}, {"month", Int64.Type}, {"fires", Int64.Type}, {"area_ha", type number}, {"month_name", type text}, {"province_short", type text}})
+				in
+				    Typed

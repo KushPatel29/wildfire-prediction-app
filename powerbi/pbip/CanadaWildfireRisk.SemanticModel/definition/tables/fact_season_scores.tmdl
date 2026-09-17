@@ -1,0 +1,73 @@
+table fact_season_scores
+	lineageTag: 141b8df0-00c4-50d4-9362-cd3dcbed0ceb
+
+	column year
+		dataType: int64
+		formatString: 0
+		lineageTag: cace3003-c2bc-5946-8f33-551ef972977b
+		summarizeBy: sum
+		sourceColumn: year
+
+	column method
+		dataType: string
+		lineageTag: 3ffa1fd7-e079-54cf-bb97-58eff81ad713
+		summarizeBy: none
+		sourceColumn: method
+
+	column method_label
+		dataType: string
+		lineageTag: 78e005e6-d909-52c1-be53-6864a74da5aa
+		summarizeBy: none
+		sourceColumn: method_label
+
+	column is_model
+		dataType: int64
+		formatString: 0
+		lineageTag: de15be15-b83a-51d6-b564-d5ea9c7e875d
+		summarizeBy: sum
+		sourceColumn: is_model
+
+	column same_day_top_decile
+		dataType: double
+		formatString: #,0.00
+		lineageTag: a547f467-39cb-50f1-b0f0-8329fc8671ab
+		summarizeBy: sum
+		sourceColumn: same_day_top_decile
+
+	column roc_auc
+		dataType: double
+		formatString: 0.000
+		lineageTag: d14f9ead-62d5-5cf4-9489-5ca103ae20c1
+		summarizeBy: sum
+		sourceColumn: roc_auc
+
+	column pr_auc
+		dataType: double
+		formatString: 0.000
+		lineageTag: 78d7c516-0fe3-5a12-bf3e-a2963a823097
+		summarizeBy: sum
+		sourceColumn: pr_auc
+
+	column share_of_fires_in_top_decile
+		dataType: double
+		formatString: 0.0%
+		lineageTag: e58ff1fa-fedc-57d5-8d2e-68b1fc5c7e6d
+		summarizeBy: sum
+		sourceColumn: share_of_fires_in_top_decile
+
+	column lift_top_decile
+		dataType: double
+		formatString: 0.000
+		lineageTag: f990574f-b79d-53f0-afbe-7e8643ccd005
+		summarizeBy: sum
+		sourceColumn: lift_top_decile
+
+	partition fact_season_scores = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(DataPath & "\data\fact_season_scores.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"year", Int64.Type}, {"method", type text}, {"method_label", type text}, {"is_model", Int64.Type}, {"same_day_top_decile", type number}, {"roc_auc", type number}, {"pr_auc", type number}, {"share_of_fires_in_top_decile", type number}, {"lift_top_decile", type number}})
+				in
+				    Typed

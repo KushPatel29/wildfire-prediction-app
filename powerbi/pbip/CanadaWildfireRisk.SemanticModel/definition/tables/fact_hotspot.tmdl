@@ -1,0 +1,66 @@
+table fact_hotspot
+	lineageTag: 6230aae7-fa05-5ede-ac1d-53f4676a6500
+
+	column lat
+		dataType: double
+		formatString: #,0.00
+		lineageTag: a7271cd6-397e-5639-9633-b5cac4b04750
+		summarizeBy: sum
+		sourceColumn: lat
+
+	column lon
+		dataType: double
+		formatString: #,0.00
+		lineageTag: 86b1e323-cde8-5b48-aaf4-9f9c000df265
+		summarizeBy: sum
+		sourceColumn: lon
+
+	column date
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: 85341a96-5330-547c-abf1-c304c23ce310
+		summarizeBy: none
+		sourceColumn: date
+
+	column detected_at
+		dataType: string
+		lineageTag: bc585dab-d71f-5e0b-9656-4e61f4e56914
+		summarizeBy: none
+		sourceColumn: detected_at
+
+	column sensor
+		dataType: string
+		lineageTag: 7e83e19b-12b1-5efd-bb74-1f33adcbcab6
+		summarizeBy: none
+		sourceColumn: sensor
+
+	column fwi
+		dataType: double
+		formatString: #,0.00
+		lineageTag: 9dd59299-7c33-5191-9a21-554f8b3fdd22
+		summarizeBy: sum
+		sourceColumn: fwi
+
+	column hfi
+		dataType: int64
+		formatString: 0
+		lineageTag: 9262342d-cc6a-5af1-a19a-54c13550e4cc
+		summarizeBy: sum
+		sourceColumn: hfi
+
+	column estarea
+		dataType: double
+		formatString: #,0
+		lineageTag: ad5a0d55-2d0e-56ae-8e34-33fc95262537
+		summarizeBy: sum
+		sourceColumn: estarea
+
+	partition fact_hotspot = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(DataPath & "\data\fact_hotspot.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"lat", type number}, {"lon", type number}, {"date", type date}, {"detected_at", type text}, {"sensor", type text}, {"fwi", type number}, {"hfi", Int64.Type}, {"estarea", type number}})
+				in
+				    Typed

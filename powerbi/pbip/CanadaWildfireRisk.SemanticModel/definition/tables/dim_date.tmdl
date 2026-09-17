@@ -1,0 +1,66 @@
+table dim_date
+	lineageTag: b9b6593f-cf60-5970-8e34-23a7ad0dbe72
+
+	column date
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: 88a515af-9c47-5a8e-a604-9da7442410e7
+		summarizeBy: none
+		sourceColumn: date
+
+	column year
+		dataType: int64
+		formatString: 0
+		lineageTag: d2d88f68-43e2-5c43-a26f-f24f57cc38cf
+		summarizeBy: sum
+		sourceColumn: year
+
+	column month
+		dataType: int64
+		formatString: 0
+		lineageTag: 30dc3fc3-6240-5e22-9539-8486dcdd3b86
+		summarizeBy: sum
+		sourceColumn: month
+
+	column month_name
+		dataType: string
+		lineageTag: 2c8838c8-130c-55f7-bb02-0db64c347111
+		summarizeBy: none
+		sourceColumn: month_name
+		sortByColumn: month_index
+
+	column month_index
+		dataType: int64
+		formatString: 0
+		lineageTag: 611f2668-6f67-533d-9d9e-6af6a4fff7c4
+		summarizeBy: none
+		sourceColumn: month_index
+
+	column day_of_year
+		dataType: int64
+		formatString: 0
+		lineageTag: 7d3280cb-ab55-5dba-b4ae-ccf8a32aa432
+		summarizeBy: sum
+		sourceColumn: day_of_year
+
+	column in_season
+		dataType: boolean
+		lineageTag: 504651ed-ca1d-5737-9675-29de160db368
+		summarizeBy: none
+		sourceColumn: in_season
+
+	column season_split
+		dataType: string
+		lineageTag: 93c38691-4c47-568d-8668-c1c280e01fc8
+		summarizeBy: none
+		sourceColumn: season_split
+
+	partition dim_date = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(DataPath & "\data\dim_date.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"date", type date}, {"year", Int64.Type}, {"month", Int64.Type}, {"month_name", type text}, {"month_index", Int64.Type}, {"day_of_year", Int64.Type}, {"in_season", type logical}, {"season_split", type text}})
+				in
+				    Typed

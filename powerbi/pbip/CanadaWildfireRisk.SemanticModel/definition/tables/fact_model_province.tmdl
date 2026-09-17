@@ -1,0 +1,92 @@
+table fact_model_province
+	lineageTag: b8a408f2-dd36-5b4e-a2db-f26c1929390f
+
+	column target
+		dataType: string
+		lineageTag: ccb10084-db9f-56ff-a959-d7b6ab8eecda
+		summarizeBy: none
+		sourceColumn: target
+
+	column target_label
+		dataType: string
+		lineageTag: 4866bb55-ebc3-5fa7-a4c1-d3e580eb20e4
+		summarizeBy: none
+		sourceColumn: target_label
+
+	column province_short
+		dataType: string
+		lineageTag: 1bb9a2db-6d5c-5fe0-ae12-f03ce9beee9c
+		summarizeBy: none
+		sourceColumn: province_short
+
+	column province
+		dataType: string
+		lineageTag: 76a9b175-28ce-5150-b6e5-470ef61163f0
+		summarizeBy: none
+		sourceColumn: province
+
+	column rows
+		dataType: int64
+		formatString: 0
+		lineageTag: f9fb9091-548a-507c-a8e1-c053a6902e26
+		summarizeBy: sum
+		sourceColumn: rows
+
+	column positive_rate
+		dataType: double
+		formatString: 0.0%
+		lineageTag: 7f0820ad-d270-5358-b3dd-0b7b0a4f4d50
+		summarizeBy: sum
+		sourceColumn: positive_rate
+
+	column roc_auc
+		dataType: double
+		formatString: 0.000
+		lineageTag: 4c2ed908-1817-5167-a0a6-29cacbde9d64
+		summarizeBy: sum
+		sourceColumn: roc_auc
+
+	column pr_auc
+		dataType: double
+		formatString: 0.000
+		lineageTag: a0782c45-de86-55db-93c5-6ba4ce5621a8
+		summarizeBy: sum
+		sourceColumn: pr_auc
+
+	column share_of_fires_in_top_decile
+		dataType: double
+		formatString: 0.0%
+		lineageTag: 24ec98a5-d954-5233-9cc0-a5c8e321613d
+		summarizeBy: sum
+		sourceColumn: share_of_fires_in_top_decile
+
+	column lift_top_decile
+		dataType: double
+		formatString: 0.000
+		lineageTag: ecfa0bb2-76d2-5b23-88ce-65040f974d3c
+		summarizeBy: sum
+		sourceColumn: lift_top_decile
+
+	column brier
+		dataType: double
+		formatString: 0.000
+		lineageTag: d7153197-2257-53b1-bd14-75133b8f8210
+		summarizeBy: sum
+		sourceColumn: brier
+
+	column log_loss
+		dataType: double
+		formatString: 0.000
+		lineageTag: f7821d77-5b48-56c6-b9f3-e450a43dc281
+		summarizeBy: sum
+		sourceColumn: log_loss
+
+	partition fact_model_province = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(DataPath & "\data\fact_model_province.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"target", type text}, {"target_label", type text}, {"province_short", type text}, {"province", type text}, {"rows", Int64.Type}, {"positive_rate", type number}, {"roc_auc", type number}, {"pr_auc", type number}, {"share_of_fires_in_top_decile", type number}, {"lift_top_decile", type number}, {"brier", type number}, {"log_loss", type number}})
+				in
+				    Typed

@@ -108,8 +108,10 @@ def cell_days(station_files: dict[date, Path | None], cells: pd.DataFrame, clima
         frame.insert(1, "date", pd.Timestamp(day))
         frames.append(frame)
     table = F.add_recent_weather(pd.concat(frames, ignore_index=True))
+    table = F.add_neighbour_weather(table)
     table = table.merge(cells[["cell_id", "lat", "lon", "province", "lightning_share"]], on="cell_id", how="left")
-    return table.merge(climatology, on=["cell_id", "month"], how="left")
+    table = table.merge(climatology, on=["cell_id", "month"], how="left")
+    return F.add_anomalies(table)
 
 
 def same_day_capture(frame: pd.DataFrame, rank_column: str) -> float:

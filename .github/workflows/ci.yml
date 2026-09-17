@@ -19,6 +19,10 @@ jobs:
           cache: pip
       - run: pip install -r requirements-dev.txt
       - run: ruff check .
+      # The Power BI project is generated. If the committed one and the spec have
+      # drifted apart, the dashboard in the repository is not the dashboard the
+      # code describes - and nothing else would notice.
+      - run: python -m powerbi.build_pbip --check
       - run: pytest -q
         env:
           WILDFIRE_OFFLINE: "1"

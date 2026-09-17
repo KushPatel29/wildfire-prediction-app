@@ -1,0 +1,54 @@
+table fact_season_day
+	lineageTag: 164062dc-29bf-54db-87ae-8f2d6c761786
+
+	column date
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: 999fd26e-694e-5b68-b506-e1dc90ad8092
+		summarizeBy: none
+		sourceColumn: date
+
+	column cells
+		dataType: int64
+		formatString: 0
+		lineageTag: 66c825a0-c327-5724-8d5a-d1f28e3c4880
+		summarizeBy: sum
+		sourceColumn: cells
+
+	column detections
+		dataType: int64
+		formatString: 0
+		lineageTag: f8e16ee8-ade0-50ef-9191-f6b4e3449237
+		summarizeBy: sum
+		sourceColumn: detections
+
+	column detections_in_top_decile
+		dataType: int64
+		formatString: 0
+		lineageTag: 199be5cf-c6af-51b0-ada5-3ca16e2562eb
+		summarizeBy: sum
+		sourceColumn: detections_in_top_decile
+
+	column mean_risk
+		dataType: double
+		formatString: 0.0%
+		lineageTag: b7b7dfaa-c7a7-5c8b-a149-88f4fcb4039d
+		summarizeBy: sum
+		sourceColumn: mean_risk
+
+	column mean_fwi
+		dataType: double
+		formatString: #,0.00
+		lineageTag: 6e778053-3fe8-5c58-b06b-d5bfc4df9f8e
+		summarizeBy: sum
+		sourceColumn: mean_fwi
+
+	partition fact_season_day = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(DataPath & "\data\fact_season_day.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"date", type date}, {"cells", Int64.Type}, {"detections", Int64.Type}, {"detections_in_top_decile", Int64.Type}, {"mean_risk", type number}, {"mean_fwi", type number}})
+				in
+				    Typed

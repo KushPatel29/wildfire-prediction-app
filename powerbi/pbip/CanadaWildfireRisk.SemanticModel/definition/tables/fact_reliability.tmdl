@@ -1,0 +1,52 @@
+table fact_reliability
+	lineageTag: d14ec80d-bfc3-555e-9bfe-cca2ba1582c7
+
+	column target
+		dataType: string
+		lineageTag: 3e30ccf2-8ab0-5048-a1a7-a0048a1f24cf
+		summarizeBy: none
+		sourceColumn: target
+
+	column target_label
+		dataType: string
+		lineageTag: 4471253b-5b7e-5588-b21f-fcc1c0f9c1fa
+		summarizeBy: none
+		sourceColumn: target_label
+
+	column decile
+		dataType: int64
+		formatString: 0
+		lineageTag: 44e9b126-6d10-5297-86af-3c2040945dd1
+		summarizeBy: sum
+		sourceColumn: decile
+
+	column predicted
+		dataType: double
+		formatString: #,0.00
+		lineageTag: 0e12deba-617c-5a69-95f8-00c0381c53b1
+		summarizeBy: sum
+		sourceColumn: predicted
+
+	column observed
+		dataType: double
+		formatString: #,0.00
+		lineageTag: 9124eeb7-2c15-5263-8320-9c4f47b469b0
+		summarizeBy: sum
+		sourceColumn: observed
+
+	column rows
+		dataType: int64
+		formatString: 0
+		lineageTag: a036d29b-dff0-5446-b94d-ffcb9913952f
+		summarizeBy: sum
+		sourceColumn: rows
+
+	partition fact_reliability = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(DataPath & "\data\fact_reliability.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"target", type text}, {"target_label", type text}, {"decile", Int64.Type}, {"predicted", type number}, {"observed", type number}, {"rows", Int64.Type}})
+				in
+				    Typed

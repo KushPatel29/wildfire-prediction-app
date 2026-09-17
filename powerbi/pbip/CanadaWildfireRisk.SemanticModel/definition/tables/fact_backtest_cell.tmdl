@@ -1,0 +1,115 @@
+table fact_backtest_cell
+	lineageTag: a64006cc-cd2e-540b-a91f-1d95ab6c3e02
+
+	column cell_id
+		dataType: string
+		lineageTag: 58eda08e-a27e-571a-be13-08bea8ad16db
+		summarizeBy: none
+		sourceColumn: cell_id
+
+	column year
+		dataType: int64
+		formatString: 0
+		lineageTag: 69006dc9-a897-5021-8feb-59d665598d43
+		summarizeBy: sum
+		sourceColumn: year
+
+	column province
+		dataType: string
+		lineageTag: 376f08a2-2bcb-5317-a310-18bb75647fae
+		summarizeBy: none
+		sourceColumn: province
+
+	column lat
+		dataType: double
+		formatString: #,0.00
+		lineageTag: 8ab7134a-b3f7-5e4f-b008-0c567abca5aa
+		summarizeBy: sum
+		sourceColumn: lat
+
+	column lon
+		dataType: double
+		formatString: #,0.00
+		lineageTag: b0fbed1b-7c38-5e64-8fe7-c6f8af9b5f2f
+		summarizeBy: sum
+		sourceColumn: lon
+
+	column days
+		dataType: int64
+		formatString: 0
+		lineageTag: 8c7137e1-01fb-54b9-ab2c-26cfaa032799
+		summarizeBy: sum
+		sourceColumn: days
+
+	column fires
+		dataType: int64
+		formatString: 0
+		lineageTag: 63a09ce3-1327-5eed-afd1-bd9a3f885b49
+		summarizeBy: sum
+		sourceColumn: fires
+
+	column fires_caught
+		dataType: int64
+		formatString: 0
+		lineageTag: 8f8428cf-a7a0-517d-aef5-9314edf1d3b4
+		summarizeBy: sum
+		sourceColumn: fires_caught
+
+	column large_fires
+		dataType: int64
+		formatString: 0
+		lineageTag: b23cf501-9c40-5449-922a-a0f417541d4a
+		summarizeBy: sum
+		sourceColumn: large_fires
+
+	column large_caught
+		dataType: int64
+		formatString: 0
+		lineageTag: 46d2cc85-2122-552b-93ee-0f259fe78f61
+		summarizeBy: sum
+		sourceColumn: large_caught
+
+	column days_flagged
+		dataType: int64
+		formatString: 0
+		lineageTag: 116fbf67-ca1c-51c6-9cad-ac1f9089e5a9
+		summarizeBy: sum
+		sourceColumn: days_flagged
+
+	column mean_risk
+		dataType: double
+		formatString: 0.0%
+		lineageTag: b02406e8-493c-52da-8cb8-328879f51504
+		summarizeBy: sum
+		sourceColumn: mean_risk
+
+	column mean_fwi
+		dataType: double
+		formatString: #,0.00
+		lineageTag: 02bed8b5-bf4a-5a38-a048-8e67408742e0
+		summarizeBy: sum
+		sourceColumn: mean_fwi
+
+	column lightning_fires
+		dataType: int64
+		formatString: 0
+		lineageTag: 85ff70b1-2c95-5c38-8bb5-6a8eb41af57e
+		summarizeBy: sum
+		sourceColumn: lightning_fires
+
+	column human_fires
+		dataType: int64
+		formatString: 0
+		lineageTag: ad900636-16b5-5819-a82d-bc157747f798
+		summarizeBy: sum
+		sourceColumn: human_fires
+
+	partition fact_backtest_cell = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(DataPath & "\data\fact_backtest_cell.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"cell_id", type text}, {"year", Int64.Type}, {"province", type text}, {"lat", type number}, {"lon", type number}, {"days", Int64.Type}, {"fires", Int64.Type}, {"fires_caught", Int64.Type}, {"large_fires", Int64.Type}, {"large_caught", Int64.Type}, {"days_flagged", Int64.Type}, {"mean_risk", type number}, {"mean_fwi", type number}, {"lightning_fires", Int64.Type}, {"human_fires", Int64.Type}})
+				in
+				    Typed

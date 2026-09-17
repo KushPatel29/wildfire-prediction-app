@@ -1,0 +1,67 @@
+relationship 69ff221d-0000-5b39-b1ee-492ebc81f842
+	fromColumn: fact_forecast.cell_id
+	toColumn: dim_cell.cell_id
+
+relationship 6e9a68e9-6d1c-5e1f-8778-165b80b85736
+	fromColumn: fact_forecast.date
+	toColumn: dim_date.date
+
+relationship ebd0c230-2fe6-5c39-b352-f6509c3019d2
+	fromColumn: fact_forecast.province
+	toColumn: dim_province.province
+
+relationship 303cf566-44ad-5ee5-bd30-930a5c2bb27d
+	fromColumn: fact_hotspot.date
+	toColumn: dim_date.date
+
+relationship cf7e982d-df86-52ce-8ed0-9b6b804cd4cd
+	fromColumn: fact_backtest_day.date
+	toColumn: dim_date.date
+
+relationship 9ab07e2d-6157-563b-a10f-c9e8a3871607
+	fromColumn: fact_backtest_cell.cell_id
+	toColumn: dim_cell.cell_id
+
+relationship 5db7c1c6-3da6-51c5-bff1-a6dced6c010b
+	fromColumn: fact_backtest_cell.year
+	toColumn: dim_season.year
+
+relationship f21adc47-c7ab-5b60-9f71-0cfc4975b655
+	fromColumn: fact_backtest_cell.province
+	toColumn: dim_province.province
+
+relationship ccc7d2b4-0498-57d1-8b73-1b71b70689a5
+	fromColumn: fact_fires_year.year
+	toColumn: dim_season.year
+
+relationship 116aa090-e02b-51e3-a3b6-09499e8862ae
+	fromColumn: fact_fires_year.province
+	toColumn: dim_province.province
+
+relationship 37556803-4006-5153-971c-7a91a19eb725
+	fromColumn: fact_fires_month.province
+	toColumn: dim_province.province
+
+relationship 9aa13e32-d35b-5a53-ba3e-ddff2b2e57d8
+	fromColumn: fact_model_year.year
+	toColumn: dim_season.year
+
+relationship 859ec01f-a012-5522-9bed-6fbd4f446b82
+	fromColumn: fact_model_province.province
+	toColumn: dim_province.province
+
+relationship 92825a48-bcfc-5522-b6a1-ffbf13297198
+	fromColumn: fact_season_day.date
+	toColumn: dim_date.date
+
+relationship 7a70d254-05c3-5dab-b547-a2cef5dd2ac3
+	fromColumn: fact_season_cell.cell_id
+	toColumn: dim_cell.cell_id
+
+relationship c8999ba3-c0d9-578f-8fcb-290a886b914a
+	fromColumn: fact_season_cell.province
+	toColumn: dim_province.province
+
+relationship 73187ab4-cbc5-5be4-b09e-abe8902d6983
+	fromColumn: fact_hackathon_month.year
+	toColumn: dim_season.year

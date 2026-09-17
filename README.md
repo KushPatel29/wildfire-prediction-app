@@ -1,7 +1,7 @@
 # Canada Wildfire Risk
 
 [![CI](https://github.com/KushPatel29/wildfire-prediction-app/actions/workflows/ci.yml/badge.svg)](https://github.com/KushPatel29/wildfire-prediction-app/actions/workflows/ci.yml)
-![Tests](https://img.shields.io/badge/tests-76%20passing-3B8C6E)
+![Tests](https://img.shields.io/badge/tests-107%20passing-3B8C6E)
 ![Model](https://img.shields.io/badge/ROC--AUC-0.807%20out%20of%20time-F28C38)
 ![Data](https://img.shields.io/badge/NFDB%20%2B%20CWFIS-4.1M%20cell--days-0B5FA5)
 ![Streamlit](https://img.shields.io/badge/Streamlit-live%20forecast-FF4B4B?logo=streamlit&logoColor=white)
@@ -64,25 +64,27 @@ fires that were actually reported:
 
 The National Fire Database is published a season or more after the fact, so it
 cannot grade 2026. CWFIS's satellite hotspot archive can. Every cell on every day
-from 1 April to 15 September 2026 was scored from that day's station weather, and
+from 1 April to 16 September 2026 was scored from that day's station weather, and
 checked against **new fire activity**: hotspots in a cell that had none in the
-previous 14 days. 936 such cell-days out of 128,757.
+previous 14 days. 941 such cell-days out of 129,528.
 
 | Ranking of 2026 satellite detections | ROC-AUC | New activity in the day's riskiest 10% |
 |---|---:|---:|
-| Large-fire model | **0.724** | 21.2% |
-| FWI alone | 0.719 | **21.7%** |
-| Any-fire model | 0.674 | 20.6% |
-| Normal for the month | 0.596 | 14.7% |
+| Large-fire model | **0.731** | **22.2%** |
+| FWI alone | 0.719 | 21.9% |
+| Any-fire model | 0.692 | 20.8% |
+| Normal for the month | 0.596 | 14.8% |
 
-**FWI alone edges the any-fire model on this label, and that is worth saying rather
-than hiding.** A satellite sees fires big and hot enough to detect from orbit — the
-fires weather drives. The any-fire model is trained on every reported start,
+**FWI alone still edges the any-fire model on this label, and that is worth saying
+rather than hiding.** A satellite sees fires big and hot enough to detect from orbit
+— the fires weather drives. The any-fire model is trained on every reported start,
 including the small human-caused fires near roads and towns that its fire-history
 features exist to find and that satellites rarely see. Scored on the fires
-satellites *can* see, the large-fire model leads on ROC-AUC and is within half a
-point of FWI on same-day capture. The honest summary is that on this season, against
-this label, the model and the index are close, and both are far ahead of climatology.
+satellites *can* see, the large-fire model now leads on both ROC-AUC and same-day
+capture; the any-fire model closed about half the gap to FWI when the count model
+and the anomaly features went in, and is still behind it. The honest summary is that
+on this season, against this label, the model and the index are close, and both are
+far ahead of climatology.
 
 ![2026 season check](docs/screenshots/02-season-check.png)
 
@@ -122,6 +124,56 @@ streamlit run app/streamlit_app.py
 
 The app ships with a forecast snapshot, so it runs with no network. Given one, it
 reads the newest forecast the scheduled GitHub Actions run published.
+
+## The Power BI dashboard
+
+The 2024 project was a Power BI dashboard. So is this one — eight pages over the
+same evidence the app reads, generated rather than clicked together.
+
+| Page | What it answers |
+|---|---|
+| Seven-day fire risk | Which cells are riskiest this week, and how that compares with normal |
+| Canada's fires since 2000 | The record the model learned from, by year, cause, province and month |
+| Out of time: 2020–2024 | What the ranking would have caught, day by day, on seasons it never saw |
+| What it scored, and against what | ROC-AUC, PR-AUC and capture against both baselines, and the calibration curve |
+| Where it works, and where it does not | Province by province, cell by cell, and what the trees split on |
+| This season, graded by satellite | 2026 against CWFIS hotspots, with FWI alone as a competitor |
+| The 2024 model, re-scored | The hackathon random forest, scored the way this repository scores everything |
+| What the evidence says | The four headline numbers and the scoreboard, on one page |
+
+![Seven-day fire risk](powerbi/screenshots/01-seven-day-fire-risk.png)
+
+| | |
+|---|---|
+| ![Canada's fires since 2000](powerbi/screenshots/02-fires-since-2000.png) | ![Out of time: 2020-2024](powerbi/screenshots/03-out-of-time.png) |
+| ![What it scored, and against what](powerbi/screenshots/04-what-it-scored.png) | ![Where it works, and where it does not](powerbi/screenshots/05-where-it-works.png) |
+| ![This season, graded by satellite](powerbi/screenshots/06-this-season.png) | ![The 2024 model, re-scored](powerbi/screenshots/07-the-2024-model.png) |
+
+![What the evidence says](powerbi/screenshots/08-what-the-evidence-says.png)
+
+The semantic model (TMDL) and the report (PBIR) are **generated** from
+[`powerbi/model_spec.py`](powerbi/model_spec.py) and
+[`powerbi/report_spec.py`](powerbi/report_spec.py):
+
+```bash
+python pipelines/powerbi_export.py     # 22 CSVs, each an aggregate of published evidence
+python -m powerbi.build_pbip           # write powerbi/pbip
+python -m powerbi.build_pbip --check   # CI gate: the committed project matches the spec
+```
+
+Nothing on the dashboard recomputes a score. Every measure either aggregates a
+column the Python engines already wrote or divides two of them, and
+`tests/test_the_dashboard_shows_the_same_numbers.py` reconciles each exported
+table against the file it came from — so the 36.7% on the dashboard's first card
+is the same 36.7% as the app's, the README's and `reports/metrics.json`.
+
+Three things this found that Power BI reports as something else entirely: an
+apostrophe in a measure name (`Share of the trees' gain`) fails as *"Invalid
+indentation was detected"* and the project will not open; a month abbreviation
+typed as a date makes every row of the calendar an error with nothing on the
+canvas to say so; and a hotspot timestamp typed as a date matches no day in the
+date table, leaving a relationship that exists and filters nothing. All three are
+now tests.
 
 ## How it works
 

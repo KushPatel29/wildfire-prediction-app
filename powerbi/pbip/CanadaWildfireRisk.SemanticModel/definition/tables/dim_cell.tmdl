@@ -1,0 +1,58 @@
+table dim_cell
+	lineageTag: c587c58c-c853-5ffb-894f-eee5b35c3ce3
+
+	column cell_id
+		dataType: string
+		lineageTag: 8dd3c059-54d2-58fc-be73-f315af07e5e1
+		summarizeBy: none
+		sourceColumn: cell_id
+
+	column lat
+		dataType: double
+		formatString: #,0.00
+		lineageTag: 1802aace-75a4-51b1-ae0e-5f89827cf7f6
+		summarizeBy: sum
+		sourceColumn: lat
+
+	column lon
+		dataType: double
+		formatString: #,0.00
+		lineageTag: 3eaa255f-5e73-5d56-84a4-eb3c02c3365b
+		summarizeBy: sum
+		sourceColumn: lon
+
+	column province
+		dataType: string
+		lineageTag: 71b4594e-807c-5732-98e7-2611470f865c
+		summarizeBy: none
+		sourceColumn: province
+
+	column province_short
+		dataType: string
+		lineageTag: 674a3425-7cb3-52bf-bf2b-077e13e909a8
+		summarizeBy: none
+		sourceColumn: province_short
+
+	column lightning_share
+		dataType: double
+		formatString: 0.0%
+		lineageTag: 735d1afc-5d92-5e8e-8d0f-2a68ce5b9831
+		summarizeBy: sum
+		sourceColumn: lightning_share
+
+	column fires_2000_2016
+		dataType: int64
+		formatString: 0
+		lineageTag: 4afd3d22-6c4f-5624-b48f-3955a727208d
+		summarizeBy: sum
+		sourceColumn: fires_2000_2016
+
+	partition dim_cell = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(DataPath & "\data\dim_cell.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"cell_id", type text}, {"lat", type number}, {"lon", type number}, {"province", type text}, {"province_short", type text}, {"lightning_share", type number}, {"fires_2000_2016", Int64.Type}})
+				in
+				    Typed

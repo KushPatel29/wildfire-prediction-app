@@ -1,0 +1,14 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/pagesMetadata/1.1.0/schema.json",
+  "pageOrder": [
+    "section_forecast",
+    "section_record",
+    "section_backtest",
+    "section_scores",
+    "section_where",
+    "section_season",
+    "section_2024",
+    "section_verdict"
+  ],
+  "activePageName": "section_forecast"
+}

@@ -1,0 +1,73 @@
+table fact_season_cell
+	lineageTag: 41737855-4284-5fc4-929c-278bfe3d9322
+
+	column cell_id
+		dataType: string
+		lineageTag: 192b3365-a75a-54e4-9060-3ce922486d12
+		summarizeBy: none
+		sourceColumn: cell_id
+
+	column province
+		dataType: string
+		lineageTag: 0a50ecb1-6373-5377-96fe-a744265364e9
+		summarizeBy: none
+		sourceColumn: province
+
+	column lat
+		dataType: double
+		formatString: #,0.00
+		lineageTag: 819bade5-8b49-56d4-a12b-5cc00d0c9d65
+		summarizeBy: sum
+		sourceColumn: lat
+
+	column lon
+		dataType: double
+		formatString: #,0.00
+		lineageTag: fc789827-e91d-557c-8e37-094a85845437
+		summarizeBy: sum
+		sourceColumn: lon
+
+	column days
+		dataType: int64
+		formatString: 0
+		lineageTag: 91920080-ef08-5fca-adcc-10ddc15a366a
+		summarizeBy: sum
+		sourceColumn: days
+
+	column detections
+		dataType: int64
+		formatString: 0
+		lineageTag: b81aa830-4921-5347-a9d4-a6e0a6bc0d02
+		summarizeBy: sum
+		sourceColumn: detections
+
+	column days_in_top_decile
+		dataType: int64
+		formatString: 0
+		lineageTag: c4d582ea-55c1-51ba-ac5f-f54b2a225535
+		summarizeBy: sum
+		sourceColumn: days_in_top_decile
+
+	column mean_risk
+		dataType: double
+		formatString: 0.0%
+		lineageTag: 6c1af20d-9cd7-58af-a8f7-22c254329340
+		summarizeBy: sum
+		sourceColumn: mean_risk
+
+	column mean_fwi
+		dataType: double
+		formatString: #,0.00
+		lineageTag: 8e7aec58-957c-56fc-a018-94b5649d152c
+		summarizeBy: sum
+		sourceColumn: mean_fwi
+
+	partition fact_season_cell = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(DataPath & "\data\fact_season_cell.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"cell_id", type text}, {"province", type text}, {"lat", type number}, {"lon", type number}, {"days", Int64.Type}, {"detections", Int64.Type}, {"days_in_top_decile", Int64.Type}, {"mean_risk", type number}, {"mean_fwi", type number}})
+				in
+				    Typed

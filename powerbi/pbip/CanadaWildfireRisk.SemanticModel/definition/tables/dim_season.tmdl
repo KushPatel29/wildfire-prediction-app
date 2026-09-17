@@ -1,0 +1,31 @@
+table dim_season
+	lineageTag: f920aaee-16d8-5177-8aa5-635c0899f3e2
+
+	column year
+		dataType: int64
+		formatString: 0
+		lineageTag: 9341ba9a-4554-5580-a299-9d1003fbb4cf
+		summarizeBy: sum
+		sourceColumn: year
+
+	column season_split
+		dataType: string
+		lineageTag: 946e4f29-fb6e-5895-ac9f-13f3d725d39a
+		summarizeBy: none
+		sourceColumn: season_split
+
+	column decade
+		dataType: string
+		lineageTag: 947dfd19-7fac-5545-a332-808e83dd2449
+		summarizeBy: none
+		sourceColumn: decade
+
+	partition dim_season = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(DataPath & "\data\dim_season.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"year", Int64.Type}, {"season_split", type text}, {"decade", type text}})
+				in
+				    Typed

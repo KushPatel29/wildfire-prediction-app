@@ -1,0 +1,129 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "v0105",
+  "position": {
+    "x": 20,
+    "y": 208,
+    "z": 1014,
+    "height": 246,
+    "width": 620,
+    "tabOrder": 1014
+  },
+  "visual": {
+    "visualType": "scatterChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_cell"
+                    }
+                  },
+                  "Property": "cell_id"
+                }
+              },
+              "queryRef": "dim_cell.cell_id",
+              "nativeQueryRef": "cell_id",
+              "displayName": "Cell ID",
+              "active": true
+            }
+          ]
+        },
+        "X": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Mean FWI"
+                }
+              },
+              "queryRef": "_Measures.Mean FWI",
+              "nativeQueryRef": "Mean FWI"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Mean risk"
+                }
+              },
+              "queryRef": "_Measures.Mean risk",
+              "nativeQueryRef": "Mean risk"
+            }
+          ]
+        },
+        "Size": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Peak risk"
+                }
+              },
+              "queryRef": "_Measures.Peak risk",
+              "nativeQueryRef": "Peak risk"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Every cell: fire weather against modelled risk'"
+                }
+              }
+            },
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Scatter chart titled Every cell: fire weather against modelled risk. One point per grid cell, plotting mean risk against mean Fire Weather Index over the forecast week, sized by the cell's peak risk.'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,171 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "v0809",
+  "position": {
+    "x": 20,
+    "y": 588,
+    "z": 1710,
+    "height": 116,
+    "width": 1240,
+    "tabOrder": 1710
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_model_scores"
+                    }
+                  },
+                  "Property": "target_label"
+                }
+              },
+              "queryRef": "fact_model_scores.target_label",
+              "nativeQueryRef": "target_label",
+              "displayName": "Target label"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_model_scores"
+                    }
+                  },
+                  "Property": "method_label"
+                }
+              },
+              "queryRef": "fact_model_scores.method_label",
+              "nativeQueryRef": "method_label",
+              "displayName": "Method label"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "ROC-AUC out of time"
+                }
+              },
+              "queryRef": "_Measures.ROC-AUC out of time",
+              "nativeQueryRef": "ROC-AUC out of time"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Top-decile capture out of time"
+                }
+              },
+              "queryRef": "_Measures.Top-decile capture out of time",
+              "nativeQueryRef": "Top-decile capture out of time"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Lift out of time"
+                }
+              },
+              "queryRef": "_Measures.Lift out of time",
+              "nativeQueryRef": "Lift out of time"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "_Measures"
+                  }
+                },
+                "Property": "ROC-AUC out of time"
+              }
+            },
+            "direction": "Descending"
+          }
+        ],
+        "isDefaultSort": false
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'The scoreboard, out of time'"
+                }
+              }
+            },
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Table titled The scoreboard out of time. Lists both targets and all three rankings with their ROC-AUC, the share of fires in the riskiest tenth, and the lift over an average cell-day.'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "objects": {
+      "total": [
+        {
+          "properties": {
+            "totals": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            },
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

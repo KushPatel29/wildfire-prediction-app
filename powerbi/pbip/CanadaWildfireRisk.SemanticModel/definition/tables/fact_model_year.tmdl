@@ -1,0 +1,87 @@
+table fact_model_year
+	lineageTag: 9ef656ed-0606-5aba-9444-f7c49cba2103
+
+	column target
+		dataType: string
+		lineageTag: 6fec58aa-99c1-570c-8d71-244e1ad695e0
+		summarizeBy: none
+		sourceColumn: target
+
+	column target_label
+		dataType: string
+		lineageTag: 4d897dc4-10bc-5762-a42b-88b149ab9471
+		summarizeBy: none
+		sourceColumn: target_label
+
+	column year
+		dataType: int64
+		formatString: 0
+		lineageTag: fd926a58-544b-5c7c-9b53-78d8c92d3538
+		summarizeBy: sum
+		sourceColumn: year
+
+	column rows
+		dataType: int64
+		formatString: 0
+		lineageTag: c88f5483-35f3-56f5-968b-607a59337734
+		summarizeBy: sum
+		sourceColumn: rows
+
+	column positive_rate
+		dataType: double
+		formatString: 0.0%
+		lineageTag: ad8581f0-b6fb-5920-a4ab-d8fbd4bf0ebf
+		summarizeBy: sum
+		sourceColumn: positive_rate
+
+	column roc_auc
+		dataType: double
+		formatString: 0.000
+		lineageTag: 3865cf6d-36c6-5826-b307-3333dfa54f11
+		summarizeBy: sum
+		sourceColumn: roc_auc
+
+	column pr_auc
+		dataType: double
+		formatString: 0.000
+		lineageTag: 24738af1-3e3a-5a71-9cd6-831a19ac03d1
+		summarizeBy: sum
+		sourceColumn: pr_auc
+
+	column share_of_fires_in_top_decile
+		dataType: double
+		formatString: 0.0%
+		lineageTag: 5d2c8ef7-4d3b-5537-a36d-876c85fe4504
+		summarizeBy: sum
+		sourceColumn: share_of_fires_in_top_decile
+
+	column lift_top_decile
+		dataType: double
+		formatString: 0.000
+		lineageTag: c0fd2adb-4975-5427-a22f-870cbc59319d
+		summarizeBy: sum
+		sourceColumn: lift_top_decile
+
+	column brier
+		dataType: double
+		formatString: 0.000
+		lineageTag: 38d320f2-dccf-5977-8702-e5cc54432bba
+		summarizeBy: sum
+		sourceColumn: brier
+
+	column log_loss
+		dataType: double
+		formatString: 0.000
+		lineageTag: 28e6e739-a51e-5e91-90cb-e95e11942eb3
+		summarizeBy: sum
+		sourceColumn: log_loss
+
+	partition fact_model_year = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(DataPath & "\data\fact_model_year.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"target", type text}, {"target_label", type text}, {"year", Int64.Type}, {"rows", Int64.Type}, {"positive_rate", type number}, {"roc_auc", type number}, {"pr_auc", type number}, {"share_of_fires_in_top_decile", type number}, {"lift_top_decile", type number}, {"brier", type number}, {"log_loss", type number}})
+				in
+				    Typed

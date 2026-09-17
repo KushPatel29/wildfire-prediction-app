@@ -1,0 +1,75 @@
+table fact_season_month
+	lineageTag: 0436b9d3-1b55-5276-b74a-365e404950e2
+
+	column month
+		dataType: int64
+		formatString: 0
+		lineageTag: 9d083b5f-9df5-5f86-b34a-d8cf9fc221fe
+		summarizeBy: sum
+		sourceColumn: month
+
+	column cell_days
+		dataType: int64
+		formatString: 0
+		lineageTag: e8384d3e-551f-5bbf-8a8f-c0c8cc9442ed
+		summarizeBy: sum
+		sourceColumn: cell_days
+
+	column new_detections
+		dataType: int64
+		formatString: 0
+		lineageTag: 075fd191-fbae-5998-877d-1eb22b0f7411
+		summarizeBy: sum
+		sourceColumn: new_detections
+
+	column model_roc_auc
+		dataType: double
+		formatString: 0.000
+		lineageTag: 3246d419-ca10-5622-8565-cd8edca93e24
+		summarizeBy: sum
+		sourceColumn: model_roc_auc
+
+	column large_fire_model_roc_auc
+		dataType: double
+		formatString: 0.000
+		lineageTag: 09715966-58b0-501a-915a-ad7574322501
+		summarizeBy: sum
+		sourceColumn: large_fire_model_roc_auc
+
+	column climatology_roc_auc
+		dataType: double
+		formatString: 0.000
+		lineageTag: 58969651-1056-5d63-8650-65c18dc4097e
+		summarizeBy: sum
+		sourceColumn: climatology_roc_auc
+
+	column fwi_alone_roc_auc
+		dataType: double
+		formatString: 0.000
+		lineageTag: 3ab72276-daae-55d9-bfb7-283c24154351
+		summarizeBy: sum
+		sourceColumn: fwi_alone_roc_auc
+
+	column year
+		dataType: int64
+		formatString: 0
+		lineageTag: f6e006e9-9edf-54ce-9693-497120c992b7
+		summarizeBy: sum
+		sourceColumn: year
+
+	column month_name
+		dataType: string
+		lineageTag: cff04295-0e4a-519f-b8c5-00dfc0bd5ed4
+		summarizeBy: none
+		sourceColumn: month_name
+		sortByColumn: month
+
+	partition fact_season_month = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(DataPath & "\data\fact_season_month.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"month", Int64.Type}, {"cell_days", Int64.Type}, {"new_detections", Int64.Type}, {"model_roc_auc", type number}, {"large_fire_model_roc_auc", type number}, {"climatology_roc_auc", type number}, {"fwi_alone_roc_auc", type number}, {"year", Int64.Type}, {"month_name", type text}})
+				in
+				    Typed
