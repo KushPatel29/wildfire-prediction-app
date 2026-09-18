@@ -5,7 +5,7 @@
     "x": 950,
     "y": 88,
     "z": 1013,
-    "height": 107,
+    "height": 104,
     "width": 310,
     "tabOrder": 1013
   },
@@ -30,7 +30,7 @@
                       "Entity": "_Measures"
                     }
                   },
-                  "Property": "KPI SVG Hotspots in the last two days | Forecast reference @324"
+                  "Property": "KPI SVG Hotspots in the last two days | Forecast reference @334"
                 }
               }
             },

@@ -5,7 +5,7 @@
     "x": 350,
     "y": 88,
     "z": 1011,
-    "height": 107,
+    "height": 104,
     "width": 290,
     "tabOrder": 1011
   },
@@ -30,7 +30,7 @@
                       "Entity": "_Measures"
                     }
                   },
-                  "Property": "KPI SVG Peak risk @304"
+                  "Property": "KPI SVG Peak risk @312"
                 }
               }
             },

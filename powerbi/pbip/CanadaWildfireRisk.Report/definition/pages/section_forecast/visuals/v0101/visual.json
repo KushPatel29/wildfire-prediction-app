@@ -5,7 +5,7 @@
     "x": 20,
     "y": 88,
     "z": 1010,
-    "height": 107,
+    "height": 104,
     "width": 320,
     "tabOrder": 1010
   },
@@ -30,7 +30,7 @@
                       "Entity": "_Measures"
                     }
                   },
-                  "Property": "KPI SVG Cells in the riskiest tenth | Riskiest tenth reference @335"
+                  "Property": "KPI SVG Cells in the riskiest tenth | Riskiest tenth reference @345"
                 }
               }
             },

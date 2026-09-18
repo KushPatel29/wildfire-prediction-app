@@ -318,18 +318,40 @@ MEASURES: list[tuple[str, str, str, str]] = [
      "", "07 Reference"),
 
     # --- the verdict each page opens with ----------------------------------
+    # Calibrated risk comes in plateaus, so the peak is usually shared: on the
+    # 16 September forecast six cells in three provinces sat at 11.4%, and a
+    # TOPN(1) broken by cell id named Ontario alone. Every province at the
+    # peak is named. And the riskiest tenth is 78 cells a day; over a week it
+    # is however many cells made it on any day, which is what gets said.
     ("Forecast verdict",
      "VAR vCells = [Cells in the riskiest tenth]\n"
+     "VAR vDays = DISTINCTCOUNT(fact_forecast[date])\n"
      "VAR vPeak = [Peak risk]\n"
      "VAR vNormal = [Risk against normal]\n"
-     "VAR vTop =\n"
-     "    MAXX(TOPN(1, VALUES(fact_forecast[cell_id]), [Peak risk], DESC, fact_forecast[cell_id], ASC),"
-     " CALCULATE(SELECTEDVALUE(fact_forecast[province])))\n"
+     "VAR vAtPeak = FILTER(VALUES(fact_forecast[cell_id]), [Peak risk] = vPeak)\n"
+     "VAR vPeakCells = COUNTROWS(vAtPeak)\n"
+     "VAR vPlaces = CALCULATETABLE(VALUES(fact_forecast[province]), vAtPeak)\n"
+     "VAR vPlaceCount = COUNTROWS(vPlaces)\n"
+     "VAR vFirst = CONCATENATEX(TOPN(1, vPlaces, fact_forecast[province], ASC), fact_forecast[province])\n"
+     "VAR vLast = CONCATENATEX(TOPN(1, vPlaces, fact_forecast[province], DESC), fact_forecast[province])\n"
+     "VAR vMiddle = CONCATENATEX(FILTER(vPlaces, fact_forecast[province] <> vFirst"
+     " && fact_forecast[province] <> vLast), fact_forecast[province], \", \", fact_forecast[province], ASC)\n"
+     "VAR vWhere = SWITCH(TRUE(),\n"
+     "    vPlaceCount = 1, vFirst,\n"
+     "    vPlaceCount = 2, vFirst & \" and \" & vLast,\n"
+     "    vPlaceCount = 3, vFirst & \", \" & vMiddle & \" and \" & vLast,\n"
+     "    FORMAT(vPlaceCount, \"0\") & \" provinces and territories\")\n"
      "RETURN\n"
-     "    \"The riskiest \" & FORMAT(vCells, \"#,0\") & \" cells hold the day's highest chance of a new fire,\""
-     " & \" peaking at \" & FORMAT(vPeak, \"0.0%\") & IF(ISBLANK(vTop), \"\", \" in \" & vTop)"
-     " & \". Across the grid the forecast runs at \" & FORMAT(vNormal, \"0.0\")"
-     " & \"x the normal rate for this month.\"",
+     "    IF(ISBLANK(vPeak), BLANK(),\n"
+     "        IF(vDays = 1,\n"
+     "            FORMAT(vCells, \"#,0\") & \" cells make the day's riskiest tenth\",\n"
+     "            FORMAT(vCells, \"#,0\") & \" cells make the riskiest tenth on at least one of these \""
+     " & FORMAT(vDays, \"0\") & \" days\")\n"
+     "        & \". The highest chance of a new fire is \" & FORMAT(vPeak, \"0.0%\")\n"
+     "        & IF(vPeakCells > 1, \", shared by \" & FORMAT(vPeakCells, \"0\") & \" cells in \", \" in \")"
+     " & vWhere\n"
+     "        & \". Across the grid the forecast runs at \" & FORMAT(vNormal, \"0.0\")"
+     " & \"x the normal rate for this month.\")",
      "", "08 Verdict"),
     ("Backtest verdict",
      "\"Ranked fresh every morning, the riskiest tenth of cells held \" & FORMAT([Same-day capture], \"0.0%\")"

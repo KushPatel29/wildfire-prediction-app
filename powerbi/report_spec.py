@@ -58,13 +58,13 @@ PAGES: list[dict] = [
             {"type": "scatter", "category": "dim_cell[cell_id]", "x": "[Mean FWI]",
              "y": ["[Mean risk]"], "size": "[Peak risk]",
              "title": "Every cell: fire weather against modelled risk",
-             "pos": (20, ROW1_Y, 620, 272),
+             "pos": (20, ROW1_Y, 620, 256),
              "alt": "Scatter chart titled Every cell: fire weather against modelled risk. "
                     "One point per grid cell, plotting mean risk against mean Fire Weather "
                     "Index over the forecast week, sized by the cell's peak risk."},
             {"type": "line", "x": "fact_forecast[lead_days]", "y": ["[Peak risk]", "[Mean risk]"],
              "title": "The week ahead, day by day",
-             "pos": (654, ROW1_Y, 606, 272),
+             "pos": (654, ROW1_Y, 606, 256),
              "alt": "Line chart titled The week ahead day by day. Plots the peak and the "
                     "mean chance of a new fire by lead day, from the latest observed station "
                     "day through seven forecast days. Both are probabilities, so they share "
@@ -72,7 +72,7 @@ PAGES: list[dict] = [
 
             {"type": "column", "x": "dim_province[province_short]", "y": ["[Mean risk]"],
              "title": "Where the risk sits this week",
-             "pos": (20, ROW2_Y, 500, 180),
+             "pos": (20, ROW2_Y - 16, 500, 164),
              "alt": "Bar chart titled Where the risk sits this week. Plots mean risk by "
                     "province or territory."},
             {"type": "table",
@@ -81,22 +81,24 @@ PAGES: list[dict] = [
              "sort": ("[Peak risk]", "Descending"),
              "totals": False,
              "title": "The cells to watch",
-             "pos": (534, ROW2_Y, 726, 180),
+             "pos": (534, ROW2_Y - 16, 726, 164),
              "alt": "Table titled The cells to watch. Lists each grid cell with its peak "
                     "new-fire risk, peak large-fire risk, mean Fire Weather Index and how "
                     "that risk compares with the cell's normal rate for the month."},
 
             {"type": "narrative", "field": "[Forecast verdict]",
              "title": "What the forecast is saying",
-             "pos": (20, ROW2_Y + 190, FULL_W, 68),
+             # Two lines: the sentence names every province at the peak, and
+             # three long names do not fit on one.
+             "pos": (20, ROW2_Y + 158, FULL_W, 116),
              "alt": "Narrative. A sentence generated from the measures on this page: how "
                     "many cells are in the day's riskiest tenth, the peak risk and where it "
                     "is, and how the week compares with the normal rate for the month."},
             {"type": "slicer", "field": "dim_province[province]", "title": "Province or territory",
-             "pos": (1068, ROW2_Y, 192, 76),
+             "pos": (1068, ROW2_Y - 16, 192, 76),
              "alt": "Slicer. Filters the page by province or territory."},
             {"type": "slicer", "field": "fact_forecast[lead_days]", "title": "Lead day",
-             "pos": (1068, ROW2_Y + 86, 192, 76),
+             "pos": (1068, ROW2_Y + 70, 192, 76),
              "alt": "Slicer. Filters the page by lead day, 0 for the latest observed day."},
         ],
     },

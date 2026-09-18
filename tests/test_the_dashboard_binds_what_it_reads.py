@@ -238,6 +238,24 @@ def test_each_headline_names_the_slice_it_shows():
             assert 'method] = "model"' in dax or 'method] = "model"' in dax.replace(" ", ""), name
 
 
+def test_the_forecast_verdict_names_every_province_at_the_peak(headers):
+    """Calibrated risk comes in plateaus, so the day's peak is usually shared.
+    On the 16 September forecast six cells in Alberta, British Columbia and
+    Ontario sat at 11.4%; the verdict took one cell with TOPN(1), broke the tie
+    by cell id, and said Ontario. It also called 119 cells "the day's" riskiest
+    when that was eight days' worth: a day's tenth is 78."""
+    dax = {name: expression for name, expression, *_ in MEASURES}["Forecast verdict"]
+    assert "TOPN(1, VALUES(fact_forecast[cell_id])" not in dax
+    assert "[Peak risk] = vPeak" in dax, "the cells at the peak are all of them"
+    assert "CONCATENATEX" in dax and "VALUES(fact_forecast[province])" in dax
+    assert "on at least one of these" in dax, "several days are not one day"
+
+    forecast = pd.read_csv(DATA / "fact_forecast.csv", usecols=["date", "risk"])
+    assert forecast["risk"].nunique() < len(forecast) / 10, (
+        "isotonic calibration should leave plateaus; if it no longer does, "
+        "this test's premise has changed")
+
+
 def test_the_committed_project_matches_the_spec(tmp_path):
     """`python -m powerbi.build_pbip` is the only way the project is written; a
     hand-edit in Desktop would be silently overwritten by the next build."""

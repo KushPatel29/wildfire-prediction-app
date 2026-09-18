@@ -449,12 +449,29 @@ table _Measures
 
 	measure 'Forecast verdict' =
 			VAR vCells = [Cells in the riskiest tenth]
+			VAR vDays = DISTINCTCOUNT(fact_forecast[date])
 			VAR vPeak = [Peak risk]
 			VAR vNormal = [Risk against normal]
-			VAR vTop =
-			    MAXX(TOPN(1, VALUES(fact_forecast[cell_id]), [Peak risk], DESC, fact_forecast[cell_id], ASC), CALCULATE(SELECTEDVALUE(fact_forecast[province])))
+			VAR vAtPeak = FILTER(VALUES(fact_forecast[cell_id]), [Peak risk] = vPeak)
+			VAR vPeakCells = COUNTROWS(vAtPeak)
+			VAR vPlaces = CALCULATETABLE(VALUES(fact_forecast[province]), vAtPeak)
+			VAR vPlaceCount = COUNTROWS(vPlaces)
+			VAR vFirst = CONCATENATEX(TOPN(1, vPlaces, fact_forecast[province], ASC), fact_forecast[province])
+			VAR vLast = CONCATENATEX(TOPN(1, vPlaces, fact_forecast[province], DESC), fact_forecast[province])
+			VAR vMiddle = CONCATENATEX(FILTER(vPlaces, fact_forecast[province] <> vFirst && fact_forecast[province] <> vLast), fact_forecast[province], ", ", fact_forecast[province], ASC)
+			VAR vWhere = SWITCH(TRUE(),
+			    vPlaceCount = 1, vFirst,
+			    vPlaceCount = 2, vFirst & " and " & vLast,
+			    vPlaceCount = 3, vFirst & ", " & vMiddle & " and " & vLast,
+			    FORMAT(vPlaceCount, "0") & " provinces and territories")
 			RETURN
-			    "The riskiest " & FORMAT(vCells, "#,0") & " cells hold the day's highest chance of a new fire," & " peaking at " & FORMAT(vPeak, "0.0%") & IF(ISBLANK(vTop), "", " in " & vTop) & ". Across the grid the forecast runs at " & FORMAT(vNormal, "0.0") & "x the normal rate for this month."
+			    IF(ISBLANK(vPeak), BLANK(),
+			        IF(vDays = 1,
+			            FORMAT(vCells, "#,0") & " cells make the day's riskiest tenth",
+			            FORMAT(vCells, "#,0") & " cells make the riskiest tenth on at least one of these " & FORMAT(vDays, "0") & " days")
+			        & ". The highest chance of a new fire is " & FORMAT(vPeak, "0.0%")
+			        & IF(vPeakCells > 1, ", shared by " & FORMAT(vPeakCells, "0") & " cells in ", " in ") & vWhere
+			        & ". Across the grid the forecast runs at " & FORMAT(vNormal, "0.0") & "x the normal rate for this month.")
 		lineageTag: 578ec2bc-fa74-5129-a7ab-9515da5c7d06
 		displayFolder: 08 Verdict
 
@@ -491,13 +508,13 @@ table _Measures
 		lineageTag: 8e126d7d-e8ee-5e37-b0ed-f3e888a7c6ac
 		displayFolder: Report UI
 
-	measure 'KPI SVG Cells in the riskiest tenth | Riskiest tenth reference @335' =
+	measure 'KPI SVG Cells in the riskiest tenth | Riskiest tenth reference @345' =
 			VAR vValue = [Cells in the riskiest tenth]
 			VAR vShown = IF(ISBLANK(vValue), "—", FORMAT(vValue, "#,0"))
 			VAR vCaptionRaw = SUBSTITUTE(SUBSTITUTE(COALESCE([Riskiest tenth reference], ""), "&", "&amp;"), "<", "&lt;")
-			VAR vCaption = IF(LEN(vCaptionRaw) > 66, LEFT(vCaptionRaw, 64) & "…", vCaptionRaw)
+			VAR vCaption = IF(LEN(vCaptionRaw) > 68, LEFT(vCaptionRaw, 66) & "…", vCaptionRaw)
 			VAR vSvg =
-			    "<svg xmlns='http://www.w3.org/2000/svg' width='335' height='112' viewBox='0 0 335 112'>"
+			    "<svg xmlns='http://www.w3.org/2000/svg' width='345' height='112' viewBox='0 0 345 112'>"
 			        & "<rect x='0' y='18' width='3' height='76' rx='1.5' fill='#3987e5'/>"
 			        & "<text x='16' y='28' font-family='Segoe UI' font-size='11' fill='#a6a6ad'>Cells in the riskiest tenth</text>"
 			        & "<text x='16' y='64' font-family='Segoe UI Light' font-size='30' fill='#f2f2f4'>" & vShown & "</text>"
@@ -506,57 +523,57 @@ table _Measures
 			        & "</svg>"
 			RETURN
 			    "data:image/svg+xml;utf8," & SUBSTITUTE(SUBSTITUTE(vSvg, "%", "%25"), "#", "%23")
-		lineageTag: 283763b6-f3c0-5944-a0ef-bd1058815b6a
+		lineageTag: de04cdc1-9b6f-529c-aa13-3347c1419a53
 		dataCategory: ImageUrl
 		displayFolder: Report UI
 
-	measure 'KPI SVG Peak risk @304' =
+	measure 'KPI SVG Peak risk @312' =
 			VAR vValue = [Peak risk]
 			VAR vShown = IF(ISBLANK(vValue), "—", FORMAT(vValue, "0.0%"))
 			VAR vCaptionRaw = ""
-			VAR vCaption = IF(LEN(vCaptionRaw) > 59, LEFT(vCaptionRaw, 57) & "…", vCaptionRaw)
-			VAR vRail = ROUND(272 * MAX(0, MIN(1, COALESCE(vValue, 0))), 0)
+			VAR vCaption = IF(LEN(vCaptionRaw) > 61, LEFT(vCaptionRaw, 59) & "…", vCaptionRaw)
+			VAR vRail = ROUND(280 * MAX(0, MIN(1, COALESCE(vValue, 0))), 0)
 			VAR vSvg =
-			    "<svg xmlns='http://www.w3.org/2000/svg' width='304' height='112' viewBox='0 0 304 112'>"
+			    "<svg xmlns='http://www.w3.org/2000/svg' width='312' height='112' viewBox='0 0 312 112'>"
 			        & "<rect x='0' y='18' width='3' height='76' rx='1.5' fill='#3987e5'/>"
 			        & "<text x='16' y='28' font-family='Segoe UI' font-size='11' fill='#a6a6ad'>Peak risk</text>"
 			        & "<text x='16' y='64' font-family='Segoe UI Light' font-size='30' fill='#f2f2f4'>" & vShown & "</text>"
-			        & "<rect x='16' y='76' width='272' height='6' rx='3' fill='#26262a'/>" & "<rect x='16' y='76' width='" & vRail & "' height='6' rx='3' fill='#3987e5'/>"
+			        & "<rect x='16' y='76' width='280' height='6' rx='3' fill='#26262a'/>" & "<rect x='16' y='76' width='" & vRail & "' height='6' rx='3' fill='#3987e5'/>"
 			        & "<text x='16' y='100' font-family='Segoe UI' font-size='10' fill='#7d7d85'>" & vCaption & "</text>"
 			        & "</svg>"
 			RETURN
 			    "data:image/svg+xml;utf8," & SUBSTITUTE(SUBSTITUTE(vSvg, "%", "%25"), "#", "%23")
-		lineageTag: c79bc94a-9357-52c7-bb90-67b42a182492
+		lineageTag: 26069658-1e01-5f66-9a8c-b3f992ddbfcc
 		dataCategory: ImageUrl
 		displayFolder: Report UI
 
-	measure 'KPI SVG Peak large-fire risk @304' =
+	measure 'KPI SVG Peak large-fire risk @312' =
 			VAR vValue = [Peak large-fire risk]
 			VAR vShown = IF(ISBLANK(vValue), "—", FORMAT(vValue, "0.00%"))
 			VAR vCaptionRaw = ""
-			VAR vCaption = IF(LEN(vCaptionRaw) > 59, LEFT(vCaptionRaw, 57) & "…", vCaptionRaw)
-			VAR vRail = ROUND(272 * MAX(0, MIN(1, COALESCE(vValue, 0))), 0)
+			VAR vCaption = IF(LEN(vCaptionRaw) > 61, LEFT(vCaptionRaw, 59) & "…", vCaptionRaw)
+			VAR vRail = ROUND(280 * MAX(0, MIN(1, COALESCE(vValue, 0))), 0)
 			VAR vSvg =
-			    "<svg xmlns='http://www.w3.org/2000/svg' width='304' height='112' viewBox='0 0 304 112'>"
+			    "<svg xmlns='http://www.w3.org/2000/svg' width='312' height='112' viewBox='0 0 312 112'>"
 			        & "<rect x='0' y='18' width='3' height='76' rx='1.5' fill='#3987e5'/>"
 			        & "<text x='16' y='28' font-family='Segoe UI' font-size='11' fill='#a6a6ad'>Peak large-fire risk</text>"
 			        & "<text x='16' y='64' font-family='Segoe UI Light' font-size='30' fill='#f2f2f4'>" & vShown & "</text>"
-			        & "<rect x='16' y='76' width='272' height='6' rx='3' fill='#26262a'/>" & "<rect x='16' y='76' width='" & vRail & "' height='6' rx='3' fill='#3987e5'/>"
+			        & "<rect x='16' y='76' width='280' height='6' rx='3' fill='#26262a'/>" & "<rect x='16' y='76' width='" & vRail & "' height='6' rx='3' fill='#3987e5'/>"
 			        & "<text x='16' y='100' font-family='Segoe UI' font-size='10' fill='#7d7d85'>" & vCaption & "</text>"
 			        & "</svg>"
 			RETURN
 			    "data:image/svg+xml;utf8," & SUBSTITUTE(SUBSTITUTE(vSvg, "%", "%25"), "#", "%23")
-		lineageTag: fd400411-bd60-5d7a-81ff-3bfa81e4680a
+		lineageTag: cee3ff6d-e86d-5910-b7cc-a9329c4b2a95
 		dataCategory: ImageUrl
 		displayFolder: Report UI
 
-	measure 'KPI SVG Hotspots in the last two days | Forecast reference @324' =
+	measure 'KPI SVG Hotspots in the last two days | Forecast reference @334' =
 			VAR vValue = [Hotspots in the last two days]
 			VAR vShown = IF(ISBLANK(vValue), "—", FORMAT(vValue, "#,0"))
 			VAR vCaptionRaw = SUBSTITUTE(SUBSTITUTE(COALESCE([Forecast reference], ""), "&", "&amp;"), "<", "&lt;")
-			VAR vCaption = IF(LEN(vCaptionRaw) > 64, LEFT(vCaptionRaw, 62) & "…", vCaptionRaw)
+			VAR vCaption = IF(LEN(vCaptionRaw) > 66, LEFT(vCaptionRaw, 64) & "…", vCaptionRaw)
 			VAR vSvg =
-			    "<svg xmlns='http://www.w3.org/2000/svg' width='324' height='112' viewBox='0 0 324 112'>"
+			    "<svg xmlns='http://www.w3.org/2000/svg' width='334' height='112' viewBox='0 0 334 112'>"
 			        & "<rect x='0' y='18' width='3' height='76' rx='1.5' fill='#3987e5'/>"
 			        & "<text x='16' y='28' font-family='Segoe UI' font-size='11' fill='#a6a6ad'>Hotspots in the last two days</text>"
 			        & "<text x='16' y='64' font-family='Segoe UI Light' font-size='30' fill='#f2f2f4'>" & vShown & "</text>"
@@ -565,7 +582,7 @@ table _Measures
 			        & "</svg>"
 			RETURN
 			    "data:image/svg+xml;utf8," & SUBSTITUTE(SUBSTITUTE(vSvg, "%", "%25"), "#", "%23")
-		lineageTag: 43d47c74-087a-5046-b1aa-e18c2d2841ae
+		lineageTag: fe3f578a-a552-5b2d-ab0d-17f761b0b28a
 		dataCategory: ImageUrl
 		displayFolder: Report UI
 

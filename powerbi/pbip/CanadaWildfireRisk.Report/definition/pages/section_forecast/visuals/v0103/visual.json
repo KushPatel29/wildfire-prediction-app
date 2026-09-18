@@ -5,7 +5,7 @@
     "x": 650,
     "y": 88,
     "z": 1012,
-    "height": 107,
+    "height": 104,
     "width": 290,
     "tabOrder": 1012
   },
@@ -30,7 +30,7 @@
                       "Entity": "_Measures"
                     }
                   },
-                  "Property": "KPI SVG Peak large-fire risk @304"
+                  "Property": "KPI SVG Peak large-fire risk @312"
                 }
               }
             },
