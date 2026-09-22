@@ -36,7 +36,9 @@ REPO_URL = "https://github.com/KushPatel29/wildfire-prediction-app"
 RELEASE_URL = f"{REPO_URL}/releases/download/live-forecast"
 STALE_HOURS = 30
 SEASON_YEAR = 2026
-CELLS_IN_GRID = 771
+# Read from the grid, not typed: it was 771 until the fire-to-cell fix of 22 September
+# 2026 moved every fire into its own cell and the grid became 753.
+CELLS_IN_GRID = len(pd.read_parquet(MODELS / "cells.parquet", columns=["cell_id"]))
 TOP_CELLS = math.ceil(0.10 * CELLS_IN_GRID)      # the day's riskiest tenth, as the evidence counts it
 
 TEXT = "#E9E6E1"

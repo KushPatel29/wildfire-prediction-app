@@ -321,7 +321,7 @@ MEASURES: list[tuple[str, str, str, str]] = [
     # Calibrated risk comes in plateaus, so the peak is usually shared: on the
     # 16 September forecast six cells in three provinces sat at 11.4%, and a
     # TOPN(1) broken by cell id named Ontario alone. Every province at the
-    # peak is named. And the riskiest tenth is 78 cells a day; over a week it
+    # peak is named. And the riskiest tenth is a tenth of the cells a day; over a week it
     # is however many cells made it on any day, which is what gets said.
     ("Forecast verdict",
      "VAR vCells = [Cells in the riskiest tenth]\n"

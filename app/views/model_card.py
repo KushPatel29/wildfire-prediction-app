@@ -10,7 +10,7 @@ sh.page_style()
 st.title("Model card")
 metrics = sh.load_metrics()
 train, valid = metrics["train_years"], metrics["validation_years"]
-sh.kicker(f"Two gradient-boosted classifiers over 771 one-degree cells and every fire-season day. Trained on "
+sh.kicker(f"Two gradient-boosted classifiers over {sh.CELLS_IN_GRID} one-degree cells and every fire-season day. Trained on "
           f"{train[0]}–{train[1]}, calibrated and early-stopped on {valid[0]}–{valid[1]}, tested once on "
           f"{metrics['test_from']}–2024.")
 
@@ -125,7 +125,7 @@ st.markdown(
 - **Weather.** CWFIS noon observations from about 3,200 stations with the official FWI System codes, where CWFIS
   computed them from the station's own record. Each cell takes an inverse-distance-weighted average of up to four
   stations within 200 km, variable by variable.
-- **Cells.** 1° cells with at least ten fires in 2000–2016 - 771 of them, holding almost all of Canada's recorded
+- **Cells.** 1° cells with at least ten fires in 2000–2016 - CELLS_IN_GRID of them, holding almost all of Canada's recorded
   fires outside the far north.
 - **Features.** {len(metrics['features'])} per cell-day: the day's weather and codes, vapour pressure deficit,
   3- to 30-day windows of FWI, humidity, drought and rain, days since rain, the week's change in Drought Code,
@@ -138,7 +138,7 @@ st.markdown(
   once, afterwards.
 - **Split by season, never by row.** A random split would put a July day in training and the next July day in
   test, and the weather they share would inflate every score.
-"""
+""".replace("CELLS_IN_GRID", str(sh.CELLS_IN_GRID))
 )
 st.subheader("Limits")
 st.markdown(

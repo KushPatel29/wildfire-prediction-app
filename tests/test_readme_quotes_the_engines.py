@@ -47,7 +47,7 @@ def quoted(readme: str, needle: str) -> bool:
 def test_the_readme_is_the_real_one(readme):
     """Guards against every assertion below passing on a stub."""
     assert len(readme) > 8000
-    assert "Four things that would have been silently wrong" in readme
+    assert "Five things that would have been silently wrong" in readme
 
 
 @pytest.mark.parametrize("target", ["has_fire", "has_large_fire"])

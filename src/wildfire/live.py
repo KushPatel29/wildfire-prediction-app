@@ -39,7 +39,7 @@ FORECAST_DAYS = 7
 BATCH = 90
 TIMEOUT = 45
 # Open-Meteo's free tier allows 600 calls a minute and counts every location in a
-# multi-location request as a call. 771 cells in one burst trips it; 400 a minute
+# multi-location request as a call. The grid's ~750 cells in one burst trips it; 400 a minute
 # does not, and costs about two minutes per forecast.
 LOCATIONS_PER_MINUTE = 400
 RATE_LIMIT_WAIT = 61

@@ -41,7 +41,7 @@ cols[0].metric("New fire activity, cell-days", f"{report['new_detections']:,}", 
                help=f"Out of {report['cell_days']:,} cell-days ({sh.pct(report['positive_rate'], 1)}).")
 cols[1].metric("Any-fire model, top 10%", sh.pct(daily_share["model"], 1),
                delta=points("model", "climatology"), border=True,
-               help="Each morning the 771 cells are ranked; this is the share of new activity that appeared in the "
+               help=f"Each morning the {sh.CELLS_IN_GRID} cells are ranked; this is the share of new activity that appeared in the "
                     f"top {sh.TOP_CELLS}. Picking cells at random would catch 10%.")
 cols[2].metric("Large-fire model, top 10%", sh.pct(daily_share["large_fire_model"], 1),
                delta=points("large_fire_model", "fwi_alone"), border=True,

@@ -41,9 +41,9 @@ PAGES: list[dict] = [
         "visuals": [
             {"type": "card", "field": "[Cells in the riskiest tenth]",
              "subtitle": "[Riskiest tenth reference]", "pos": (20, CARD_Y, 320, CARD_H),
-             "alt": "Card. How many cells sit in the day's riskiest tenth, out of the "
-                    "771 in the grid, and how that compares with the normal rate for "
-                    "the month."},
+             "alt": "Card. How many cells sit in the day's riskiest tenth, out of all "
+                    "the cells in the grid, and how that compares with the normal rate "
+                    "for the month."},
             {"type": "card", "field": "[Peak risk]", "pos": (350, CARD_Y, 290, CARD_H),
              "alt": "Card. The highest probability of a new fire in any cell over the "
                     "forecast week."},

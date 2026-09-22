@@ -99,7 +99,7 @@ st.dataframe(by_year.reset_index()[["year", "fires", "share", "large", "large_sh
                  "large_share": st.column_config.NumberColumn("In the day's riskiest 10% (large-fire model)", format="percent"),
                  "auc": st.column_config.NumberColumn("ROC-AUC", format="%.3f"),
              })
-st.caption("\"The day's riskiest 10%\" ranks the 771 cells afresh every morning, the way crews would be positioned. "
+st.caption(f"\"The day's riskiest 10%\" ranks the {sh.CELLS_IN_GRID} cells afresh every morning, the way crews would be positioned. "
            "The model card's pooled figures rank all cell-days of the season together, which also rewards knowing "
            "July is busier than April, so they run higher.")
 sh.sources_footer()

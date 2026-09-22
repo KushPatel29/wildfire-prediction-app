@@ -1,41 +1,41 @@
 target,target_label,feature,gain
-has_fire,Any new fire,clim_month_rate,0.35633681137957135
-has_fire,Any new fire,clim_cell_rate,0.13426862280115098
-has_fire,Any new fire,vpd_mean_3d,0.08797129367826374
-has_fire,Any new fire,fwi_neighbour,0.02818035923721135
-has_fire,Any new fire,temp_mean_3d,0.027333341289692996
-has_fire,Any new fire,vpd,0.024513028078124038
-has_fire,Any new fire,temp_anom,0.022745694843126097
-has_fire,Any new fire,lat,0.01951555989670634
-has_fire,Any new fire,vpd_max_7d,0.01860710281163628
-has_fire,Any new fire,doy_cos,0.017456215946418684
-has_fire,Any new fire,doy_sin,0.015224450954426741
-has_fire,Any new fire,lightning_share,0.013910361513598422
-has_fire,Any new fire,dmc,0.012678690930730001
-has_fire,Any new fire,lon,0.01218298616111137
-has_fire,Any new fire,fwi_anom,0.011998986310719838
-has_fire,Any new fire,station_km,0.011551872384282192
-has_fire,Any new fire,fwi,0.010415233072159186
-has_fire,Any new fire,dc_neighbour,0.009175976873393802
-has_fire,Any new fire,rh_mean_3d,0.009023966077461592
-has_fire,Any new fire,temp,0.008490182080934612
-has_large_fire,A fire past 200 ha,temp_mean_3d,0.08930251660633709
-has_large_fire,A fire past 200 ha,vpd_mean_3d,0.08031725252763901
-has_large_fire,A fire past 200 ha,vpd_max_7d,0.07386947111406274
-has_large_fire,A fire past 200 ha,doy_cos,0.07276616099600647
-has_large_fire,A fire past 200 ha,clim_month_rate,0.0550865318479764
-has_large_fire,A fire past 200 ha,lightning_share,0.0428866408393804
-has_large_fire,A fire past 200 ha,temp,0.03819075882301416
-has_large_fire,A fire past 200 ha,lat,0.03130483216516369
-has_large_fire,A fire past 200 ha,doy_sin,0.025912052556989053
-has_large_fire,A fire past 200 ha,lon,0.02539143436217615
-has_large_fire,A fire past 200 ha,clim_cell_rate,0.022338313317592097
-has_large_fire,A fire past 200 ha,temp_anom,0.02114241360512817
-has_large_fire,A fire past 200 ha,fwi_neighbour,0.020548489887677563
-has_large_fire,A fire past 200 ha,vpd,0.019345517445708078
-has_large_fire,A fire past 200 ha,dmc,0.017010788738732994
-has_large_fire,A fire past 200 ha,bui,0.016619749228988626
-has_large_fire,A fire past 200 ha,dc_anom,0.016610214247536125
-has_large_fire,A fire past 200 ha,bui_mean_7d,0.015460797569653129
-has_large_fire,A fire past 200 ha,is_weekend,0.014810265252549935
-has_large_fire,A fire past 200 ha,dc_neighbour,0.01455430970206416
+has_fire,Any new fire,clim_month_rate,0.26858241779695896
+has_fire,Any new fire,clim_cell_rate,0.08788158258290325
+has_fire,Any new fire,fwi_neighbour,0.06863939321704307
+has_fire,Any new fire,vpd_mean_3d,0.05585324121702091
+has_fire,Any new fire,dsr,0.03353239274344939
+has_fire,Any new fire,fwi,0.03304087637483241
+has_fire,Any new fire,vpd,0.030774864461272648
+has_fire,Any new fire,fwi_anom,0.025409764728337354
+has_fire,Any new fire,temp_mean_3d,0.024922279839141404
+has_fire,Any new fire,lat,0.022882130922828633
+has_fire,Any new fire,temp_anom,0.019919530714782172
+has_fire,Any new fire,lightning_share,0.019739277697904598
+has_fire,Any new fire,fwi_mean_3d,0.016441168813597057
+has_fire,Any new fire,doy_sin,0.015429615271407564
+has_fire,Any new fire,dmc,0.013767029698459912
+has_fire,Any new fire,lon,0.013660373031853062
+has_fire,Any new fire,temp,0.01309934368812419
+has_fire,Any new fire,rh,0.01222556058348423
+has_fire,Any new fire,dc_anom,0.012068562319852339
+has_fire,Any new fire,isi,0.01182813209795845
+has_large_fire,A fire past 200 ha,vpd_mean_3d,0.17431026567872002
+has_large_fire,A fire past 200 ha,fwi_mean_3d,0.06465075652395093
+has_large_fire,A fire past 200 ha,dmc,0.05263454985961738
+has_large_fire,A fire past 200 ha,vpd_max_7d,0.05112096597519199
+has_large_fire,A fire past 200 ha,fwi_neighbour,0.05070433598791507
+has_large_fire,A fire past 200 ha,vpd,0.0351175624918716
+has_large_fire,A fire past 200 ha,lightning_share,0.03313164323450434
+has_large_fire,A fire past 200 ha,clim_month_rate,0.029082039763958505
+has_large_fire,A fire past 200 ha,doy_cos,0.027347121198792245
+has_large_fire,A fire past 200 ha,lat,0.02713245810606283
+has_large_fire,A fire past 200 ha,temp_mean_3d,0.024172153122845406
+has_large_fire,A fire past 200 ha,temp,0.0234912371392157
+has_large_fire,A fire past 200 ha,doy_sin,0.021901471614016392
+has_large_fire,A fire past 200 ha,lon,0.02148472736689142
+has_large_fire,A fire past 200 ha,fwi_mean_7d,0.020877086075433662
+has_large_fire,A fire past 200 ha,temp_anom,0.020049516834870915
+has_large_fire,A fire past 200 ha,bui,0.01602571828325724
+has_large_fire,A fire past 200 ha,clim_cell_rate,0.016006389078311273
+has_large_fire,A fire past 200 ha,dsr,0.013926325641718475
+has_large_fire,A fire past 200 ha,station_km,0.013735930153601859

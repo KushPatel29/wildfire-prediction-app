@@ -1,5 +1,7 @@
 """The table-building steps the model's features come out of."""
 
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
 import pytest
@@ -23,6 +25,53 @@ def haversine_km(lat1, lon1, lat2, lon2) -> float:
 
 def test_cell_ids_floor_to_the_whole_degree():
     assert F.cell_ids([49.99, 50.0, 60.4], [-123.01, -123.0, -100.5]).tolist() == ["49_-124", "50_-123", "60_-101"]
+
+
+def test_every_fire_keeps_its_own_cell_after_rows_are_dropped():
+    """The NFDB has rows clean_fires drops - bad dates, prescribed burns. The cell
+    ids were assigned with a fresh index to a frame that kept the file's row
+    labels, so from the first dropped row on, every fire took a later fire's
+    cell: 97.7% of the database, and Nova Scotia's fires in the Yukon."""
+    nfdb = pd.DataFrame({
+        "NFDBFIREID": ["a", "b", "c", "d", "e"],
+        "SRC_AGENCY": ["NS", "NS", "BC", "YT", "YT"],
+        "LATITUDE": [44.6, 45.1, 49.2, 60.7, 61.3],
+        "LONGITUDE": [-63.6, -64.2, -123.1, -135.0, -134.2],
+        "YEAR": [2010, 2010, 2010, 2010, 2010],
+        "MONTH": [5, 13, 6, 7, 7],          # 13: an invalid date, dropped
+        "DAY": [1, 1, 1, 1, 2],
+        "PRESCRIBED": ["", "", "Y", "", ""],  # a prescribed burn, dropped
+        "SIZE_HA": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "CAUSE": ["H", "H", "H", "N", "N"],
+    })
+    fires = F.clean_fires(nfdb)
+    assert fires["nfdbfireid"].tolist() == ["a", "d", "e"]
+    assert fires["cell_id"].tolist() == ["44_-64", "60_-135", "61_-135"]
+
+
+def test_the_published_grid_puts_every_province_where_it_is():
+    """A cell's province comes from the agencies that report its fires. With the
+    cells scrambled, 73 'Nova Scotia' cells ran from the Atlantic to the Yukon
+    border. Each province's cells have to sit inside its own extent, give or
+    take the one-degree cell a border runs through."""
+    extents = {   # (lat min, lat max, lon min, lon max), generous by a degree
+        "British Columbia": (47, 61, -140, -113), "Alberta": (48, 61, -121, -109),
+        "Saskatchewan": (48, 61, -111, -100), "Manitoba": (48, 61, -103, -88),
+        "Ontario": (41, 58, -96, -73), "Quebec": (44, 64, -81, -56),
+        "New Brunswick": (44, 49, -70, -63), "Nova Scotia": (42, 48, -67, -59),
+        "Prince Edward Island": (45, 48, -65, -61), "Newfoundland and Labrador": (46, 61, -68, -52),
+        "Yukon": (59, 71, -142, -123), "Northwest Territories": (59, 79, -137, -101),
+        "Nunavut": (59, 84, -121, -60),
+    }
+    cells = pd.read_parquet(Path(__file__).resolve().parent.parent / "models" / "cells.parquet")
+    misplaced = [
+        f"{row.cell_id} {row.province}" for row in cells.itertuples()
+        if row.province in extents and not (
+            extents[row.province][0] <= row.lat <= extents[row.province][1]
+            and extents[row.province][2] <= row.lon <= extents[row.province][3])
+    ]
+    assert not misplaced, f"{len(misplaced)} cells outside their province: {misplaced[:8]}"
+    assert "Other" not in set(cells["province"]), "a Parks Canada cell takes its neighbour's province"
 
 
 def test_station_files_read_as_text_are_cleaned_like_the_typed_archives():

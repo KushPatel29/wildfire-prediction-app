@@ -1,9 +1,9 @@
 # Canada Wildfire Risk
 
 [![CI](https://github.com/KushPatel29/wildfire-prediction-app/actions/workflows/ci.yml/badge.svg)](https://github.com/KushPatel29/wildfire-prediction-app/actions/workflows/ci.yml)
-![Tests](https://img.shields.io/badge/tests-108%20passing-3B8C6E)
-![Model](https://img.shields.io/badge/ROC--AUC-0.807%20out%20of%20time-F28C38)
-![Data](https://img.shields.io/badge/NFDB%20%2B%20CWFIS-4.1M%20cell--days-0B5FA5)
+![Tests](https://img.shields.io/badge/tests-111%20passing-3B8C6E)
+![Model](https://img.shields.io/badge/ROC--AUC-0.881%20out%20of%20time-F28C38)
+![Data](https://img.shields.io/badge/NFDB%20%2B%20CWFIS-4.0M%20cell--days-0B5FA5)
 [![Streamlit](https://img.shields.io/badge/Streamlit-live%20forecast-FF4B4B?logo=streamlit&logoColor=white)](https://wildfire-prediction-app1.streamlit.app)
 ![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
 
@@ -37,27 +37,33 @@ what a fire-danger class table gives an agency today.
 
 | 2020–2024, any new fire | ROC-AUC | PR-AUC | Fires in the riskiest 10% | Lift |
 |---|---:|---:|---:|---:|
-| **This model** | **0.807** | **0.114** | **46.3%** | **4.3×** |
-| Normal for the month | 0.780 | 0.095 | 40.0% | 3.8× |
-| FWI logistic regression | 0.639 | 0.045 | 23.1% | 2.2× |
+| **This model** | **0.881** | **0.196** | **65.8%** | **5.9×** |
+| Normal for the month | 0.822 | 0.117 | 49.7% | 4.4× |
+| FWI logistic regression | 0.736 | 0.064 | 35.0% | 3.1× |
 
 | 2020–2024, a fire that grows past 200 ha | ROC-AUC | PR-AUC | Fires in the riskiest 10% | Lift |
 |---|---:|---:|---:|---:|
-| **This model** | **0.850** | **0.016** | **55.6%** | **5.3×** |
-| Normal for the month | 0.752 | 0.008 | 32.4% | 3.2× |
-| FWI logistic regression | 0.714 | 0.008 | 34.1% | 3.4× |
+| **This model** | **0.926** | **0.028** | **77.9%** | **7.6×** |
+| Normal for the month | 0.710 | 0.006 | 23.0% | 2.2× |
+| FWI logistic regression | 0.853 | 0.013 | 54.4% | 5.4× |
 
-The operational number is the last one re-ranked daily: **rank the 771 cells fresh
-every morning, take the riskiest 78, and 36.7% of the 26,975 fires reported in
+The operational number is the last one re-ranked daily: **rank the 753 cells fresh
+every morning, take the riskiest 76, and 57.5% of the 27,147 fires reported in
 2020–2024 started inside them.** Random cells would hold 10%. Ranking the whole test
-period at once scores higher (46.3%) because it also rewards knowing July is busier
+period at once scores higher (65.8%) because it also rewards knowing July is busier
 than April; both are reported, and which is which is stated on the page.
 
-Calibration is isotonic, fitted on the validation seasons, and it holds through the
-middle of the range on the test seasons: the decile the model calls 2.1% reports a
-fire on 2.1% of days, the 3.1% decile on 3.1%, the 5.4% decile on 5.1%. The riskiest tenth is over-confident
-- 14.7% predicted against 11.1% observed - which the model card shows rather than
-smooths. Brier 0.0233 against a 2.5% base rate.
+These are the numbers after a bug that had put 97.7% of fires in the wrong cell was
+fixed on 22 September 2026 — before it, this table read 0.807 and 36.7%. What it was,
+and why nothing broke, is the fifth item under
+[Five things that would have been silently wrong](#five-things-that-would-have-been-silently-wrong).
+
+Calibration is isotonic, fitted on the validation seasons. On the test seasons it
+holds at the low end and runs a little high above about 2%: the decile the model
+calls 0.9% reports a fire on 0.9% of days, the 1.5% decile on 1.4%, the 2.9% decile
+on 2.5%, the 5.7% decile on 4.8%, and the riskiest tenth is over-confident - 16.5%
+predicted against 14.9% observed - which the model card shows rather than smooths.
+Brier 0.0214 against a 2.5% base rate.
 
 Replaying 1 June 2023 — the day Quebec's lightning bust began. White rings are the
 fires that were actually reported:
@@ -68,27 +74,28 @@ fires that were actually reported:
 
 The National Fire Database is published a season or more after the fact, so it
 cannot grade 2026. CWFIS's satellite hotspot archive can. Every cell on every day
-from 1 April to 16 September 2026 was scored from that day's station weather, and
+from 1 April to 21 September 2026 was scored from that day's station weather, and
 checked against **new fire activity**: hotspots in a cell that had none in the
-previous 14 days. 941 such cell-days out of 129,528.
+previous 14 days. 969 such cell-days out of 130,269.
 
 | Ranking of 2026 satellite detections | ROC-AUC | New activity in the day's riskiest 10% |
 |---|---:|---:|
-| Large-fire model | **0.731** | **22.2%** |
-| FWI alone | 0.719 | 21.9% |
-| Any-fire model | 0.692 | 20.8% |
-| Normal for the month | 0.596 | 14.8% |
+| Large-fire model | **0.748** | **24.5%** |
+| Any-fire model | 0.743 | 23.5% |
+| FWI alone | 0.724 | 21.5% |
+| Normal for the month | 0.630 | 16.2% |
 
-**FWI alone still edges the any-fire model on this label, and that is worth saying
-rather than hiding.** A satellite sees fires big and hot enough to detect from orbit
-— the fires weather drives. The any-fire model is trained on every reported start,
-including the small human-caused fires near roads and towns that its fire-history
-features exist to find and that satellites rarely see. Scored on the fires
-satellites *can* see, the large-fire model now leads on both ROC-AUC and same-day
-capture; the any-fire model closed about half the gap to FWI when the count model
-and the anomaly features went in, and is still behind it. The honest summary is that
-on this season, against this label, the model and the index are close, and both are
-far ahead of climatology.
+**Both models beat the Fire Weather Index on this season, and by much less than
+on the test seasons — which is worth saying rather than hiding.** A satellite sees
+fires big and hot enough to detect from orbit, and those are the fires weather
+drives, so the label favours the index. The any-fire model is trained on every
+reported start, including the small human-caused fires near roads and towns that its
+fire-history features exist to find and that satellites rarely see. Before the cell
+bug was fixed, FWI alone beat the any-fire model here (0.719 against 0.692): this was
+the one score the scrambled labels could not flatter, because it is graded against
+satellites rather than against the same scrambled record, and it was the one the
+model lost. The honest summary now is that on this season, against this label, the
+model is a little ahead of the index, and both are far ahead of climatology.
 
 ![2026 season check](docs/screenshots/02-season-check.png)
 
@@ -97,9 +104,9 @@ far ahead of climatology.
 | | |
 |---|---|
 | Fires | 164,707 in the National Fire Database point layer, 2000–2024, prescribed burns excluded |
-| Grid | 771 one-degree cells — every cell with at least ten fires in 2000–2016 |
+| Grid | 753 one-degree cells — every cell with at least ten fires in 2000–2016 |
 | Weather | 3,198 CWFIS stations with the official FWI System codes |
-| Rows | 4,124,850 cell-days over 25 fire seasons, 2.7% of which report a fire |
+| Rows | 4,028,550 cell-days over 25 fire seasons, 2.6% of which report a fire |
 | Live sources | CWFIS station observations, CWFIS satellite hotspots, Open-Meteo forecast |
 
 ## The app
@@ -168,8 +175,12 @@ python -m powerbi.build_pbip --check   # CI gate: the committed project matches 
 Nothing on the dashboard recomputes a score. Every measure either aggregates a
 column the Python engines already wrote or divides two of them, and
 `tests/test_the_dashboard_shows_the_same_numbers.py` reconciles each exported
-table against the file it came from — so the 36.7% on the dashboard's first card
-is the same 36.7% as the app's, the README's and `reports/metrics.json`.
+table against the file it came from — so the 57.5% on the dashboard's final page
+is the same 57.5% as the app's, the README's and `reports/metrics.json`.
+
+**The screenshots above predate the 22 September rebuild** and show the scrambled-cell
+model (0.807, 36.7%). The project itself is regenerated from the current evidence;
+the pictures wait on the next export from Power BI Desktop.
 
 Three things this found that Power BI reports as something else entirely: an
 apostrophe in a measure name (`Share of the trees' gain`) fails as *"Invalid
@@ -209,13 +220,15 @@ share, its normal fire rate for the month, and how far the nearest reporting sta
 is.
 
 **Model.** Two boosters read as one number. A classifier asks whether the cell
-reports a fire; a Poisson model of how many reads as `1 - exp(-lambda)`. They
-disagree about different rows, and their average put 0.8 more points of fires inside
-the day's riskiest tenth than either alone on the validation seasons. The average is
-what gets isotonically calibrated, so the published number is still a probability.
-XGBoost, histogram trees, depth 12, learning rate 0.03, early stopping on the
-validation seasons; twelve configurations were compared there and the test seasons
-were scored once, afterwards. Split by season, never by row: a random split would put
+reports a fire; a Poisson model of how many reads as `1 - exp(-lambda)`. On the
+validation seasons their average puts 55.45% of fires inside the day's riskiest
+tenth, the count model alone 55.41% and the classifier alone 54.86%: the average is
+kept because it is never worse, not because it is much better. It is what gets
+isotonically calibrated, so the published number is still a probability. XGBoost,
+histogram trees, depth 12, learning rate 0.03, early stopping on the validation
+seasons; twelve configurations were compared there and the test seasons were scored
+once, afterwards. Those configurations were compared before the cell bug was fixed
+and were not re-tuned after it, so the test seasons are still unseen. Split by season, never by row: a random split would put
 a July day in training and the next July day in test, and the weather they share
 would flatter every score.
 
@@ -223,7 +236,7 @@ would flatter every score.
 rolling features; Open-Meteo's forecast for each cell centre steps the codes forward
 one day at a time; the same 42 features are assembled and scored.
 
-## Four things that would have been silently wrong
+## Five things that would have been silently wrong
 
 Each of these produced a plausible number, and each is now a test.
 
@@ -236,7 +249,7 @@ Each of these produced a plausible number, and each is now a test.
    calibration outputs plateaus, so `score >= quantile(0.9)` swept in every cell tied
    at the cut — and flattered whichever ranking had the biggest plateau there. Taking
    exactly the top tenth, ties broken by the uncalibrated score, moved same-day
-   capture from 37.9% to 36.7%.
+   capture from 37.9% to 36.7% (both on the scrambled cells of item 5).
 3. **A partly published station file restarted the drought codes.** CWFIS posts a
    day's file while stations are still reporting; the file for 15 September 2026 held
    1,110 of about 2,100 stations, leaving 30% of cells with no station in range and
@@ -245,13 +258,24 @@ Each of these produced a plausible number, and each is now a test.
 4. **The hotspot map showed Idaho and Montana.** CWFIS's hotspot file covers North
    America; a latitude-longitude box around Canada keeps the northern United States.
    It is filtered against an outline now.
+5. **97.7% of fires were in another fire's cell.** `clean_fires` drops the database
+   rows it cannot use — bad dates, prescribed burns — and then gave each fire its cell
+   from a list numbered from zero. The filtered table still carried the file's own row
+   numbers, pandas lined the two up by number, and from the first dropped row onward
+   every fire took the cell of a fire further down the file: 433,822 of 443,999.
+   Nothing broke. The model trained, calibrated and scored 0.807 against the same
+   scrambled record, and the one score it could not fake, against satellites, was the
+   one where FWI alone beat it. A map of the grid's provinces gave it away: Nova
+   Scotia's fires were in the Yukon. With every fire in its own cell the grid is 753
+   cells, and the model scores 0.881 out of time and puts 57.5% of fires in the day's
+   riskiest tenth.
 
 ## Reproduce it
 
 ```bash
 pip install -r requirements-dev.txt
 
-python pipelines/build_table.py     # NFDB + CWFIS archives -> 4.1M cell-days   (slow, downloads)
+python pipelines/build_table.py     # NFDB + CWFIS archives -> 4.0M cell-days   (slow, downloads)
 python pipelines/train.py           # fit, calibrate, evaluate -> models/, reports/metrics.json
 python pipelines/publish.py         # the evidence the app reads -> data/published/
 python pipelines/season_check.py    # this season against satellite hotspots
@@ -283,8 +307,8 @@ days without commits, so the fallback matters.
 - **Lightning is not an input.** It starts most of the area burned in Canada. The
   model knows which cells tend to get lightning fires, not where today's storms are.
   The worst day in the 2023 replay is a lightning bust.
-- **The cell's own history is the largest single input** — 36% of the trees' gain is
-  the cell's normal rate for the month, 13% its rate over the season. Weather moves
+- **The cell's own history is the largest single input** — 27% of the trees' gain is
+  the cell's normal rate for the month, 9% its rate over the season. Weather moves
   the answer around a strong prior; it does not replace it.
 - **Report date, not ignition date.** A fire that smoulders before it is found is
   labelled on the day it was reported.

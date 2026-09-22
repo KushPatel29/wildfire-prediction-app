@@ -38,10 +38,10 @@ st.markdown(
 | **Fire data** | Summary tables by jurisdiction | Every fire in the NFDB point layer, 2000–2024 |
 | **Weather** | Daily weather records joined to area burned | Noon observations from about 3,200 CWFIS stations, plus a live forecast |
 | **Fire science** | None | The Canadian FWI System, implemented and checked against CWFIS's own codes |
-| **Unit** | One weather record | One 1° cell on one day, 771 cells |
+| **Unit** | One weather record | One 1° cell on one day, CELLS_IN_GRID cells |
 | **Validation** | Random 80/20 split | Seasons held out in time, two baselines, and the 2026 season against satellite detections |
 | **Delivery** | A .pbix file and a slide deck | This app, rebuilt twice a day from public data |
-"""
+""".replace("CELLS_IN_GRID", str(sh.CELLS_IN_GRID))
 )
 
 report = sh.load_hackathon()

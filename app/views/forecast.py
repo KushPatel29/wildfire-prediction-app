@@ -16,7 +16,7 @@ live = sh.live_forecast()
 def rebuild_panel(expanded: bool) -> None:
     with st.expander("Rebuild from live data now", expanded=expanded):
         st.write("Reads the last 30 days of CWFIS station observations, Open-Meteo's forecast for every cell and "
-                 "the latest satellite hotspots, then scores all 771 cells. It takes about three minutes; the "
+                 f"the latest satellite hotspots, then scores all {sh.CELLS_IN_GRID} cells. It takes about three minutes; the "
                  "scheduled run does the same twice a day.")
         if st.button("Rebuild the forecast", type="primary"):
             with st.status("Rebuilding the forecast", expanded=True) as status:
@@ -78,7 +78,7 @@ top_bands = bands[bands["band"] >= 3] if bands is not None else None
 
 cols = st.columns(4)
 cols[0].metric("Cells expected to report a fire", sh.number(expected), border=True,
-               help="The sum of every cell's probability: how many of the 771 cells the model expects to "
+               help=f"The sum of every cell's probability: how many of the {sh.CELLS_IN_GRID} cells the model expects to "
                     "report at least one new fire that day.")
 cols[1].metric("Cells at 7% risk or more", f"{high}", border=True,
                help=None if top_bands is None else
@@ -143,7 +143,7 @@ st.dataframe(top, hide_index=True, column_config={
 with st.expander("How this forecast is built, and what it cannot see"):
     st.markdown(
         """
-**Built.** Canada is cut into 1° cells, keeping the 771 that recorded at least ten fires in 2000–2016. For each
+**Built.** Canada is cut into 1° cells, keeping the CELLS_IN_GRID that recorded at least ten fires in 2000–2016. For each
 cell the last month of noon weather and FWI System codes are interpolated from the nearest CWFIS stations
 (up to four within 200 km). Open-Meteo's forecast for the cell centre then steps the Fine Fuel, Duff and Drought
 codes forward one day at a time, with the same FWI implementation that reproduces CWFIS's published codes. Each
@@ -154,7 +154,7 @@ day's row is scored by two gradient-boosted models, one for any new fire and one
 is invisible until fires are reported. Nor are people, fuel breaks, suppression, or the state of the vegetation
 beyond what the moisture codes carry. Forecast weather adds error with each day ahead, and a 1° cell is
 around 110 km by 70 km, so the map says where to look, not where a fire will be.
-"""
+""".replace("CELLS_IN_GRID", str(sh.CELLS_IN_GRID))
     )
 
 rebuild_panel(expanded=False)

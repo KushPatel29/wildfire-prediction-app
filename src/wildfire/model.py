@@ -6,11 +6,12 @@ Each target is two boosters read as one number. The first asks the binary
 question - will this cell report a fire today - and the second models the count of
 starts as a Poisson intensity, which answers the same question through
 `P(at least one) = 1 - exp(-lambda)`. They disagree about different rows: the
-classifier is better calibrated in the middle of the distribution, the count model
-separates a cell-day with four starts from one with one, and averaging the two put
-0.8 more points of fires inside the day's riskiest tenth than either alone on the
-validation seasons. The average is then calibrated once, so the published number is
-still a probability.
+classifier is better calibrated in the middle of the distribution, and the count
+model separates a cell-day with four starts from one with one. On the validation
+seasons the average puts 55.45% of fires inside the day's riskiest tenth, the count
+model alone 55.41% and the classifier alone 54.86%: it is kept because it is never
+worse, not because it is much better. The average is then calibrated once, so the
+published number is still a probability.
 
 Training writes, per target, `models/<target>.json` (classifier),
 `models/<target>_counts.json` (Poisson) and `models/<target>_calibration.json`. The

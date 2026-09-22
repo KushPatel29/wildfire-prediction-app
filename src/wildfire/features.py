@@ -54,15 +54,23 @@ def clean_fires(nfdb: pd.DataFrame) -> pd.DataFrame:
             & fires["LONGITUDE"].between(-142.0, -52.0)
             & (fires["PRESCRIBED"].fillna("").str.upper().isin(["", "0", "NO", "N"])))
     fires = fires.loc[keep, ["NFDBFIREID", "SRC_AGENCY", "LATITUDE", "LONGITUDE", "date",
-                             "SIZE_HA", "CAUSE"]].rename(columns=str.lower)
+                             "SIZE_HA", "CAUSE"]].rename(columns=str.lower).reset_index(drop=True)
     fires["cell_id"] = cell_ids(fires["latitude"], fires["longitude"])
-    return fires.reset_index(drop=True)
+    return fires
 
 
 def cell_ids(lat, lon) -> pd.Series:
+    """The 1° cell of each point, indexed like `lat` when it is a Series.
+
+    It used to return a fresh 0..n index. clean_fires assigned it to a filtered
+    frame that still carried the NFDB's own row labels, pandas aligned the two
+    by label, and from the first dropped row onward every fire took the cell of
+    a fire further down the file - 97.7% of them, which put Nova Scotia's
+    fires in the Yukon."""
     lat0 = np.floor(np.asarray(lat, dtype=float) / CELL_DEG) * CELL_DEG
     lon0 = np.floor(np.asarray(lon, dtype=float) / CELL_DEG) * CELL_DEG
-    return pd.Series([f"{a:.0f}_{b:.0f}" for a, b in zip(lat0, lon0)])
+    index = lat.index if isinstance(lat, pd.Series) else None
+    return pd.Series([f"{a:.0f}_{b:.0f}" for a, b in zip(lat0, lon0)], index=index)
 
 
 def build_cells(fires: pd.DataFrame, years: tuple[int, int], min_fires: int = 10) -> pd.DataFrame:
@@ -83,6 +91,15 @@ def build_cells(fires: pd.DataFrame, years: tuple[int, int], min_fires: int = 10
     cells["lat"] = parts[0] + CELL_DEG / 2
     cells["lon"] = parts[1] + CELL_DEG / 2
     cells["province"] = cells["agency"].map(AGENCIES).fillna("Other")
+    # A cell only Parks Canada reports from is inside a national park: give it the
+    # province of the nearest cell a provincial agency reports from.
+    parks = cells["province"] == "Other"
+    if parks.any() and (~parks).any():
+        known = cells[~parks]
+        scale = np.cos(np.radians(cells["lat"].mean()))
+        for i in cells.index[parks]:
+            d2 = (known["lat"] - cells.at[i, "lat"]) ** 2 + ((known["lon"] - cells.at[i, "lon"]) * scale) ** 2
+            cells.at[i, "province"] = known.at[d2.idxmin(), "province"]
     return cells.drop(columns="agency")
 
 

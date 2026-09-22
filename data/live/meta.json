@@ -1,18 +1,18 @@
 {
-  "generated_at": "2026-09-16T19:18:04+00:00",
-  "requested_for": "2026-09-17",
-  "cells": 771,
+  "generated_at": "2026-09-22T12:47:22+00:00",
+  "requested_for": "2026-09-22",
+  "cells": 753,
   "sources": {
     "stations": "https://cwfis.cfs.nrcan.gc.ca/downloads/fwi_obs/current/",
     "forecast": "https://api.open-meteo.com/v1/forecast",
     "hotspots": "https://cwfis.cfs.nrcan.gc.ca/downloads/hotspots/"
   },
-  "hotspots": 5,
+  "hotspots": 516,
   "in_season": true,
-  "rows": 6168,
-  "as_of": "2026-09-15",
+  "rows": 6024,
+  "as_of": "2026-09-21",
   "stations_used": 2110,
-  "first_day": "2026-09-15",
-  "last_day": "2026-09-22",
-  "seconds": 182.3
+  "first_day": "2026-09-21",
+  "last_day": "2026-09-28",
+  "seconds": 181.0
 }
