@@ -4,7 +4,7 @@
 ![Tests](https://img.shields.io/badge/tests-108%20passing-3B8C6E)
 ![Model](https://img.shields.io/badge/ROC--AUC-0.807%20out%20of%20time-F28C38)
 ![Data](https://img.shields.io/badge/NFDB%20%2B%20CWFIS-4.1M%20cell--days-0B5FA5)
-![Streamlit](https://img.shields.io/badge/Streamlit-live%20forecast-FF4B4B?logo=streamlit&logoColor=white)
+[![Streamlit](https://img.shields.io/badge/Streamlit-live%20forecast-FF4B4B?logo=streamlit&logoColor=white)](https://wildfire-prediction-app1.streamlit.app)
 ![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
 
 Seven-day wildfire ignition risk for Canada, rebuilt twice a day from public data:
@@ -15,6 +15,10 @@ It is the 2024 hackathon project this started as, taken from a yearly area-burne
 regression to a daily, calibrated, out-of-time-tested forecast that runs on live
 CWFIS observations and an Open-Meteo forecast — and that reports the seasons it got
 wrong as plainly as the ones it got right.
+
+**Live app:** [wildfire-prediction-app1.streamlit.app](https://wildfire-prediction-app1.streamlit.app)
+— this week's forecast, the 2026 season check, a replay of any day in 2020–2024,
+and the model card.
 
 **Everything below is produced by a pipeline in this repository and asserted by a
 test. No number is quoted that the code does not reproduce.**
@@ -262,9 +266,11 @@ path.
 
 ## Deploying
 
-The app runs on Streamlit Community Cloud with **Python 3.12** (set it in Advanced
-settings before deploying; the default is newer than the pinned scientific stack).
-Main file `app/streamlit_app.py`.
+The app runs on Streamlit Community Cloud at <https://wildfire-prediction-app1.streamlit.app>, on **Python 3.12** (set
+it in Advanced settings before deploying; the default is newer than the pinned
+scientific stack). Main file `app/streamlit_app.py`. The subdomain carries a `1`
+because `wildfire-prediction-app` was already taken by someone else's app, and
+Community Cloud subdomains are global.
 
 `.github/workflows/forecast.yml` rebuilds the forecast twice a day and attaches
 `forecast.parquet`, `hotspots.parquet` and `meta.json` to the `live-forecast`
