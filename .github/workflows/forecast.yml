@@ -38,3 +38,21 @@ jobs:
           # Data first, metadata last, so a reader never sees a meta.json describing files not yet uploaded.
           gh release upload live-forecast build/live/forecast.parquet build/live/hotspots.parquet --clobber
           gh release upload live-forecast build/live/meta.json --clobber
+      # The static forecast page on the portfolio site reads this file from
+      # raw.githubusercontent.com, which serves any origin; release files do not.
+      # It lives on a branch of its own so the twice-daily data commits stay out
+      # of main's history.
+      - run: python pipelines/web_snapshot.py build/live build/web/forecast.json
+      - name: Publish the web snapshot to the live-data branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch --depth 1 origin live-data
+          git worktree add --detach "$RUNNER_TEMP/live-data" FETCH_HEAD
+          cp build/web/forecast.json "$RUNNER_TEMP/live-data/forecast.json"
+          cd "$RUNNER_TEMP/live-data"
+          git add forecast.json
+          if git diff --cached --quiet; then echo "forecast unchanged"; exit 0; fi
+          as_of=$(python -c "import json; print(json.load(open('forecast.json'))['as_of'])")
+          git commit -q -m "Forecast from the ${as_of} station day, built $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push origin HEAD:live-data
