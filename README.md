@@ -178,9 +178,7 @@ column the Python engines already wrote or divides two of them, and
 table against the file it came from — so the 57.5% on the dashboard's final page
 is the same 57.5% as the app's, the README's and `reports/metrics.json`.
 
-**The screenshots above predate the 22 September rebuild** and show the scrambled-cell
-model (0.807, 36.7%). The project itself is regenerated from the current evidence;
-the pictures wait on the next export from Power BI Desktop.
+The screenshots above were exported from Power BI Desktop on 24 September 2026, after a full refresh against the current evidence (753 cells, ROC-AUC 0.881, 57.5% same-day capture).
 
 Three things this found that Power BI reports as something else entirely: an
 apostrophe in a measure name (`Share of the trees' gain`) fails as *"Invalid
