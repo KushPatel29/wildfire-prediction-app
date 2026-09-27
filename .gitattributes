@@ -10,3 +10,7 @@
 *.pbix binary
 *.zip binary
 
+
+# The 2024 hackathon notebooks are kept as history, not as the project. Without this
+# they are three-quarters of the language bar and the repo reads as a notebook.
+legacy/** linguist-documentation
