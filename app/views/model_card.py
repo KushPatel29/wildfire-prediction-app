@@ -140,6 +140,36 @@ st.markdown(
   test, and the weather they share would inflate every score.
 """.replace("CELLS_IN_GRID", str(sh.CELLS_IN_GRID))
 )
+st.subheader("Monitoring: the forecasts as published, graded afterwards")
+record = sh.track_record()
+if record and record.get("prospective"):
+    from wildfire.track_record import verdict
+
+    p, ci = record["prospective"], record["prospective_intervals"]
+    st.markdown(
+        f"Every scheduled run publishes its forecast to a public branch before the outcome exists. A weekly job "
+        f"grades those snapshots against the satellite detections that followed: {record['forecasts_graded']} "
+        f"forecasts from {record['first_forecast']} to {record['last_forecast']}, leads 2 to 7, "
+        f"{p['cell_days']:,} cell-days and {p['new_detections']:,} cases of new fire activity."
+    )
+    st.dataframe(pd.DataFrame([
+        {"Ranking": label, "ROC-AUC": p[key]["roc_auc"], "New activity in the riskiest 10%": p[key]["top_decile_capture"]}
+        for key, label in [("model", "This model"), ("large_fire_model", "Large-fire model"),
+                           ("normal_for_the_month", "Normal for the month"),
+                           ("fire_next_door", "Fire next door (last 48 h)")]
+    ]), hide_index=True, width="stretch", column_config={
+        "ROC-AUC": st.column_config.NumberColumn(format="%.3f"),
+        "New activity in the riskiest 10%": st.column_config.NumberColumn(format="percent"),
+    })
+    calls = [verdict(ci["edge_on_normal_auc"], "normal for the month", "ranking"),
+             verdict(ci["edge_on_fire_next_door_auc"], "fire next door", "ranking"),
+             verdict(ci["edge_on_normal_capture"], "normal for the month", "the top 10%"),
+             verdict(ci["edge_on_fire_next_door_capture"], "fire next door", "the top 10%")]
+    st.markdown(f"So far it is {calls[0]}, {calls[1]}, {calls[2]}, and {calls[3]}: each call is made by the "
+                f"95% interval of the edge, from resampling whole days, not by the point estimate.")
+else:
+    st.markdown("No published forecast has a graded target day yet.")
+
 st.subheader("Limits")
 st.markdown(
     """

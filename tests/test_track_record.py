@@ -149,5 +149,24 @@ def test_the_readme_block_is_written_from_the_report_and_nothing_else_changes(tm
     assert int(daily["caught_model"].sum()) == int(daily["new_detections"].sum())
 
 
+def test_the_written_verdict_follows_the_interval_not_the_point_estimate():
+    assert pipeline.verdict([0.01, 0.05], "normal", "ROC-AUC") == "ahead of normal on ROC-AUC"
+    assert pipeline.verdict([-0.05, -0.01], "normal", "ROC-AUC") == "behind normal on ROC-AUC"
+    # A point estimate of +4 points with an interval through zero is not a win.
+    assert pipeline.verdict([-0.05, 0.13], "normal", "the top 10%") == "not yet distinguishable from normal on the top 10%"
+    assert "too few" in pipeline.verdict([None, None], "normal", "ROC-AUC")
+
+
 def test_an_empty_record_says_so_rather_than_printing_zeros():
     assert "No forecast has a graded target day yet" in pipeline.readme_block({"graded_cell_days": 0})
+
+
+def test_the_readme_quotes_the_committed_track_record():
+    """The weekly workflow writes both; a hand edit to either breaks this."""
+    import json
+    report_file = ROOT / "data" / "published" / "track_record.json"
+    if not report_file.exists():
+        pytest.skip("no track record has been graded yet")
+    report = json.loads(report_file.read_text(encoding="utf-8"))
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    assert pipeline.readme_block(report) in readme

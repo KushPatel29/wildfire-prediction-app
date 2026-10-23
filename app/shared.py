@@ -397,3 +397,10 @@ def sources_footer() -> None:
         "fire danger rating: for decisions, follow [CWFIS](https://cwfis.cfs.nrcan.gc.ca/) and your provincial "
         f"or territorial wildfire service. [Source code]({REPO_URL})."
     )
+
+
+@st.cache_data(show_spinner=False)
+def track_record() -> dict | None:
+    """The published forecasts, graded weekly by .github/workflows/track-record.yml."""
+    path = PUBLISHED / "track_record.json"
+    return json.loads(path.read_text(encoding="utf-8")) if path.exists() else None

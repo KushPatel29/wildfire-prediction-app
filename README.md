@@ -1,7 +1,7 @@
 # Canada Wildfire Risk
 
 [![CI](https://github.com/KushPatel29/wildfire-prediction-app/actions/workflows/ci.yml/badge.svg)](https://github.com/KushPatel29/wildfire-prediction-app/actions/workflows/ci.yml)
-![Tests](https://img.shields.io/badge/tests-120%20passing-3B8C6E)
+![Tests](https://img.shields.io/badge/tests-122%20passing-3B8C6E)
 ![Model](https://img.shields.io/badge/ROC--AUC-0.881%20out%20of%20time-F28C38)
 ![Data](https://img.shields.io/badge/NFDB%20%2B%20CWFIS-4.0M%20cell--days-0B5FA5)
 [![Streamlit](https://img.shields.io/badge/Streamlit-live%20forecast-FF4B4B?logo=streamlit&logoColor=white)](https://wildfire-prediction-app1.streamlit.app)
@@ -124,7 +124,9 @@ resampling whole target days.
 | Normal for the month | 0.693 | 24.0% |
 | Fire next door (last 48 h) | 0.590 | 30.9% |
 
-95% intervals from resampling whole target days: the model's top-10% capture 20.9% to 36.4%; its edge on normal for the month -4.7 to +13.9 points; its edge on fire next door -10.1 to +4.7 points.
+**So far the published model is ahead of normal for the month on ranking (ROC-AUC), ahead of fire next door on ranking (ROC-AUC), not yet distinguishable from normal for the month on the top 10%, and not yet distinguishable from fire next door on the top 10%.** Each call is made by the 95% interval of the edge, not by the point estimate.
+
+95% intervals from resampling whole target days: the model's ROC-AUC 0.691 to 0.777; its top-10% capture 20.9% to 36.4%; its edge on normal for the month -4.7 to +13.9 points; its edge on fire next door -10.1 to +4.7 points.
 
 | Lead (days) | Cell-days | New activity | Model ROC-AUC | Model top 10% | Normal top 10% | Fire next door top 10% |
 |---:|---:|---:|---:|---:|---:|---:|

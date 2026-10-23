@@ -256,3 +256,19 @@ def grade(rows: pd.DataFrame, labels: pd.DataFrame, draws: int = BOOTSTRAP_DRAWS
     keep = ["issued", "built_at", "date", "lead_days", "prospective", "cell_id", "risk", "large_risk", "normal",
             "fire_next_door", "new_detection", "rank_model"]
     return report, ranked[keep]
+
+
+def verdict(interval: list[float | None], baseline: str, metric: str) -> str:
+    """One sentence per comparison, decided by the interval and nothing else.
+
+    The README is rewritten weekly by a workflow, so its wording cannot be chosen
+    after looking at the numbers: "ahead" only when the whole 95% interval of the
+    edge is above zero, "behind" only when it is all below."""
+    lo, hi = interval
+    if lo is None or hi is None:
+        return f"too few graded days to compare with {baseline} on {metric}"
+    if lo > 0:
+        return f"ahead of {baseline} on {metric}"
+    if hi < 0:
+        return f"behind {baseline} on {metric}"
+    return f"not yet distinguishable from {baseline} on {metric}"

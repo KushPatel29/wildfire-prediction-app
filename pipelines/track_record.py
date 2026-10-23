@@ -80,6 +80,9 @@ def daily_table(graded: pd.DataFrame) -> pd.DataFrame:
     return out.astype({"lead_days": "int8", "cells": "int16", "new_detections": "int16", "caught_model": "int16"})
 
 
+verdict = T.verdict  # one rule for the README and the app
+
+
 def readme_block(report: dict) -> str:
     """The README's track-record section, written from the report so it cannot drift from it."""
     p = report.get("prospective")
@@ -103,9 +106,17 @@ def readme_block(report: dict) -> str:
              "normal_for_the_month": "Normal for the month", "fire_next_door": "Fire next door (last 48 h)"}
     for key, label in names.items():
         lines.append(f"| {label} | {p[key]['roc_auc']:.3f} | {pct(p[key]['top_decile_capture'])} |")
+    calls = [verdict(ci["edge_on_normal_auc"], "normal for the month", "ranking (ROC-AUC)"),
+             verdict(ci["edge_on_fire_next_door_auc"], "fire next door", "ranking (ROC-AUC)"),
+             verdict(ci["edge_on_normal_capture"], "normal for the month", "the top 10%"),
+             verdict(ci["edge_on_fire_next_door_capture"], "fire next door", "the top 10%")]
     lines += [
         "",
-        f"95% intervals from resampling whole target days: the model's top-10% capture "
+        f"**So far the published model is {calls[0]}, {calls[1]}, {calls[2]}, and {calls[3]}.** "
+        f"Each call is made by the 95% interval of the edge, not by the point estimate.",
+        "",
+        f"95% intervals from resampling whole target days: the model's ROC-AUC "
+        f"{ci['model_auc'][0]:.3f} to {ci['model_auc'][1]:.3f}; its top-10% capture "
         f"{pct(ci['model_capture'][0])} to {pct(ci['model_capture'][1])}; its edge on normal for the month "
         f"{ci['edge_on_normal_capture'][0] * 100:+.1f} to {ci['edge_on_normal_capture'][1] * 100:+.1f} points; "
         f"its edge on fire next door {ci['edge_on_fire_next_door_capture'][0] * 100:+.1f} to "
