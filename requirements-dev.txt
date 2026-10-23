@@ -2,3 +2,5 @@
 -r requirements.txt
 pytest==9.1.1
 ruff==0.15.21
+# The model registry and monitoring store (mlflow/), read by tests/test_mlflow_registry.py.
+mlflow==3.17.2

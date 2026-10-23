@@ -37,11 +37,20 @@ jobs:
           key: cwfis-hotspots-${{ github.run_id }}
           restore-keys: cwfis-hotspots-
       - run: python pipelines/track_record.py --ref origin/live-data
+      # The same grade, as a monitoring run in the committed MLflow store, against
+      # the registered champion.
+      - name: Log the grade to MLflow
+        env:
+          MLFLOW_DISABLE_AGENT_HINT: "1"
+        run: |
+          pip install mlflow==3.17.2
+          python pipelines/mlflow_tracking.py monitor
+          python pipelines/mlflow_tracking.py summary
       - name: Commit the grade
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/published/track_record.json data/published/track_record_daily.parquet README.md
+          git add data/published/track_record.json data/published/track_record_daily.parquet README.md mlflow/
           if git diff --cached --quiet; then echo "track record unchanged"; exit 0; fi
           last=$(python -c "import json; print(json.load(open('data/published/track_record.json')).get('last_target_day', 'none'))")
           git commit -q -m "Track record: published forecasts graded through ${last}"

@@ -1,0 +1,66 @@
+{
+  "validation": {
+    "model": {
+      "rows": 483426,
+      "positive_rate": 0.023989193795948088,
+      "roc_auc": 0.883131032329648,
+      "pr_auc": 0.18811889063222842,
+      "share_of_fires_in_top_decile": 0.6599789460647718,
+      "lift_top_decile": 5.900615141502063,
+      "brier": 0.021055684940536567,
+      "log_loss": 0.08513747651959722
+    },
+    "climatology": {
+      "rows": 483426,
+      "positive_rate": 0.023989193795948088,
+      "roc_auc": 0.8177891807738729,
+      "pr_auc": 0.10949189082641433,
+      "share_of_fires_in_top_decile": 0.48820360393832435,
+      "lift_top_decile": 4.320047034769155,
+      "brier": 0.022378160583173292,
+      "log_loss": 0.09827461334344435
+    },
+    "fwi_logistic": {
+      "rows": 483426,
+      "positive_rate": 0.023989193795948088,
+      "roc_auc": 0.7277815348761758,
+      "pr_auc": 0.0627664432196336,
+      "share_of_fires_in_top_decile": 0.3566784321010589,
+      "lift_top_decile": 3.090428856808913,
+      "brier": 0.02348307345384576,
+      "log_loss": 0.10695311208527983
+    }
+  },
+  "test": {
+    "model": {
+      "rows": 805710,
+      "positive_rate": 0.02451750629879237,
+      "roc_auc": 0.8814280911343455,
+      "pr_auc": 0.19557801414072543,
+      "share_of_fires_in_top_decile": 0.657678564850628,
+      "lift_top_decile": 5.8889338868077346,
+      "brier": 0.021448577381724485,
+      "log_loss": 0.08697675619719672
+    },
+    "climatology": {
+      "rows": 805710,
+      "positive_rate": 0.02451750629879237,
+      "roc_auc": 0.8222697958214313,
+      "pr_auc": 0.11685453166143503,
+      "share_of_fires_in_top_decile": 0.49740302795889046,
+      "lift_top_decile": 4.444669434038675,
+      "brier": 0.022718776761742217,
+      "log_loss": 0.09891741752907503
+    },
+    "fwi_logistic": {
+      "rows": 805710,
+      "positive_rate": 0.02451750629879237,
+      "roc_auc": 0.7364096351459489,
+      "pr_auc": 0.06430659641343256,
+      "share_of_fires_in_top_decile": 0.3497624046856006,
+      "lift_top_decile": 3.1370861597651105,
+      "brier": 0.023919827033827175,
+      "log_loss": 0.10828413697689088
+    }
+  }
+}

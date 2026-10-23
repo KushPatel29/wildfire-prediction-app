@@ -1,0 +1,55 @@
+artifact_path: file:///home/claude/wildfire-prediction-app/mlflow/artifacts/wildfire-training/models/m-dc1a29ca603a4523804312971e09759a/artifacts
+flavors:
+  python_function:
+    cloudpickle_version: 3.1.2
+    code: null
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.pyfunc.model
+    python_model: python_model.pkl
+    python_version: 3.12.3
+    streamable: false
+is_signature_from_type_hint: false
+mlflow_version: 3.17.2
+model_id: m-dc1a29ca603a4523804312971e09759a
+model_size_bytes: 1024
+model_uuid: m-dc1a29ca603a4523804312971e09759a
+prompts: null
+run_id: 584b45cb2dfd45029cdcabbe41d806e4
+signature:
+  inputs: '[{"type": "double", "name": "temp", "required": true}, {"type": "double",
+    "name": "rh", "required": true}, {"type": "double", "name": "ws", "required":
+    true}, {"type": "double", "name": "precip", "required": true}, {"type": "double",
+    "name": "vpd", "required": true}, {"type": "double", "name": "ffmc", "required":
+    true}, {"type": "double", "name": "dmc", "required": true}, {"type": "double",
+    "name": "dc", "required": true}, {"type": "double", "name": "isi", "required":
+    true}, {"type": "double", "name": "bui", "required": true}, {"type": "double",
+    "name": "fwi", "required": true}, {"type": "double", "name": "dsr", "required":
+    true}, {"type": "double", "name": "fwi_mean_3d", "required": true}, {"type": "double",
+    "name": "fwi_mean_7d", "required": true}, {"type": "double", "name": "fwi_max_7d",
+    "required": true}, {"type": "double", "name": "isi_mean_3d", "required": true},
+    {"type": "double", "name": "temp_mean_3d", "required": true}, {"type": "double",
+    "name": "rh_mean_3d", "required": true}, {"type": "double", "name": "vpd_mean_3d",
+    "required": true}, {"type": "double", "name": "vpd_max_7d", "required": true},
+    {"type": "double", "name": "bui_mean_7d", "required": true}, {"type": "double",
+    "name": "dc_mean_30d", "required": true}, {"type": "double", "name": "precip_sum_3d",
+    "required": true}, {"type": "double", "name": "precip_sum_7d", "required": true},
+    {"type": "double", "name": "precip_sum_14d", "required": true}, {"type": "double",
+    "name": "precip_sum_30d", "required": true}, {"type": "double", "name": "days_since_rain",
+    "required": true}, {"type": "double", "name": "dc_change_7d", "required": true},
+    {"type": "double", "name": "fwi_anom", "required": true}, {"type": "double", "name":
+    "temp_anom", "required": true}, {"type": "double", "name": "dc_anom", "required":
+    true}, {"type": "double", "name": "fwi_neighbour", "required": true}, {"type":
+    "double", "name": "dc_neighbour", "required": true}, {"type": "double", "name":
+    "doy_sin", "required": true}, {"type": "double", "name": "doy_cos", "required":
+    true}, {"type": "double", "name": "is_weekend", "required": true}, {"type": "double",
+    "name": "lat", "required": true}, {"type": "double", "name": "lon", "required":
+    true}, {"type": "double", "name": "lightning_share", "required": true}, {"type":
+    "double", "name": "clim_month_rate", "required": true}, {"type": "double", "name":
+    "clim_cell_rate", "required": true}, {"type": "double", "name": "station_km",
+    "required": true}]'
+  outputs: '[{"type": "float", "required": true}]'
+  params: null
+type_hint_from_example: false
+utc_time_created: '2026-10-23 18:19:58.455269'

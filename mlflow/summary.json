@@ -1,0 +1,138 @@
+{
+  "tracking_uri": "sqlite:///mlflow/mlflow.db",
+  "registered_models": {
+    "wildfire-has-fire": {
+      "champion": 3,
+      "versions": [
+        {
+          "version": 1,
+          "git_commit": "e20d9af53755e5b6e9b9853ffd6405e6ea7f35e6",
+          "gate": "promoted",
+          "comparison": "first version",
+          "reason": "beats both baselines on validation",
+          "run_id": "7fb3ef4d0bf04a3c83b461850f09742f"
+        },
+        {
+          "version": 2,
+          "git_commit": "1cc4012ac7c9e6c578adab0553f63c0170560688",
+          "gate": "promoted",
+          "comparison": "like-for-like",
+          "reason": "top-decile capture 0.5787 -> 0.5851, ROC-AUC 0.8427 -> 0.8471 on the same validation rows",
+          "run_id": "584b45cb2dfd45029cdcabbe41d806e4"
+        },
+        {
+          "version": 3,
+          "git_commit": "69dbd201101349b8637135e2dc74ad7fcd886e69",
+          "gate": "promoted",
+          "comparison": "data changed",
+          "reason": "validation rows differ from the champion's, so its scores are not comparable; beats both baselines on validation",
+          "run_id": "0aa79250555d43d5a4bb8d9f944f37f4"
+        }
+      ]
+    },
+    "wildfire-has-large-fire": {
+      "champion": 3,
+      "versions": [
+        {
+          "version": 1,
+          "git_commit": "e20d9af53755e5b6e9b9853ffd6405e6ea7f35e6",
+          "gate": "promoted",
+          "comparison": "first version",
+          "reason": "beats both baselines on validation",
+          "run_id": "df3f3e696dff4e1390701be8cc8a62bd"
+        },
+        {
+          "version": 2,
+          "git_commit": "1cc4012ac7c9e6c578adab0553f63c0170560688",
+          "gate": "promoted",
+          "comparison": "like-for-like",
+          "reason": "top-decile capture 0.6308 -> 0.6499, ROC-AUC 0.8778 -> 0.8835 on the same validation rows",
+          "run_id": "6c1d56a9b7d54749bd052b13a18f2c62"
+        },
+        {
+          "version": 3,
+          "git_commit": "69dbd201101349b8637135e2dc74ad7fcd886e69",
+          "gate": "promoted",
+          "comparison": "data changed",
+          "reason": "validation rows differ from the champion's, so its scores are not comparable; beats both baselines on validation",
+          "run_id": "bdb8ce38dcd74a04bb54221089b18388"
+        }
+      ]
+    }
+  },
+  "training_runs": [
+    {
+      "run_id": "7fb3ef4d0bf04a3c83b461850f09742f",
+      "target": "has_fire",
+      "git_commit": "e20d9af53755e5b6e9b9853ffd6405e6ea7f35e6",
+      "commit_subject": "Predict where Canada's next wildfires start, from live public data",
+      "validation_model_roc_auc": 0.8427430406335639,
+      "validation_model_share_of_fires_in_top_decile": 0.5786971287434394,
+      "test_model_roc_auc": 0.8020433676448293,
+      "test_model_share_of_fires_in_top_decile": 0.4563855421686747
+    },
+    {
+      "run_id": "df3f3e696dff4e1390701be8cc8a62bd",
+      "target": "has_large_fire",
+      "git_commit": "e20d9af53755e5b6e9b9853ffd6405e6ea7f35e6",
+      "commit_subject": "Predict where Canada's next wildfires start, from live public data",
+      "validation_model_roc_auc": 0.8778020785086995,
+      "validation_model_share_of_fires_in_top_decile": 0.6308277830637488,
+      "test_model_roc_auc": 0.8452056679398302,
+      "test_model_share_of_fires_in_top_decile": 0.5553669919389054
+    },
+    {
+      "run_id": "584b45cb2dfd45029cdcabbe41d806e4",
+      "target": "has_fire",
+      "git_commit": "1cc4012ac7c9e6c578adab0553f63c0170560688",
+      "commit_subject": "Score every cell twice and average: ROC-AUC 0.802 to 0.807 out of time",
+      "validation_model_roc_auc": 0.8470681701512321,
+      "validation_model_share_of_fires_in_top_decile": 0.5851188638468663,
+      "test_model_roc_auc": 0.8071796039877799,
+      "test_model_share_of_fires_in_top_decile": 0.4631696014828545
+    },
+    {
+      "run_id": "6c1d56a9b7d54749bd052b13a18f2c62",
+      "target": "has_large_fire",
+      "git_commit": "1cc4012ac7c9e6c578adab0553f63c0170560688",
+      "commit_subject": "Score every cell twice and average: ROC-AUC 0.802 to 0.807 out of time",
+      "validation_model_roc_auc": 0.8835181392875171,
+      "validation_model_share_of_fires_in_top_decile": 0.6498572787821123,
+      "test_model_roc_auc": 0.8503190997053254,
+      "test_model_share_of_fires_in_top_decile": 0.5562155282138311
+    },
+    {
+      "run_id": "0aa79250555d43d5a4bb8d9f944f37f4",
+      "target": "has_fire",
+      "git_commit": "69dbd201101349b8637135e2dc74ad7fcd886e69",
+      "commit_subject": "Put every fire in its own cell: 97.7% were in another fire's",
+      "validation_model_roc_auc": 0.883131032329648,
+      "validation_model_share_of_fires_in_top_decile": 0.6599789460647718,
+      "test_model_roc_auc": 0.8814280911343455,
+      "test_model_share_of_fires_in_top_decile": 0.657678564850628
+    },
+    {
+      "run_id": "bdb8ce38dcd74a04bb54221089b18388",
+      "target": "has_large_fire",
+      "git_commit": "69dbd201101349b8637135e2dc74ad7fcd886e69",
+      "commit_subject": "Put every fire in its own cell: 97.7% were in another fire's",
+      "validation_model_roc_auc": 0.928551981966607,
+      "validation_model_share_of_fires_in_top_decile": 0.7855691056910569,
+      "test_model_roc_auc": 0.9260865742760243,
+      "test_model_share_of_fires_in_top_decile": 0.7791327913279132
+    }
+  ],
+  "monitoring_runs": [
+    {
+      "run_id": "9632eef74c4145bea172e692e132ce48",
+      "last_target_day": "2026-10-22",
+      "champion_has_fire": "v3 @ 69dbd20",
+      "model_roc_auc": 0.7341572662998792,
+      "model_top_decile_capture": 0.28213689482470783,
+      "model_auc_low": 0.6905183342032148,
+      "model_auc_high": 0.7774413948233455,
+      "normal_for_the_month_roc_auc": 0.6932908888445248,
+      "target_days": 30.0
+    }
+  ]
+}

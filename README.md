@@ -1,7 +1,7 @@
 # Canada Wildfire Risk
 
 [![CI](https://github.com/KushPatel29/wildfire-prediction-app/actions/workflows/ci.yml/badge.svg)](https://github.com/KushPatel29/wildfire-prediction-app/actions/workflows/ci.yml)
-![Tests](https://img.shields.io/badge/tests-122%20passing-3B8C6E)
+![Tests](https://img.shields.io/badge/tests-131%20passing-3B8C6E)
 ![Model](https://img.shields.io/badge/ROC--AUC-0.881%20out%20of%20time-F28C38)
 ![Data](https://img.shields.io/badge/NFDB%20%2B%20CWFIS-4.0M%20cell--days-0B5FA5)
 [![Streamlit](https://img.shields.io/badge/Streamlit-live%20forecast-FF4B4B?logo=streamlit&logoColor=white)](https://wildfire-prediction-app1.streamlit.app)
@@ -139,6 +139,38 @@ resampling whole target days.
 | 6 | 19,578 | 97 | 0.734 | 28.9% | 23.7% | 30.9% |
 | 7 | 18,825 | 93 | 0.741 | 29.0% | 25.8% | 32.3% |
 <!-- track-record:end -->
+
+## Every version tracked and registered in MLflow
+
+The model has been trained three times, and each fit wrote its evaluation to
+`reports/metrics.json` beside the files it fitted. [`mlflow_tracking.py`](pipelines/mlflow_tracking.py)
+records each one, from Git, as an MLflow training run (parameters, validation and
+test metrics for the model and both baselines, the SHA-256 of every model file) and
+registers it as a version of `wildfire-has-fire` and `wildfire-has-large-fire`. A
+registered version is a pyfunc wrapper around the files at its commit, not a second
+copy of 80 MB of trees: it loads only files whose hashes match, from `models/` or
+from Git history, and scores with the feature list it was trained on.
+
+Which version is live is decided by a written rule
+([`registry.py`](src/wildfire/registry.py)), not by a person re-reading a table:
+
+| Version | Commit | The gate's comparison | Decision |
+|---|---|---|---|
+| 1 | `e20d9af`, the first model | beats both baselines on the validation seasons | promoted |
+| 2 | `1cc4012`, the classifier and count model averaged | like-for-like: top-decile capture 0.5787 → 0.5851, ROC-AUC 0.8427 → 0.8471 on the same validation rows | promoted |
+| 3 | `69dbd20`, every fire in its own cell | data changed: the label fix moved fires between cells, so version 2's scores no longer measure the same thing; must beat both baselines on the new labels instead | promoted, `champion` |
+
+The test seasons are never used to choose. The weekly grading of the published
+forecasts above is also logged, as a monitoring run against the champion
+(`wildfire-prospective`), and committed with the grade.
+
+The store is committed: `mlflow ui --backend-store-uri sqlite:///mlflow/mlflow.db`
+browses it. [`test_mlflow_registry.py`](tests/test_mlflow_registry.py) checks that the
+champion is the exact set of files the app serves, that it scores identically to the
+app, that its training run holds the published evaluation, that each promotion is
+recorded with its reason, and the gate's rules one by one. The training runs are
+recorded from Git rather than re-fitted, because a re-fit needs the 4.0M-row table
+built from the National Fire Database, which is not in the repository.
 
 ## What is in it
 
@@ -362,12 +394,13 @@ days without commits, so the fallback matters.
 
 ```
 app/                 Streamlit app: streamlit_app.py + shared.py + views/
-src/wildfire/        fwi.py, features.py, model.py, evaluation.py, live.py, forecast.py
-pipelines/           build_table.py, train.py, publish.py, season_check.py, forecast.py
+src/wildfire/        fwi.py, features.py, model.py, evaluation.py, live.py, forecast.py, registry.py
+pipelines/           build_table.py, train.py, publish.py, season_check.py, forecast.py, mlflow_tracking.py
 models/              boosters, isotonic calibrations, the grid, climatology, stations
 data/published/      fire history, the 2020-2024 replay, the 2026 season check
 data/live/           the forecast snapshot shipped with the app
 reports/metrics.json every figure the model card shows
+mlflow/              the MLflow store: training runs, registered versions, monitoring runs
 legacy/2024-hackathon/  the original notebooks, .pbix, deck and source tables
 tests/               FWI against CWFIS, features, the live assembly, the evidence, every page
 ```
