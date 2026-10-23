@@ -1,5 +1,7 @@
 """Model card: what the model predicts, how it was tested, and where it falls short."""
 
+import json
+
 import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
@@ -141,7 +143,11 @@ st.markdown(
 """.replace("CELLS_IN_GRID", str(sh.CELLS_IN_GRID))
 )
 st.subheader("Monitoring: the forecasts as published, graded afterwards")
-record = sh.track_record()
+# Read here, not through a helper in shared.py: Streamlit Cloud hot-reloads a
+# changed page but keeps already-imported modules, so a page that calls a helper
+# added in the same push raises AttributeError until the app is rebooted.
+_track_record_file = sh.PUBLISHED / "track_record.json"
+record = json.loads(_track_record_file.read_text(encoding="utf-8")) if _track_record_file.exists() else None
 if record and record.get("prospective"):
     from wildfire.track_record import verdict
 
