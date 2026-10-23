@@ -1,7 +1,7 @@
 # Canada Wildfire Risk
 
 [![CI](https://github.com/KushPatel29/wildfire-prediction-app/actions/workflows/ci.yml/badge.svg)](https://github.com/KushPatel29/wildfire-prediction-app/actions/workflows/ci.yml)
-![Tests](https://img.shields.io/badge/tests-111%20passing-3B8C6E)
+![Tests](https://img.shields.io/badge/tests-120%20passing-3B8C6E)
 ![Model](https://img.shields.io/badge/ROC--AUC-0.881%20out%20of%20time-F28C38)
 ![Data](https://img.shields.io/badge/NFDB%20%2B%20CWFIS-4.0M%20cell--days-0B5FA5)
 [![Streamlit](https://img.shields.io/badge/Streamlit-live%20forecast-FF4B4B?logo=streamlit&logoColor=white)](https://wildfire-prediction-app1.streamlit.app)
@@ -98,6 +98,25 @@ model lost. The honest summary now is that on this season, against this label, t
 model is a little ahead of the index, and both are far ahead of climatology.
 
 ![2026 season check](docs/screenshots/02-season-check.png)
+
+## The forecasts as published, graded afterwards
+
+The backtest and the season check score the model on data it never saw. Neither is
+the forecast anyone actually read. Every run of the scheduled forecast publishes a
+snapshot to the [`live-data`](https://github.com/KushPatel29/wildfire-prediction-app/commits/live-data)
+branch, so its history is a public, timestamped record of what the model said
+before the outcome existed. A weekly workflow
+([`track-record.yml`](.github/workflows/track-record.yml)) grades that record against
+the satellite hotspots that followed, under rules fixed before the first grade
+([`src/wildfire/track_record.py`](src/wildfire/track_record.py)): the first
+forecast published for each station day, the season check's *new fire activity*
+label, leads 2 to 7 only (the target day starts after the forecast was built), two
+baselines that were available at publication time, and 95% intervals from
+resampling whole target days.
+
+<!-- track-record:begin -->
+_No forecast has a graded target day yet._
+<!-- track-record:end -->
 
 ## What is in it
 

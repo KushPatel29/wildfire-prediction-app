@@ -1,0 +1,49 @@
+name: Track record
+
+# Grades every forecast the Live forecast workflow has published against the
+# satellite hotspots that followed, and commits the grade with the README block it
+# writes. Weekly, so the record grows with the season; on demand for a fresh grade.
+# The rules are fixed in src/wildfire/track_record.py and tested in
+# tests/test_track_record.py.
+on:
+  schedule:
+    - cron: "17 15 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: track-record
+  cancel-in-progress: false
+
+jobs:
+  grade:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      # The forecast history: every snapshot the public page has shown.
+      - run: git fetch --depth=2000 origin live-data:refs/remotes/origin/live-data
+      # Hotspot files never change once the day is over; keep them between runs.
+      - uses: actions/cache@v4
+        with:
+          path: data/raw/hotspots
+          key: cwfis-hotspots-${{ github.run_id }}
+          restore-keys: cwfis-hotspots-
+      - run: python pipelines/track_record.py --ref origin/live-data
+      - name: Commit the grade
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/published/track_record.json data/published/track_record_daily.parquet README.md
+          if git diff --cached --quiet; then echo "track record unchanged"; exit 0; fi
+          last=$(python -c "import json; print(json.load(open('data/published/track_record.json')).get('last_target_day', 'none'))")
+          git commit -q -m "Track record: published forecasts graded through ${last}"
+          git pull --rebase -q origin main
+          git push origin HEAD:main
