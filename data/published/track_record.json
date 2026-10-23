@@ -1,0 +1,267 @@
+{
+  "rule": {
+    "one_forecast_per_station_day": "first published",
+    "prospective_from_lead": 2,
+    "label": "new fire activity: satellite hotspots after 14 days with none",
+    "top_share": 0.1
+  },
+  "first_target_day": "2026-09-21",
+  "last_target_day": "2026-10-22",
+  "first_forecast": "2026-09-21",
+  "last_forecast": "2026-10-22",
+  "strictly_prospective_rows": 1.0,
+  "by_lead": [
+    {
+      "lead_days": 0,
+      "prospective_share": 0.0,
+      "cell_days": 24096,
+      "new_detections": 119,
+      "target_days": 32,
+      "forecasts": 32,
+      "model": {
+        "roc_auc": 0.7365686233620946,
+        "top_decile_capture": 0.2689075630252101
+      },
+      "large_fire_model": {
+        "roc_auc": 0.6836143390917697,
+        "top_decile_capture": 0.31092436974789917
+      },
+      "normal_for_the_month": {
+        "roc_auc": 0.694769286953218,
+        "top_decile_capture": 0.226890756302521
+      },
+      "fire_next_door": {
+        "roc_auc": 0.7073051099740894,
+        "top_decile_capture": 0.47058823529411764
+      }
+    },
+    {
+      "lead_days": 1,
+      "prospective_share": 0.2903225806451613,
+      "cell_days": 23343,
+      "new_detections": 112,
+      "target_days": 31,
+      "forecasts": 31,
+      "model": {
+        "roc_auc": 0.7262636286489111,
+        "top_decile_capture": 0.24107142857142858
+      },
+      "large_fire_model": {
+        "roc_auc": 0.6777208871151232,
+        "top_decile_capture": 0.33035714285714285
+      },
+      "normal_for_the_month": {
+        "roc_auc": 0.6871298818696692,
+        "top_decile_capture": 0.22321428571428573
+      },
+      "fire_next_door": {
+        "roc_auc": 0.6251704541960558,
+        "top_decile_capture": 0.3392857142857143
+      }
+    },
+    {
+      "lead_days": 2,
+      "prospective_share": 1.0,
+      "cell_days": 22590,
+      "new_detections": 108,
+      "target_days": 30,
+      "forecasts": 30,
+      "model": {
+        "roc_auc": 0.736078162941876,
+        "top_decile_capture": 0.2777777777777778
+      },
+      "large_fire_model": {
+        "roc_auc": 0.6895932383767095,
+        "top_decile_capture": 0.3055555555555556
+      },
+      "normal_for_the_month": {
+        "roc_auc": 0.689079246936644,
+        "top_decile_capture": 0.23148148148148148
+      },
+      "fire_next_door": {
+        "roc_auc": 0.5805471537724007,
+        "top_decile_capture": 0.25
+      }
+    },
+    {
+      "lead_days": 3,
+      "prospective_share": 1.0,
+      "cell_days": 21837,
+      "new_detections": 103,
+      "target_days": 29,
+      "forecasts": 29,
+      "model": {
+        "roc_auc": 0.7319988099715806,
+        "top_decile_capture": 0.2621359223300971
+      },
+      "large_fire_model": {
+        "roc_auc": 0.6808070393933356,
+        "top_decile_capture": 0.33980582524271846
+      },
+      "normal_for_the_month": {
+        "roc_auc": 0.6914033847910437,
+        "top_decile_capture": 0.23300970873786409
+      },
+      "fire_next_door": {
+        "roc_auc": 0.5907153214372183,
+        "top_decile_capture": 0.30097087378640774
+      }
+    },
+    {
+      "lead_days": 4,
+      "prospective_share": 1.0,
+      "cell_days": 21084,
+      "new_detections": 100,
+      "target_days": 28,
+      "forecasts": 28,
+      "model": {
+        "roc_auc": 0.7326463019443386,
+        "top_decile_capture": 0.29
+      },
+      "large_fire_model": {
+        "roc_auc": 0.6787454727411362,
+        "top_decile_capture": 0.33
+      },
+      "normal_for_the_month": {
+        "roc_auc": 0.6874918985894014,
+        "top_decile_capture": 0.24
+      },
+      "fire_next_door": {
+        "roc_auc": 0.6011120377430422,
+        "top_decile_capture": 0.35
+      }
+    },
+    {
+      "lead_days": 5,
+      "prospective_share": 1.0,
+      "cell_days": 20331,
+      "new_detections": 98,
+      "target_days": 27,
+      "forecasts": 27,
+      "model": {
+        "roc_auc": 0.7303690071887006,
+        "top_decile_capture": 0.2857142857142857
+      },
+      "large_fire_model": {
+        "roc_auc": 0.6715199053475984,
+        "top_decile_capture": 0.3673469387755102
+      },
+      "normal_for_the_month": {
+        "roc_auc": 0.6846359806216759,
+        "top_decile_capture": 0.24489795918367346
+      },
+      "fire_next_door": {
+        "roc_auc": 0.6036541636869249,
+        "top_decile_capture": 0.32653061224489793
+      }
+    },
+    {
+      "lead_days": 6,
+      "prospective_share": 1.0,
+      "cell_days": 19578,
+      "new_detections": 97,
+      "target_days": 26,
+      "forecasts": 26,
+      "model": {
+        "roc_auc": 0.7341985873626802,
+        "top_decile_capture": 0.28865979381443296
+      },
+      "large_fire_model": {
+        "roc_auc": 0.6561510898538729,
+        "top_decile_capture": 0.3402061855670103
+      },
+      "normal_for_the_month": {
+        "roc_auc": 0.7018371588071275,
+        "top_decile_capture": 0.23711340206185566
+      },
+      "fire_next_door": {
+        "roc_auc": 0.5844391336628816,
+        "top_decile_capture": 0.30927835051546393
+      }
+    },
+    {
+      "lead_days": 7,
+      "prospective_share": 1.0,
+      "cell_days": 18825,
+      "new_detections": 93,
+      "target_days": 25,
+      "forecasts": 25,
+      "model": {
+        "roc_auc": 0.7409579145800758,
+        "top_decile_capture": 0.2903225806451613
+      },
+      "large_fire_model": {
+        "roc_auc": 0.6657533884859215,
+        "top_decile_capture": 0.3225806451612903
+      },
+      "normal_for_the_month": {
+        "roc_auc": 0.7065825486373729,
+        "top_decile_capture": 0.25806451612903225
+      },
+      "fire_next_door": {
+        "roc_auc": 0.5802473600462896,
+        "top_decile_capture": 0.3225806451612903
+      }
+    }
+  ],
+  "prospective": {
+    "cell_days": 124245,
+    "new_detections": 599,
+    "target_days": 30,
+    "forecasts": 30,
+    "model": {
+      "roc_auc": 0.7341572662998792,
+      "top_decile_capture": 0.28213689482470783
+    },
+    "large_fire_model": {
+      "roc_auc": 0.6739647602395086,
+      "top_decile_capture": 0.333889816360601
+    },
+    "normal_for_the_month": {
+      "roc_auc": 0.6932908888445248,
+      "top_decile_capture": 0.24040066777963273
+    },
+    "fire_next_door": {
+      "roc_auc": 0.5900534151876363,
+      "top_decile_capture": 0.3088480801335559
+    }
+  },
+  "prospective_intervals": {
+    "model_capture": [
+      0.20915350329390445,
+      0.36379317920126053
+    ],
+    "model_auc": [
+      0.6905183342032148,
+      0.7774413948233455
+    ],
+    "edge_on_normal_capture": [
+      -0.04718465045592704,
+      0.1391861360289195
+    ],
+    "edge_on_normal_auc": [
+      0.015924619325543753,
+      0.06492450828423882
+    ],
+    "edge_on_fire_next_door_capture": [
+      -0.10091772029540266,
+      0.046647164072284836
+    ],
+    "edge_on_fire_next_door_auc": [
+      0.09654653828641996,
+      0.19288896471471528
+    ],
+    "draws": 1000,
+    "resampled": "target days"
+  },
+  "generated_on": "2026-10-23",
+  "last_hotspot_day": "2026-10-22",
+  "forecasts_graded": 32,
+  "excluded": {
+    "published": 61,
+    "off_grid": 1,
+    "republished_same_day": 28
+  },
+  "hotspot_days": 46,
+  "hotspot_days_requested": 46
+}

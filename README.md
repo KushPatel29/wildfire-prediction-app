@@ -115,7 +115,27 @@ baselines that were available at publication time, and 95% intervals from
 resampling whole target days.
 
 <!-- track-record:begin -->
-_No forecast has a graded target day yet._
+32 forecasts, one per station day from 2026-09-21 to 2026-10-22, graded on 30 target days through 2026-10-22: 124,245 prospective cell-days (leads 2-7), 599 of them new fire activity.
+
+| Leads 2-7, as published | ROC-AUC | New activity in the forecast's riskiest 10% |
+|---|---:|---:|
+| **This model** | 0.734 | 28.2% |
+| Large-fire model | 0.674 | 33.4% |
+| Normal for the month | 0.693 | 24.0% |
+| Fire next door (last 48 h) | 0.590 | 30.9% |
+
+95% intervals from resampling whole target days: the model's top-10% capture 20.9% to 36.4%; its edge on normal for the month -4.7 to +13.9 points; its edge on fire next door -10.1 to +4.7 points.
+
+| Lead (days) | Cell-days | New activity | Model ROC-AUC | Model top 10% | Normal top 10% | Fire next door top 10% |
+|---:|---:|---:|---:|---:|---:|---:|
+| 0 (not a forecast) | 24,096 | 119 | 0.737 | 26.9% | 22.7% | 47.1% |
+| 1 (not a forecast) | 23,343 | 112 | 0.726 | 24.1% | 22.3% | 33.9% |
+| 2 | 22,590 | 108 | 0.736 | 27.8% | 23.1% | 25.0% |
+| 3 | 21,837 | 103 | 0.732 | 26.2% | 23.3% | 30.1% |
+| 4 | 21,084 | 100 | 0.733 | 29.0% | 24.0% | 35.0% |
+| 5 | 20,331 | 98 | 0.730 | 28.6% | 24.5% | 32.7% |
+| 6 | 19,578 | 97 | 0.734 | 28.9% | 23.7% | 30.9% |
+| 7 | 18,825 | 93 | 0.741 | 29.0% | 25.8% | 32.3% |
 <!-- track-record:end -->
 
 ## What is in it
