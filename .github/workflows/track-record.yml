@@ -1,6 +1,6 @@
 name: Track record
 
-# Grades every forecast the Live forecast workflow has published against the
+# Grades eligible sampled forecasts the Live forecast workflow published against the
 # satellite hotspots that followed, and commits the grade with the README block it
 # writes. Weekly, so the record grows with the season; on demand for a fresh grade.
 # The rules are fixed in src/wildfire/track_record.py and tested in
@@ -37,6 +37,8 @@ jobs:
           key: cwfis-hotspots-${{ github.run_id }}
           restore-keys: cwfis-hotspots-
       - run: python pipelines/track_record.py --ref origin/live-data
+      - name: Rebuild decision-cost monitoring from the same prospective grade
+        run: python pipelines/decision_monitor.py
       # The same grade, as a monitoring run in the committed MLflow store, against
       # the registered champion.
       - name: Log the grade to MLflow
@@ -50,7 +52,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/published/track_record.json data/published/track_record_daily.parquet README.md mlflow/
+          git add data/published/track_record.json data/published/track_record_daily.parquet reports/decision_monitor.json README.md mlflow/
           if git diff --cached --quiet; then echo "track record unchanged"; exit 0; fi
           last=$(python -c "import json; print(json.load(open('data/published/track_record.json')).get('last_target_day', 'none'))")
           git commit -q -m "Track record: published forecasts graded through ${last}"
