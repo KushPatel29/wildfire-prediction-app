@@ -1,7 +1,9 @@
 # Canada Wildfire Risk
 
 [![CI](https://github.com/KushPatel29/wildfire-prediction-app/actions/workflows/ci.yml/badge.svg)](https://github.com/KushPatel29/wildfire-prediction-app/actions/workflows/ci.yml)
-![Tests](https://img.shields.io/badge/tests-143%20passing-3B8C6E)
+![Tests](https://img.shields.io/badge/tests-143%20collected-3B8C6E)
+
+The count is collected tests; CI reports executed passes and optional environment-dependent skips.
 ![Model](https://img.shields.io/badge/ROC--AUC-0.881%20out%20of%20time-F28C38)
 ![Data](https://img.shields.io/badge/NFDB%20%2B%20CWFIS-4.0M%20cell--days-0B5FA5)
 [![Streamlit](https://img.shields.io/badge/Streamlit-live%20forecast-FF4B4B?logo=streamlit&logoColor=white)](https://wildfire-prediction-app1.streamlit.app)
