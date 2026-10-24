@@ -248,8 +248,13 @@ python -m powerbi.build_pbip --check   # CI gate: the committed project matches 
 Nothing on the dashboard recomputes a score. Every measure either aggregates a
 column the Python engines already wrote or divides two of them, and
 `tests/test_the_dashboard_shows_the_same_numbers.py` reconciles each exported
-table against the file it came from — so the 57.5% on the dashboard's final page
-is the same 57.5% as the app's, the README's and `reports/metrics.json`.
+table against the file it came from. The 57.5% same-day capture on the dashboard's
+final page comes from [`data/published/backtest_summary.parquet`](data/published/backtest_summary.parquet):
+15,597 of 27,147 fires in each day's top-ranked cells. The app and this README use
+the same daily-ranking denominator. `reports/metrics.json` separately reports the
+pooled test ROC-AUC and pooled top-decile capture; its pooled cutoff is a different
+selection rule and is not the source of the 57.5% daily-ranking figure. Neither
+historical calculation is the prospective forecast result above.
 
 The screenshots above were exported from Power BI Desktop on 24 September 2026, after a full refresh against the current evidence (753 cells, ROC-AUC 0.881, 57.5% same-day capture).
 
