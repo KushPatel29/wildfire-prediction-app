@@ -114,5 +114,7 @@ def test_the_badge_counts_the_tests_that_exist(readme):
                              cwd=ROOT, capture_output=True, text=True)
     assert collect.returncode == 0, collect.stdout[-2000:]
     collected = sum(1 for line in collect.stdout.splitlines() if "::" in line)
-    stated = int(re.search(r"tests-(\d+)%20passing", readme).group(1))
+    badge = re.search(r"tests-(\d+)%20collected", readme)
+    assert badge, "The badge must describe collected tests, not imply skips passed"
+    stated = int(badge.group(1))
     assert collected == stated, f"badge says {stated}, pytest collects {collected}"
