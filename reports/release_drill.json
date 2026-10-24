@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "executed_at_utc": "2026-10-24T21:11:30.741206+00:00",
+  "environment": "disposable copy of local MLflow SQLite registry",
+  "boundary": "Release replay of existing artifacts; no retraining, live alias change, new forecast grade or enterprise deployment. Numeric canaries test execution, not model accuracy.",
+  "checks": {
+    "has_fire_degradation_rejected": true,
+    "has_fire_tampering_rejected": true,
+    "has_fire_replay_promoted": true,
+    "has_fire_rollback_restored_version": true,
+    "has_fire_actual_model_canary_unchanged": true,
+    "has_large_fire_degradation_rejected": true,
+    "has_large_fire_tampering_rejected": true,
+    "has_large_fire_replay_promoted": true,
+    "has_large_fire_rollback_restored_version": true,
+    "has_large_fire_actual_model_canary_unchanged": true,
+    "source_registry_unchanged": true
+  },
+  "events": [
+    {
+      "target": "has_fire",
+      "original_version": 3,
+      "replayed_version": 4,
+      "rejection": {
+        "changed": false,
+        "reason": "does not beat climatology share_of_fires_in_top_decile, fwi_logistic share_of_fires_in_top_decile"
+      },
+      "promotion": {
+        "changed": true,
+        "reason": "top-decile capture 0.6600 -> 0.6600, ROC-AUC 0.8831 -> 0.8831 on the same validation rows"
+      },
+      "rollback": {
+        "changed": true,
+        "reason": "top-decile capture 0.6600 -> 0.6600, ROC-AUC 0.8831 -> 0.8831 on the same validation rows"
+      },
+      "canary_rows": 12,
+      "artifact_hashes": {
+        "has_fire.json": "acc1b1ad0021d549f1b558bfa0c32c2c2b0cd39fadb1cd556da9c3e48a2c5343",
+        "has_fire_counts.json": "d07adc1ae5640326ba4d8825d656f2bb8f22642b535fcba96e0b49bdb03e9f1f",
+        "has_fire_calibration.json": "f401c697017bb84df8833db6f26c587358477e1dd16b58cc393d6d8f62646bbf"
+      }
+    },
+    {
+      "target": "has_large_fire",
+      "original_version": 3,
+      "replayed_version": 4,
+      "rejection": {
+        "changed": false,
+        "reason": "does not beat climatology share_of_fires_in_top_decile, fwi_logistic share_of_fires_in_top_decile"
+      },
+      "promotion": {
+        "changed": true,
+        "reason": "top-decile capture 0.7856 -> 0.7856, ROC-AUC 0.9286 -> 0.9286 on the same validation rows"
+      },
+      "rollback": {
+        "changed": true,
+        "reason": "top-decile capture 0.7856 -> 0.7856, ROC-AUC 0.9286 -> 0.9286 on the same validation rows"
+      },
+      "canary_rows": 12,
+      "artifact_hashes": {
+        "has_large_fire.json": "6a03608f259922c6d89c403da67d7fd02e696288b1d026b20211f9d4af548cc7",
+        "has_large_fire_counts.json": "efb48cb55e03b20b269d1f4449ee8168840282060ab6aefca4ac60b53aec7593",
+        "has_large_fire_calibration.json": "e48bf04ef14c6c63461d8534fb46f726fdb2609293c66a24ade3fbcae136be6b"
+      }
+    }
+  ],
+  "source_registry_sha256": "eaee2e32a18994196fdacd01a5410db070926bd2efb320e9b012e127730734e4"
+}

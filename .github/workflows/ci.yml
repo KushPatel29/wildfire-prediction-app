@@ -26,3 +26,7 @@ jobs:
       - run: pytest -q
         env:
           WILDFIRE_OFFLINE: "1"
+      - name: Exercise promotion rejection and rollback in a disposable registry
+        run: python pipelines/release_drill.py
+      - name: Rebuild decision-cost slices from the current prospective grade
+        run: python pipelines/decision_monitor.py
