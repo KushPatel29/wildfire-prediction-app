@@ -290,6 +290,18 @@ def page_style() -> None:
         .legend .swatch {width: 14px; height: 14px; border-radius: 3px; display: inline-block}
         .legend .note {color: #9AA3AD}
         .kicker {color: #9AA3AD; font-size: .95rem; margin-top: -.5rem; max-width: 62rem}
+        /* KPI tiles wrap their text instead of ending in an ellipsis. Four bordered
+           tiles beside the sidebar are ~130px wide on a laptop, and the rule targets
+           every text element in a tile (not one wrapper) so it holds whichever
+           element a Streamlit release truncates. */
+        [data-testid="stMetricValue"] {font-size: clamp(1.35rem, 2.3vw, 2.25rem)}
+        :is([data-testid="stMetricLabel"], [data-testid="stMetricValue"], [data-testid="stMetricDelta"]),
+        :is([data-testid="stMetricLabel"], [data-testid="stMetricValue"], [data-testid="stMetricDelta"])
+            :is(div, p, span, label) {white-space: normal !important; overflow: visible !important;
+            text-overflow: clip !important; overflow-wrap: anywhere; height: auto !important;
+            max-height: none !important; -webkit-line-clamp: unset !important; line-height: 1.25}
+        div[data-testid="stMetric"] div:has(> [data-testid="stMetricDelta"]) {overflow: visible; height: auto}
+        [data-testid="stMetricDelta"] {border-radius: .45rem}
         </style>""",
         unsafe_allow_html=True,
     )
