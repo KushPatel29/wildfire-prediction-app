@@ -6,14 +6,17 @@ the live one has done since.
                                                    registered, and promoted only through the gate
     python pipelines/mlflow_tracking.py monitor    the current track record as a monitoring run
     python pipelines/mlflow_tracking.py summary    write mlflow/summary.json from the store
+    python pipelines/mlflow_tracking.py relocate   point recorded artifact folders at this checkout
 
-All three are idempotent: a commit or a grading already in the store is skipped.
+All four are idempotent: a commit or a grading already in the store is skipped.
 The store is committed (mlflow/mlflow.db, artifacts in mlflow/artifacts), so
 
     mlflow ui --backend-store-uri sqlite:///mlflow/mlflow.db
 
-browses the same history the tests read. The Track record workflow runs
-`monitor` and `summary` after each weekly grading and commits the result.
+browses the same history the tests read (after `python pipelines/mlflow_tracking.py relocate`,
+which points the store's recorded artifact folders at this checkout; every command does
+that first). The Track record workflow runs `monitor` and `summary` after each weekly
+grading and commits the result.
 
 Training runs are recorded from Git, not re-fitted: every version of
 reports/metrics.json is the evaluation train.py wrote when that model was fitted,
@@ -27,6 +30,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import sqlite3
 import subprocess
 import sys
 from pathlib import Path
@@ -59,8 +63,46 @@ def git(*args: str) -> str:
     return subprocess.run(["git", *args], cwd=ROOT, capture_output=True, text=True, check=True).stdout.strip()
 
 
+# Every column in which MLflow records where a run's or a model's files live.
+LOCATION_COLUMNS = (("experiments", "artifact_location"), ("runs", "artifact_uri"),
+                    ("logged_models", "artifact_location"), ("model_versions", "storage_location"))
+
+
+def relocate(db: Path | None = None, root: Path | None = None) -> int:
+    """Point every artifact location the store records at this checkout.
+
+    MLflow records absolute paths from whichever machine wrote the store. Committed and
+    then opened somewhere else - a fresh clone, or the GitHub runner that grades the
+    forecasts each week - new artifacts would be written into the first machine's folders,
+    which do not exist there (on 2026-10-26 the weekly grade failed exactly this way:
+    PermissionError on /home/claude). Idempotent; returns the number of rows changed."""
+    db = db or STORE / "mlflow.db"
+    root = (root or ROOT).resolve()
+    if not db.exists():
+        return 0
+    with sqlite3.connect(db) as con:
+        row = con.execute("SELECT artifact_location FROM experiments WHERE name = ?", (TRAINING,)).fetchone()
+        if not row or "/mlflow/artifacts/" not in row[0]:
+            return 0
+        old_uri = row[0].split("/mlflow/artifacts/", 1)[0]
+        new_uri = root.as_uri()
+        if old_uri == new_uri:
+            return 0
+        old_path, new_path = old_uri.removeprefix("file://"), root.as_posix()
+        changed = 0
+        for table, column in LOCATION_COLUMNS:
+            changed += con.execute(
+                f"UPDATE {table} SET {column} = ? || substr({column}, ?) WHERE {column} LIKE ? || '%'",
+                (new_uri, len(old_uri) + 1, old_uri)).rowcount
+            changed += con.execute(
+                f"UPDATE {table} SET {column} = ? || substr({column}, ?) WHERE {column} LIKE ? || '%'",
+                (new_path, len(old_path) + 1, old_path)).rowcount
+    return changed
+
+
 def client() -> MlflowClient:
     STORE.mkdir(exist_ok=True)
+    relocate()
     mlflow.set_tracking_uri(TRACKING_URI)
     mlflow.set_registry_uri(TRACKING_URI)
     return MlflowClient()
@@ -213,8 +255,11 @@ def summary() -> dict:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("command", choices=["register", "monitor", "summary"])
+    parser.add_argument("command", choices=["register", "monitor", "summary", "relocate"])
     args = parser.parse_args(argv)
+    if args.command == "relocate":
+        print(f"{relocate()} recorded locations now point at {ROOT}")
+        return 0
     {"register": register, "monitor": monitor, "summary": summary}[args.command]()
     return 0
 

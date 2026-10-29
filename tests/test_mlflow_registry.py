@@ -10,6 +10,8 @@ from __future__ import annotations
 
 import json
 import os
+import shutil
+import sqlite3
 import subprocess
 import sys
 from pathlib import Path
@@ -22,6 +24,7 @@ os.environ.setdefault("MLFLOW_DISABLE_AGENT_HINT", "1")
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "pipelines"))
 
+import mlflow  # noqa: E402
 import mlflow_tracking as mt  # noqa: E402
 
 from wildfire.model import FEATURES, TARGETS, load  # noqa: E402
@@ -135,3 +138,30 @@ def test_an_older_version_loads_its_own_files_from_git():
     rows = pd.DataFrame({f: np.random.default_rng(3).uniform(0, 30, 8) for f in FEATURES})
     first = mt.load_version("has_fire", 1).predict(rows).to_numpy()
     assert not np.allclose(first, load("has_fire").predict(rows))
+
+
+def _locations(db: Path) -> list[str]:
+    with sqlite3.connect(db) as con:
+        return [value for table, column in mt.LOCATION_COLUMNS
+                for (value,) in con.execute(f"SELECT {column} FROM {table}") if value]
+
+
+def test_a_store_opened_in_another_checkout_writes_its_artifacts_there(tmp_path):
+    """The weekly grade failed on 2026-10-26: the committed store named the folders of the
+    machine that wrote it, and the runner was denied when it tried to create them."""
+    checkout = tmp_path / "another-checkout"
+    shutil.copytree(mt.STORE, checkout / "mlflow")
+    db = checkout / "mlflow" / "mlflow.db"
+    assert mt.relocate(db, root=checkout) > 0
+    assert all(str(checkout.resolve().as_posix()) in value for value in _locations(db))
+    assert mt.relocate(db, root=checkout) == 0, "relocating twice changes nothing"
+
+    c = mlflow.MlflowClient(tracking_uri=f"sqlite:///{db}")
+    try:
+        experiment = c.get_experiment_by_name(mt.PROSPECTIVE).experiment_id
+        run = c.create_run(experiment)
+        c.log_dict(run.info.run_id, {"ok": True}, "probe.json")
+        assert run.info.artifact_uri.startswith(checkout.resolve().as_uri())
+        assert list((checkout / "mlflow" / "artifacts").rglob("probe.json"))
+    finally:
+        c._tracking_client.store.engine.dispose()
