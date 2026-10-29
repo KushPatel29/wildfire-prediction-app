@@ -119,29 +119,29 @@ baselines that were available at publication time, and 95% intervals from
 resampling whole target days.
 
 <!-- track-record:begin -->
-32 forecasts, one per station day from 2026-09-21 to 2026-10-22, graded on 30 target days through 2026-10-22: 124,245 prospective cell-days (leads 2-7), 599 of them new fire activity.
+38 forecasts, one per station day from 2026-09-21 to 2026-10-28, graded on 36 target days through 2026-10-28: 151,353 prospective cell-days (leads 2-7), 719 of them new fire activity.
 
 | Leads 2-7, as published | ROC-AUC | New activity in the forecast's riskiest 10% |
 |---|---:|---:|
-| **This model** | 0.734 | 28.2% |
-| Large-fire model | 0.674 | 33.4% |
-| Normal for the month | 0.693 | 24.0% |
-| Fire next door (last 48 h) | 0.590 | 30.9% |
+| **This model** | 0.734 | 28.7% |
+| Large-fire model | 0.665 | 31.6% |
+| Normal for the month | 0.695 | 24.6% |
+| Fire next door (last 48 h) | 0.606 | 30.6% |
 
 **So far the published model is ahead of normal for the month on ranking (ROC-AUC), ahead of fire next door on ranking (ROC-AUC), not yet distinguishable from normal for the month on the top 10%, and not yet distinguishable from fire next door on the top 10%.** Each call is made by the 95% interval of the edge, not by the point estimate.
 
-95% intervals from resampling whole target days: the model's ROC-AUC 0.691 to 0.777; its top-10% capture 20.9% to 36.4%; its edge on normal for the month -4.7 to +13.9 points; its edge on fire next door -10.1 to +4.7 points.
+95% intervals from resampling whole target days: the model's ROC-AUC 0.696 to 0.770; its top-10% capture 21.8% to 35.7%; its edge on normal for the month -4.0 to +12.3 points; its edge on fire next door -8.7 to +4.8 points.
 
 | Lead (days) | Cell-days | New activity | Model ROC-AUC | Model top 10% | Normal top 10% | Fire next door top 10% |
 |---:|---:|---:|---:|---:|---:|---:|
-| 0 (not a forecast) | 24,096 | 119 | 0.737 | 26.9% | 22.7% | 47.1% |
-| 1 (not a forecast) | 23,343 | 112 | 0.726 | 24.1% | 22.3% | 33.9% |
-| 2 | 22,590 | 108 | 0.736 | 27.8% | 23.1% | 25.0% |
-| 3 | 21,837 | 103 | 0.732 | 26.2% | 23.3% | 30.1% |
-| 4 | 21,084 | 100 | 0.733 | 29.0% | 24.0% | 35.0% |
-| 5 | 20,331 | 98 | 0.730 | 28.6% | 24.5% | 32.7% |
-| 6 | 19,578 | 97 | 0.734 | 28.9% | 23.7% | 30.9% |
-| 7 | 18,825 | 93 | 0.741 | 29.0% | 25.8% | 32.3% |
+| 0 (not a forecast) | 28,614 | 139 | 0.734 | 26.6% | 23.7% | 44.6% |
+| 1 (not a forecast) | 27,861 | 132 | 0.727 | 25.0% | 22.7% | 33.3% |
+| 2 | 27,108 | 128 | 0.734 | 28.1% | 23.4% | 27.3% |
+| 3 | 26,355 | 123 | 0.731 | 26.8% | 24.4% | 30.9% |
+| 4 | 25,602 | 120 | 0.731 | 29.2% | 23.3% | 33.3% |
+| 5 | 24,849 | 118 | 0.731 | 29.7% | 25.4% | 31.4% |
+| 6 | 24,096 | 117 | 0.737 | 29.1% | 24.8% | 29.9% |
+| 7 | 23,343 | 113 | 0.738 | 29.2% | 26.5% | 31.0% |
 <!-- track-record:end -->
 
 ## Every version tracked and registered in MLflow

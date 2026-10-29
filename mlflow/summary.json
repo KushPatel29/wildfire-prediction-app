@@ -133,6 +133,17 @@
       "model_auc_high": 0.7774413948233455,
       "normal_for_the_month_roc_auc": 0.6932908888445248,
       "target_days": 30.0
+    },
+    {
+      "run_id": "e3940bae7216492da9041a8b7af13767",
+      "last_target_day": "2026-10-28",
+      "champion_has_fire": "v3 @ 69dbd20",
+      "model_roc_auc": 0.7336305327415105,
+      "model_top_decile_capture": 0.2865090403337969,
+      "model_auc_low": 0.6959345325573472,
+      "model_auc_high": 0.7704546481170942,
+      "normal_for_the_month_roc_auc": 0.6949659716429343,
+      "target_days": 36.0
     }
   ]
 }

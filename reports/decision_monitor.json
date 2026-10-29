@@ -2,7 +2,7 @@
   "schema_version": 1,
   "classification": "observed_prospective_counts_with_assumed_costs",
   "first_target_day": "2026-09-23",
-  "last_target_day": "2026-10-22",
+  "last_target_day": "2026-10-28",
   "cost_assumptions": {
     "per_selected_cell_review": 1.0,
     "per_missed_detection": 100.0,
@@ -11,105 +11,105 @@
   "slices": [
     {
       "lead_days": 2,
-      "forecast_target_groups": 30,
-      "target_days": 30,
-      "cell_days": 22590,
-      "new_detections": 108,
-      "selected_cells": 2280,
-      "caught": 30,
-      "missed": 78,
-      "selected_without_detection": 2250,
-      "capture": 0.2777777777777778,
+      "forecast_target_groups": 36,
+      "target_days": 36,
+      "cell_days": 27108,
+      "new_detections": 128,
+      "selected_cells": 2736,
+      "caught": 36,
+      "missed": 92,
+      "selected_without_detection": 2700,
+      "capture": 0.28125,
       "capture_interval_95": [
-        0.1932699395547693,
-        0.3541910046728972
+        0.21423830594184576,
+        0.3491021185038066
       ],
-      "illustrative_cost_per_forecast_target": 336.0
+      "illustrative_cost_per_forecast_target": 331.55555555555554
     },
     {
       "lead_days": 3,
-      "forecast_target_groups": 29,
-      "target_days": 29,
-      "cell_days": 21837,
-      "new_detections": 103,
-      "selected_cells": 2204,
-      "caught": 27,
-      "missed": 76,
-      "selected_without_detection": 2177,
-      "capture": 0.2621359223300971,
+      "forecast_target_groups": 35,
+      "target_days": 35,
+      "cell_days": 26355,
+      "new_detections": 123,
+      "selected_cells": 2660,
+      "caught": 33,
+      "missed": 90,
+      "selected_without_detection": 2627,
+      "capture": 0.2682926829268293,
       "capture_interval_95": [
-        0.18362708719851578,
-        0.3484883236030025
+        0.1951167837949566,
+        0.3478357919254658
       ],
-      "illustrative_cost_per_forecast_target": 338.0689655172414
+      "illustrative_cost_per_forecast_target": 333.14285714285717
     },
     {
       "lead_days": 4,
-      "forecast_target_groups": 28,
-      "target_days": 28,
-      "cell_days": 21084,
-      "new_detections": 100,
-      "selected_cells": 2128,
-      "caught": 29,
-      "missed": 71,
-      "selected_without_detection": 2099,
-      "capture": 0.29,
+      "forecast_target_groups": 34,
+      "target_days": 34,
+      "cell_days": 25602,
+      "new_detections": 120,
+      "selected_cells": 2584,
+      "caught": 35,
+      "missed": 85,
+      "selected_without_detection": 2549,
+      "capture": 0.2916666666666667,
       "capture_interval_95": [
-        0.19385517364840674,
-        0.39218440185062786
+        0.20967197035745425,
+        0.3826416925465838
       ],
-      "illustrative_cost_per_forecast_target": 329.57142857142856
+      "illustrative_cost_per_forecast_target": 326.0
     },
     {
       "lead_days": 5,
-      "forecast_target_groups": 27,
-      "target_days": 27,
-      "cell_days": 20331,
-      "new_detections": 98,
-      "selected_cells": 2052,
-      "caught": 28,
-      "missed": 70,
-      "selected_without_detection": 2024,
-      "capture": 0.2857142857142857,
+      "forecast_target_groups": 33,
+      "target_days": 33,
+      "cell_days": 24849,
+      "new_detections": 118,
+      "selected_cells": 2508,
+      "caught": 35,
+      "missed": 83,
+      "selected_without_detection": 2473,
+      "capture": 0.2966101694915254,
       "capture_interval_95": [
-        0.1925610178293232,
-        0.4000574712643678
+        0.20967357910906298,
+        0.3983050847457627
       ],
-      "illustrative_cost_per_forecast_target": 335.25925925925924
+      "illustrative_cost_per_forecast_target": 327.5151515151515
     },
     {
       "lead_days": 6,
-      "forecast_target_groups": 26,
-      "target_days": 26,
-      "cell_days": 19578,
-      "new_detections": 97,
-      "selected_cells": 1976,
-      "caught": 28,
-      "missed": 69,
-      "selected_without_detection": 1948,
-      "capture": 0.28865979381443296,
+      "forecast_target_groups": 32,
+      "target_days": 32,
+      "cell_days": 24096,
+      "new_detections": 117,
+      "selected_cells": 2432,
+      "caught": 34,
+      "missed": 83,
+      "selected_without_detection": 2398,
+      "capture": 0.2905982905982906,
       "capture_interval_95": [
-        0.21945917285259808,
-        0.36363636363636365
+        0.22772075988086615,
+        0.35870261984392415
       ],
-      "illustrative_cost_per_forecast_target": 341.38461538461536
+      "illustrative_cost_per_forecast_target": 335.375
     },
     {
       "lead_days": 7,
-      "forecast_target_groups": 25,
-      "target_days": 25,
-      "cell_days": 18825,
-      "new_detections": 93,
-      "selected_cells": 1900,
-      "caught": 27,
-      "missed": 66,
-      "selected_without_detection": 1873,
-      "capture": 0.2903225806451613,
+      "forecast_target_groups": 31,
+      "target_days": 31,
+      "cell_days": 23343,
+      "new_detections": 113,
+      "selected_cells": 2356,
+      "caught": 33,
+      "missed": 80,
+      "selected_without_detection": 2323,
+      "capture": 0.2920353982300885,
       "capture_interval_95": [
-        0.21739130434782608,
-        0.37366071428571423
+        0.22825610221205186,
+        0.35715737514518003
       ],
-      "illustrative_cost_per_forecast_target": 340.0
+      "illustrative_cost_per_forecast_target": 334.06451612903226
     }
   ],
   "automatic_retraining_or_promotion": false,
@@ -119,5 +119,5 @@
     "1000 target-day bootstrap draws describe uncertainty; no automatic drift conclusion",
     "Selection remains the fixed top 10% rule; costs do not select a model or threshold"
   ],
-  "source_sha256": "762622fd99fdee1faaa750d44640b7f1884f0867b304187c46917bcb435fa7b7"
+  "source_sha256": "fadda503af51efed2e23d250d915588430bcc9fd13b8e1b8382709c63d53352d"
 }
