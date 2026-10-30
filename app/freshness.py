@@ -13,6 +13,11 @@ any of them has changed on disk, it reloads every local module, dependencies
 first, so a module that did ``from helper import thing`` picks up the new
 ``thing`` too, and clears Streamlit's data and resource caches so no cached
 object outlives the code that built it.
+
+A file first seen with a modification time later than this module's own import
+counts as changed. Otherwise a deploy landing while the first run is still going
+would be recorded as the baseline against a module that still holds the old
+code. The cost of the rule is at most one unnecessary reload.
 """
 
 from __future__ import annotations
@@ -22,11 +27,13 @@ import importlib
 import importlib.util
 import sys
 import threading
+import time
 from pathlib import Path
 
 _LOCK = threading.Lock()
 _SEEN: dict[str, int] = {}
 _SELF = Path(__file__).resolve()
+_STARTED_NS = time.time_ns()
 
 
 def _local_modules(root: Path) -> list[tuple[str, object, Path]]:
@@ -113,7 +120,11 @@ def refresh(root: str | Path, *, clear_caches: bool = True) -> list[str]:
             stamp = _stamp(path)
             if stamp is None:
                 continue
-            if _SEEN.setdefault(name, stamp) != stamp:
+            seen = _SEEN.get(name)
+            if seen is None:
+                _SEEN[name] = stamp
+                changed = changed or stamp > _STARTED_NS
+            elif seen != stamp:
                 changed = True
         if not changed:
             return []

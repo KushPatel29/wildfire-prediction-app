@@ -12,11 +12,12 @@ from __future__ import annotations
 import importlib
 import os
 import sys
+import time
 import uuid
 
 import pytest
 
-from freshness import _SEEN, refresh
+from freshness import _SEEN, _STARTED_NS, refresh
 
 
 @pytest.fixture
@@ -28,6 +29,7 @@ def package(tmp_path, monkeypatch):
     (root / "__init__.py").write_text("")
     (root / "helper.py").write_text("VALUE = 1\n")
     (root / "user.py").write_text(f"from {name}.helper import VALUE\n")
+    _backdate(root)
     monkeypatch.syspath_prepend(str(tmp_path))
     helper = importlib.import_module(f"{name}.helper")
     user = importlib.import_module(f"{name}.user")
@@ -35,6 +37,12 @@ def package(tmp_path, monkeypatch):
     for module in [m for m in sys.modules if m == name or m.startswith(name + ".")]:
         sys.modules.pop(module, None)
         _SEEN.pop(module, None)
+
+
+def _backdate(root):
+    """Date every file before the guard started, as a checkout before the app's start is."""
+    for path in root.iterdir():
+        os.utime(path, ns=(_STARTED_NS - 60_000_000_000, _STARTED_NS - 60_000_000_000))
 
 
 def _rewrite(path, text):
@@ -80,9 +88,21 @@ def test_an_import_cycle_still_reloads_once(package):
     tmp_path, root, name, helper, _user = package
     (root / "ping.py").write_text(f"import {name}.pong\nVALUE = 1\n")
     (root / "pong.py").write_text(f"import {name}.ping\n")
+    _backdate(root)
     ping = importlib.import_module(f"{name}.ping")
     refresh(tmp_path, clear_caches=False)
     _rewrite(root / "ping.py", f"import {name}.pong\nVALUE = 2\n")
     reloaded = refresh(tmp_path, clear_caches=False)
     assert sorted(reloaded) == sorted(set(reloaded)), "each module reloads exactly once"
     assert ping.VALUE == 2
+
+
+def test_a_deploy_before_the_first_check_is_not_taken_as_the_baseline(package):
+    """The first run imports a helper; a deploy lands before that run records it.
+    Recording the new mtime as the baseline would leave the old code loaded for good."""
+    tmp_path, root, name, helper, _user = package
+    _rewrite(root / "helper.py", "VALUE = 5\n")
+    os.utime(root / "helper.py", ns=(time.time_ns(), time.time_ns()))
+    reloaded = refresh(tmp_path, clear_caches=False)
+    assert f"{name}.helper" in reloaded
+    assert helper.VALUE == 5
