@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import ast
 import re
+import sys
 from pathlib import Path
 
 import pytest
@@ -41,12 +42,8 @@ DISTRIBUTION = {"sklearn": "scikit-learn"}
 #: Where this repository's own modules live. A local import is followed, not declared.
 LOCAL_ROOTS = [ROOT / "src", ROOT / "app", ROOT / "pipelines", ROOT / "app" / "views"]
 
-STDLIB = {
-    "__future__", "argparse", "collections", "concurrent", "contextlib", "csv",
-    "dataclasses", "datetime", "functools", "io", "itertools", "json", "math",
-    "os", "pathlib", "random", "re", "shutil", "subprocess", "sys", "tempfile",
-    "textwrap", "threading", "time", "typing", "urllib", "warnings", "zipfile",
-}
+#: Python's own list, so a new stdlib import never reads as an undeclared dependency.
+STDLIB = set(sys.stdlib_module_names) | {"__future__"}
 
 
 def declared(path: Path) -> set[str]:

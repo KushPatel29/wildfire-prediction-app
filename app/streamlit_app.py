@@ -1,6 +1,15 @@
 """Canada wildfire risk - entry point and navigation."""
 
+from pathlib import Path
+
 import streamlit as st
+
+from freshness import refresh
+
+# A push that changes only app/shared.py or src/ must reach this running app:
+# reload the repo's own modules when their files change (see freshness.py).
+ROOT = Path(__file__).resolve().parent.parent
+refresh(ROOT)
 
 st.set_page_config(page_title="Canada Wildfire Risk", page_icon="🔥", layout="wide")
 
@@ -19,3 +28,5 @@ pages = {
     ],
 }
 st.navigation(pages).run()
+# Record what this run imported, so the next run can tell when it changed.
+refresh(ROOT)
