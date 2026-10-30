@@ -1,7 +1,7 @@
 # Canada Wildfire Risk
 
 [![CI](https://github.com/KushPatel29/wildfire-prediction-app/actions/workflows/ci.yml/badge.svg)](https://github.com/KushPatel29/wildfire-prediction-app/actions/workflows/ci.yml)
-![Tests](https://img.shields.io/badge/tests-149%20collected-3B8C6E)
+![Tests](https://img.shields.io/badge/tests-155%20collected-3B8C6E)
 
 The count is collected tests; CI reports executed passes and optional environment-dependent skips.
 ![Model](https://img.shields.io/badge/ROC--AUC-0.881%20out%20of%20time-F28C38)
